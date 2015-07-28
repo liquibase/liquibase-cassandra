@@ -27,8 +27,9 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:http://github.com/liquibase/liquibase-cassandra.git</connection>
-		<url>https://github.com/liquibase/liquibase-cassandra</url>
+        <connection>scm:git:git@github.com:liquibase/liquibase-cassandra.git</connection>
+        <url>scm:git:https://github.com/liquibase/liquibase-cassandra.git</url>
+        <developerConnection>scm:git:git@github.com:liquibase/liquibase-cassandra.git</developerConnection>
 	</scm>
 
 	<developers>
@@ -118,17 +119,7 @@
 					<artifactId>maven-release-plugin</artifactId>
                     <version>2.2.2</version>
 					<configuration>
-                        <stagingRepository>/tmp/maven-snapshot</stagingRepository>
 						<mavenExecutorId>forked-path</mavenExecutorId>
-                        <pushChanges>false</pushChanges>
-					</configuration>
-				</plugin>
-
-
-				<plugin>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<configuration>
-						<skip>false</skip>
 					</configuration>
 				</plugin>
 
@@ -151,27 +142,34 @@
 						<nexusUrl>https://oss.sonatype.org/service/local/staging/deploy/maven2/</nexusUrl>
 					</configuration>
 				</plugin>
-			</plugins>
 
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <skip>false</skip>
+                    </configuration>
+                </plugin>
+			</plugins>
 		</pluginManagement>
 	</build>
 
-    <distributionManagement>
+  <distributionManagement>
         <repository>
             <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
+            <name>Sonatype Production Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+
         </repository>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
+            <name>Sontatype Snapshot Repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
 	<profiles>
 		<profile>
-            <!-- Required for deployment to Sonatype -->
 			<id>release-sign-artifacts</id>
 			<activation>
 				<property>
@@ -198,5 +196,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>
