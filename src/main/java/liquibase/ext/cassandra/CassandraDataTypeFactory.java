@@ -1,4 +1,4 @@
-package liquibase.cassandra;
+package liquibase.ext.cassandra;
 
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeFactory;
@@ -30,10 +30,10 @@ public class CassandraDataTypeFactory extends DataTypeFactory {
 		return super.fromObject(object, database);
 	}
 
-	public LiquibaseDataType fromDescription(String dataTypeDefinition) {
-		System.out.println("from description: "+dataTypeDefinition);
-		LiquibaseDataType dataType = super.fromDescription(dataTypeDefinition);
-
-		return new CassandraDataType(dataType);
-	}
+//	public LiquibaseDataType fromDescription(String dataTypeDefinition) {
+//		System.out.println("from description: "+dataTypeDefinition);
+//		LiquibaseDataType dataType = super.fromDescription(dataTypeDefinition);
+//
+//		return new CassandraDataType(dataType);
+//	}
 }

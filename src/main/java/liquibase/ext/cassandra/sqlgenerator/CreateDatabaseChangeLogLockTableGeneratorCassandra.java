@@ -1,6 +1,6 @@
-package liquibase.cassandra.sqlgenerator;
+package liquibase.ext.cassandra.sqlgenerator;
 
-import liquibase.cassandra.database.CassandraDatabase;
+import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDatabaseChangeLogLockTableGenerator {
+
     @Override
     public int getPriority() {
         return PRIORITY_DATABASE;
@@ -24,16 +25,16 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
 
     @Override
     public boolean supports(CreateDatabaseChangeLogLockTableStatement statement, Database database) {
-        return database instanceof CassandraDatabase;
+        return super.supports(statement, database) && database instanceof CassandraDatabase;
     }
 
     public Sql[] generateSql(CreateDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         CreateTableStatement createTableStatement = new CreateTableStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName())
                 .setTablespace(database.getLiquibaseTablespaceName())
-                .addPrimaryKeyColumn("ID", DataTypeFactory.getInstance().fromDescription("INT"), null, null, null, new NotNullConstraint())
-                .addColumn("LOCKED", DataTypeFactory.getInstance().fromDescription("BOOLEAN"), null, new NotNullConstraint())
-                .addColumn("LOCKGRANTED", DataTypeFactory.getInstance().fromDescription("DATETIME"))
-                .addColumn("LOCKEDBY", DataTypeFactory.getInstance().fromDescription("VARCHAR(255)"));
+                .addPrimaryKeyColumn("ID", DataTypeFactory.getInstance().fromDescription("INT", database), null, null, null, new NotNullConstraint())
+                .addColumn("LOCKED", DataTypeFactory.getInstance().fromDescription("BOOLEAN", database), null, null, new NotNullConstraint())
+                .addColumn("LOCKGRANTED", DataTypeFactory.getInstance().fromDescription("TIMESTAMP", database))
+                .addColumn("LOCKEDBY", DataTypeFactory.getInstance().fromDescription("TEXT", database));
 
         // no support for AND in update
         InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());

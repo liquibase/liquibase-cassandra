@@ -1,15 +1,12 @@
-package liquibase.cassandra.sqlgenerator;
+package liquibase.ext.cassandra.sqlgenerator;
 
 import liquibase.database.Database;
-import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.LockDatabaseChangeLogGenerator;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.UpdateStatement;
-
-import java.sql.Timestamp;
 
 public class LockDatabaseChangeLogGeneratorCassandra extends LockDatabaseChangeLogGenerator {
 

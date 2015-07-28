@@ -1,4 +1,4 @@
-package liquibase.cassandra;
+package liquibase.ext.cassandra;
 
 import liquibase.common.datatype.DataTypeWrapper;
 import liquibase.datatype.LiquibaseDataType;

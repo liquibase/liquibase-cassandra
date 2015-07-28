@@ -1,4 +1,4 @@
-package liquibase.cassandra.sqlgenerator;
+package liquibase.ext.cassandra.sqlgenerator;
 
 import liquibase.database.Database;
 import liquibase.sql.Sql;
