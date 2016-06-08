@@ -1,19 +1,18 @@
 package liquibase.ext.cassandra;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-
-import org.cassandraunit.CassandraCQLUnit;
-import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.junit.Rule;
-import org.junit.Test;
-
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class ChangeLogIT {
 

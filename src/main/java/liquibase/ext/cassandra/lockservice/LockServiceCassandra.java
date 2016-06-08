@@ -2,12 +2,11 @@ package liquibase.ext.cassandra.lockservice;
 
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
 import liquibase.ext.cassandra.database.CassandraDatabase;
+import liquibase.ext.cassandra.database.CassandraQueries;
 import liquibase.lockservice.StandardLockService;
 import liquibase.logging.LogFactory;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -25,7 +24,7 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("select ID from DATABASECHANGELOGLOCK");
+            statement.executeQuery(CassandraQueries.SELECT_DATABASE_CHANGE_LOCK);
             statement.close();
             hasChangeLogLockTable = true;
         } catch (SQLException e) {
