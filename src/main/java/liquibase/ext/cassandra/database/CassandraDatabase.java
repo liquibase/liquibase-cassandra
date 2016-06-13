@@ -84,7 +84,6 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	public Statement getStatement() throws ClassNotFoundException, SQLException {
 		String url = super.getConnection().getURL();
-		Class.forName("org.apache.cassandra.cql.jdbc.CassandraDriver");
 		Connection con = DriverManager.getConnection(url);
 		Statement statement = con.createStatement();
 		return statement;

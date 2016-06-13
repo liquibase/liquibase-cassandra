@@ -24,12 +24,13 @@ public class ChangeLogIT {
 
     @Test
     public void canApplyChangelog() throws Exception {
+        Class.forName("com.github.adejanovski.cassandra.jdbc.CassandraDriver");
         // Connect to the Cassandra instance setup by cassandra-unit
-        Connection con = DriverManager.getConnection("jdbc:cassandra://127.0.0.1:9171/" + KEYSPACE);
+        Connection con = DriverManager.getConnection("jdbc:cassandra://127.0.0.1:9142/" + KEYSPACE);
         // Trigger a liquibase update with a simple changelog
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(con));
         database.setDefaultSchemaName(KEYSPACE);
-        Liquibase liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database);
+        Liquibase liquibase = new Liquibase("changelog.sql", new ClassLoaderResourceAccessor(), database);
         Contexts contexts = new Contexts();
         liquibase.update(contexts);
     }

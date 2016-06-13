@@ -1,4 +1,4 @@
-package liquibase.ext.cassandra.sqlgenerator;
+package liquibase.ext.cassandra.sqlgenerator.cql;
 
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeFactory;
@@ -7,16 +7,20 @@ import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.core.CreateTableGenerator;
 import liquibase.statement.core.CreateTableStatement;
 
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 
-public class CassandraCreateTableGenerator extends CreateTableGenerator {
+public class CreateTableGenerator extends liquibase.sqlgenerator.core.CreateTableGenerator {
 
     final DataTypeFactory instance = DataTypeFactory.getInstance();
+
+    @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
 
     @Override
     public boolean supports(CreateTableStatement statement, Database database) {
@@ -30,18 +34,17 @@ public class CassandraCreateTableGenerator extends CreateTableGenerator {
         buffer.append("(");
         String columnsAsString = statement.getColumnTypes().entrySet().stream().map(columnEntry -> {
             LiquibaseDataType value = columnEntry.getValue();
-            String cassandraColumn = String.format("%s %s",columnEntry.getKey(),value.getName());
+            String cassandraColumn = String.format("%s %s", columnEntry.getKey(), value.getName());
             return cassandraColumn;
         }).collect(joining(","));
         buffer.append(columnsAsString);
-        buffer.append(",");
-        buffer.append(String.format(", %s",getPrimaryKey(statement)));
+        buffer.append(","+getPrimaryKey(statement));
         buffer.append(")");
         return new Sql[]{new UnparsedSql(buffer.toString())};
     }
 
     private String getPrimaryKey(CreateTableStatement statement) {
-        return String.format("PRIMARY KEY(%s)",statement.getPrimaryKeyConstraint().getColumns().stream().collect(Collectors.joining(",")));
+        return String.format("PRIMARY KEY(%s)", statement.getPrimaryKeyConstraint().getColumns().stream().collect(Collectors.joining(",")));
     }
 
 }

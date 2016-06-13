@@ -1,4 +1,4 @@
-package liquibase.ext.cassandra.sqlgenerator;
+package liquibase.ext.cassandra.sqlgenerator.databasechangelog;
 
 import liquibase.database.Database;
 import liquibase.sql.Sql;
@@ -24,6 +24,7 @@ public class UnlockDatabaseChangeLogGeneratorCassandra extends UnlockDatabaseCha
         releaseStatement.setWhereClause(database.escapeColumnName(database.getLiquibaseCatalogName(), liquibaseSchema, database.getDatabaseChangeLogTableName(), "ID")+" = 1");
 
         return SqlGeneratorFactory.getInstance().generateSql(releaseStatement, database);
+
     }
 
 }

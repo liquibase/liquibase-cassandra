@@ -1,17 +1,23 @@
-package liquibase.ext.cassandra.changelog;
+package liquibase.ext.cassandra.service;
 
+import liquibase.change.ColumnConfig;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
+import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.logging.LogFactory;
+import liquibase.logging.Logger;
+import liquibase.statement.core.SelectFromDatabaseChangeLogStatement;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
+
+    private Logger logger = LogFactory.getInstance().getLog("CassandraChangeLogHistoryService");
 
     @Override
     public int getPriority() {
@@ -24,6 +30,12 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     }
 
     @Override
+    public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
+        SelectFromDatabaseChangeLogStatement select = new SelectFromDatabaseChangeLogStatement(new ColumnConfig().setName("*").setComputed(true));
+        return ExecutorService.getInstance().getExecutor(database).queryForList(select);
+    }
+
+    @Override
     public boolean hasDatabaseChangeLogTable() throws DatabaseException {
         boolean hasChangeLogTable;
         try {
@@ -32,35 +44,14 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {
-            LogFactory.getLogger().info("No DATABASECHANGELOG available in cassandra.");
+            logger.info("No DATABASECHANGELOG available in cassandra.");
             hasChangeLogTable = false;
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            logger.warning(e.getMessage(),e);
             hasChangeLogTable = false;
         }
-
         // needs to be generated up front
         return hasChangeLogTable;
     }
 
-
-    @Override
-    public int getNextSequenceValue() throws LiquibaseException {
-        int next = 0;
-        try {
-            Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT KEY, AUTHOR, ORDEREXECUTED FROM DATABASECHANGELOGLOCK");
-            while (rs.next()) {
-                int order = rs.getInt("ORDEREXECUTED");
-                next = Math.max(order, next);
-            }
-            statement.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return next + 1;
-    }
 }

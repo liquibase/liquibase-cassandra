@@ -1,4 +1,4 @@
-package liquibase.ext.cassandra.sqlgenerator;
+package liquibase.ext.cassandra.sqlgenerator.databasechangelog;
 
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeFactory;
@@ -9,7 +9,6 @@ import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.CreateDatabaseChangeLogLockTableGenerator;
 import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
 import liquibase.statement.core.CreateTableStatement;
-import liquibase.statement.core.InsertStatement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,12 +36,12 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
                 .addColumn("LOCKEDBY", DataTypeFactory.getInstance().fromDescription("TEXT", database));
 
         // no support for AND in update
-        InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());
+//        InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());
 
         List<Sql> sql = new ArrayList<Sql>();
 
         sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(createTableStatement, database)));
-        sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(insertStatement, database)));
+//        sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(insertStatement, database)));
 
         return sql.toArray(new Sql[sql.size()]);
     }
