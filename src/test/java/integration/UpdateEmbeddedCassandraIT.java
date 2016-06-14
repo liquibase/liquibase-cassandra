@@ -1,4 +1,4 @@
-package liquibase.ext.cassandra;
+package integration;
 
 import liquibase.Contexts;
 import liquibase.Liquibase;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class ChangeLogIT {
+public class UpdateEmbeddedCassandraIT {
 
     private static final String KEYSPACE = "liquibase";
 
