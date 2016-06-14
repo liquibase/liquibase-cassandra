@@ -23,7 +23,7 @@ public class UpdateStandaloneCassandraIT {
         // Trigger a liquibase update with a simple changelog
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(con));
         database.setDefaultSchemaName(KEYSPACE);
-        Liquibase liquibase = new Liquibase("changeset/sql/examples.sql", new ClassLoaderResourceAccessor(), database);
+        Liquibase liquibase = new Liquibase("changeset/sql/changelog.sql", new ClassLoaderResourceAccessor(), database);
         Contexts contexts = new Contexts();
         liquibase.update(contexts);
     }

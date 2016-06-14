@@ -19,7 +19,7 @@ public class UpdateEmbeddedCassandraIT {
     private static final String KEYSPACE = "liquibase";
     private static final String CASSANDRA_CONFIGURATION_FILE = "cassandra.yaml";
 
-    // Sets up an instance of Cassandra with a new empty keyspace
+    // Sets up an embedded instance of Cassandra with a new empty keyspace
     @Rule
     public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("empty.cql", KEYSPACE),CASSANDRA_CONFIGURATION_FILE);
 
