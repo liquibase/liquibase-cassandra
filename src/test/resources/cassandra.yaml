@@ -6,7 +6,7 @@
 # /NOTE
 
 
-cluster_name: Cognito Cluster
+cluster_name: Embedded Cluster
 num_tokens: 256
 
 hinted_handoff_enabled: true
