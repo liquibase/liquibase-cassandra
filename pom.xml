@@ -75,7 +75,7 @@
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
             <scope>test</scope>
-            <version>3.0.0.1</version>
+            <version>${cassandra-unit.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.cassandra</groupId>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>3.0.0</version>
+            <version>${cassandra-driver.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -245,17 +245,21 @@
         </profile>
         <profile>
             <id>cassandra3</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <cassandra.version>3.5</cassandra.version>
+                <cassandra-unit.version>3.0.0.1</cassandra-unit.version>
+                <cassandra-driver.version>3.0.0</cassandra-driver.version>
             </properties>
         </profile>
         <profile>
             <id>cassandra2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <cassandra.version>2.2.6</cassandra.version>
+                <cassandra-unit.version>2.2.2.1</cassandra-unit.version>
+                <cassandra-driver.version>2.1.9</cassandra-driver.version>
             </properties>
         </profile>
     </profiles>
