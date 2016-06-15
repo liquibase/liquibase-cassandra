@@ -25,7 +25,7 @@ public class CreateDatabaseChangeLogTableGeneratorCassandra extends CreateDataba
         CreateTableStatement createTableStatement = new CreateTableStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName())
                 .setTablespace(database.getLiquibaseTablespaceName())
                 .addPrimaryKeyColumn("ID", DataTypeFactory.getInstance().fromDescription(charTypeName, database), null, null, null)
-                .addColumn("AUTHOR", DataTypeFactory.getInstance().fromDescription(charTypeName, database), null, null, new NotNullConstraint())
+                .addPrimaryKeyColumn("AUTHOR", DataTypeFactory.getInstance().fromDescription(charTypeName, database), null, null, null)
                 .addColumn("FILENAME", DataTypeFactory.getInstance().fromDescription(charTypeName, database), null, null, new NotNullConstraint())
                 .addColumn("DATEEXECUTED", DataTypeFactory.getInstance().fromDescription(dateTimeTypeString, database), null, null, new NotNullConstraint())
                 .addColumn("ORDEREXECUTED", DataTypeFactory.getInstance().fromDescription("int", database), null, null, new NotNullConstraint())

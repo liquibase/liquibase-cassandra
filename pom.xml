@@ -86,7 +86,7 @@
         <dependency>
             <groupId>com.github.adejanovski</groupId>
             <artifactId>cassandra-jdbc-wrapper</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -259,7 +259,8 @@
             <properties>
                 <cassandra.version>2.2.6</cassandra.version>
                 <cassandra-unit.version>2.2.2.1</cassandra-unit.version>
-                <cassandra-driver.version>2.1.9</cassandra-driver.version>
+                <cassandra-driver.version>3.0.0</cassandra-driver.version>
+                <!--<cassandra-driver.version>2.1.9</cassandra-driver.version>-->
             </properties>
         </profile>
     </profiles>
