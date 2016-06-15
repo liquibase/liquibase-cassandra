@@ -14,6 +14,8 @@ import java.sql.Statement;
  */
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
+	public static final String DATABASECHANGELOGLOCK_NAME = "databasechangeloglock";
+	public static final String DATABASECHANGELOG_NAME = "databasechangelog";
 
 	public String getShortName() {
 		return "cassandra";
@@ -21,6 +23,8 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	public CassandraDatabase() {
 		setDefaultSchemaName("");
+		setDatabaseChangeLogLockTableName(DATABASECHANGELOGLOCK_NAME);
+		setDatabaseChangeLogTableName(DATABASECHANGELOG_NAME);
 	}
 
 	public int getPriority() {
@@ -29,7 +33,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	protected String getDefaultDatabaseProductName() {
-		return "Cassandra";
+		return PRODUCT_NAME;
 	}
 
 	public Integer getDefaultPort() {
