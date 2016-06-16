@@ -16,6 +16,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
 	public static final String DATABASECHANGELOGLOCK_NAME = "databasechangeloglock";
 	public static final String DATABASECHANGELOG_NAME = "databasechangelog";
+	public static final String CASSANDRA_DRIVER_NAME = "org.apache.cassandra.cql.jdbc.CassandraDriver";
 
 	public String getShortName() {
 		return "cassandra";
@@ -55,7 +56,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	}
 
 	public String getDefaultDriver(String url) {
-		return "org.apache.cassandra.cql.jdbc.CassandraDriver";
+		return CASSANDRA_DRIVER_NAME;
 	}
 
 	public boolean supportsTablespaces() {
@@ -92,7 +93,6 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		Statement statement = con.createStatement();
 		return statement;
 	}
-
 
 	public String getCurrentDateTimeFunction() {
 		// no alternative in cassandra, using client time

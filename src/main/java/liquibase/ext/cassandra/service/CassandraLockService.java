@@ -38,7 +38,7 @@ public class CassandraLockService extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            ResultSet rs = statement.executeQuery(CassandraQueries.SELECT_DATABASE_CHANGE_LOCK);
+            ResultSet rs = statement.executeQuery(CassandraQueries.SELECT_ID_LOCKED_FROM_LIQUIBASE_DATABASECHANGELOGLOCK);
             while (rs.next()) {
                 int id = rs.getInt("id");
                 boolean locked = rs.getBoolean("locked");
@@ -139,8 +139,7 @@ public class CassandraLockService extends StandardLockService {
                 hasChangeLogLock = false;
 
                 database.setCanCacheLiquibaseTableInfo(false);
-
-                LogFactory.getLogger().info("Successfully released change log lock");
+                logger.info("Successfully released change log lock");
                 database.rollback();
             } catch (DatabaseException e) {
                 ;

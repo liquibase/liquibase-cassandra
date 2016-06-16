@@ -21,17 +21,18 @@ public class UpdateEmbeddedCassandraIT {
 
     // Sets up an embedded instance of Cassandra with a new empty keyspace
     @Rule
-    public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("empty.cql", KEYSPACE),CASSANDRA_CONFIGURATION_FILE);
+//    public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("empty.cql", KEYSPACE),CASSANDRA_CONFIGURATION_FILE);
+    public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("empty.cql", KEYSPACE));
 
     @Test
     public void canApplyChangelog() throws Exception {
         Class.forName("com.github.adejanovski.cassandra.jdbc.CassandraDriver");
         // Connect to the Cassandra instance setup by cassandra-unit
-        Connection con = DriverManager.getConnection("jdbc:cassandra://127.0.0.1:9042/" + KEYSPACE);
+        Connection con = DriverManager.getConnection("jdbc:cassandra://127.0.0.1:9142/" + KEYSPACE);
         // Trigger a liquibase update with a simple changelog
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(con));
         database.setDefaultSchemaName(KEYSPACE);
-        Liquibase liquibase = new Liquibase("changeset/sql/changelog.sql", new ClassLoaderResourceAccessor(), database);
+        Liquibase liquibase = new Liquibase("changeset/sql/examples.sql", new ClassLoaderResourceAccessor(), database);
         Contexts contexts = new Contexts();
         liquibase.update(contexts);
     }

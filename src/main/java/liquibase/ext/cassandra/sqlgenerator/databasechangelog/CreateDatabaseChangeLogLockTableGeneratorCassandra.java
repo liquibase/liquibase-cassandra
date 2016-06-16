@@ -35,13 +35,9 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
                 .addColumn("LOCKGRANTED", DataTypeFactory.getInstance().fromDescription("TIMESTAMP", database))
                 .addColumn("LOCKEDBY", DataTypeFactory.getInstance().fromDescription("TEXT", database));
 
-        // no support for AND in update
-//        InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());
-
         List<Sql> sql = new ArrayList<Sql>();
 
         sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(createTableStatement, database)));
-//        sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(insertStatement, database)));
 
         return sql.toArray(new Sql[sql.size()]);
     }

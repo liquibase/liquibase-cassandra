@@ -6,6 +6,7 @@ import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
+import liquibase.ext.cassandra.database.CassandraQueries;
 import liquibase.logging.LogFactory;
 import liquibase.logging.Logger;
 import liquibase.statement.core.SelectFromDatabaseChangeLogStatement;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
-    private Logger logger = LogFactory.getInstance().getLog("CassandraChangeLogHistoryService");
+    private Logger logger = LogFactory.getInstance().getLog(CassandraChangeLogHistoryService.class.getName());
 
     @Override
     public int getPriority() {
@@ -40,7 +41,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         boolean hasChangeLogTable;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from DATABASECHANGELOG");
+            statement.executeQuery(CassandraQueries.SELECT_ID_FROM_DATABASECHANGELOG);
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {
