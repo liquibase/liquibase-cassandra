@@ -24,7 +24,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     }
 
     @Override
-    public boolean hasDatabaseChangeLogTable() throws DatabaseException {
+    public boolean hasDatabaseChangeLogTable() {
         boolean hasChangeLogTable;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();

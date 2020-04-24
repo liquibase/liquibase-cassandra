@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>3.4.1</version>
+			<version>3.8.9</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -73,8 +73,8 @@
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>1.8</source>
+						<target>1.8</target>
 						<optimize>true</optimize>
 						<debug>true</debug>
 						<encoding>${project.build.sourceEncoding}</encoding>
