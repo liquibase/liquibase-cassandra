@@ -1,5 +1,6 @@
 package liquibase.ext.cassandra.lockservice;
 
+import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
@@ -29,7 +30,7 @@ public class LockServiceCassandra extends StandardLockService {
             statement.close();
             hasChangeLogLockTable = true;
         } catch (SQLException e) {
-            LogFactory.getLogger().info("No DATABASECHANGELOGLOCK available in cassandra.");
+            Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
             hasChangeLogLockTable = false;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

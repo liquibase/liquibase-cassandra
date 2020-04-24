@@ -1,5 +1,6 @@
 package liquibase.ext.cassandra.changelog;
 
+import liquibase.Scope;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
@@ -32,7 +33,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {
-            LogFactory.getLogger().info("No DATABASECHANGELOG available in cassandra.");
+            Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOG available in cassandra.");
             hasChangeLogTable = false;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
