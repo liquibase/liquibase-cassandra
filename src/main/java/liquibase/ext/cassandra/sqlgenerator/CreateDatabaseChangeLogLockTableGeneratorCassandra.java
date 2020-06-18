@@ -31,7 +31,8 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
     public Sql[] generateSql(CreateDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         CreateTableStatement createTableStatement = new CreateTableStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName())
                 .setTablespace(database.getLiquibaseTablespaceName())
-                .addPrimaryKeyColumn("ID", DataTypeFactory.getInstance().fromDescription("INT", database), null, null, null, new NotNullConstraint())
+//                .addPrimaryKeyColumn("ID", DataTypeFactory.getInstance().fromDescription("INT", database), null, null, null, new NotNullConstraint())
+                .addPrimaryKeyColumn("FOO", DataTypeFactory.getInstance().fromDescription("INT", database), null, null, null, new NotNullConstraint())
                 .addColumn("LOCKED", DataTypeFactory.getInstance().fromDescription("BOOLEAN", database), null, null, new NotNullConstraint())
                 .addColumn("LOCKGRANTED", DataTypeFactory.getInstance().fromDescription("TIMESTAMP", database))
                 .addColumn("LOCKEDBY", DataTypeFactory.getInstance().fromDescription("TEXT", database));
