@@ -13,14 +13,17 @@ import java.sql.Statement;
 
 public class LockServiceCassandra extends StandardLockService {
 
+	@Override
 	public int getPriority() {
 		return PRIORITY_DATABASE;
 	}
 
+	@Override
 	public boolean supports(Database database) {
 		return database instanceof CassandraDatabase;
 	}
 
+	@Override
     public boolean hasDatabaseChangeLogLockTable() throws DatabaseException {
         boolean hasChangeLogLockTable;
         try {

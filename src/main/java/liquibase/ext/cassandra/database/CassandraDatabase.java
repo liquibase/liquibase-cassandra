@@ -51,7 +51,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	}
 
 	public String getDefaultDriver(String url) {
-		return "org.apache.cassandra.cql.jdbc.CassandraDriver";
+		return "com.simba.cassandra.jdbc42.Driver";
 	}
 
 	public boolean supportsTablespaces() {
@@ -84,7 +84,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	public Statement getStatement() throws ClassNotFoundException, SQLException {
 		String url = super.getConnection().getURL();
-		Class.forName("org.apache.cassandra.cql.jdbc.CassandraDriver");
+		Class.forName("com.simba.cassandra.jdbc42.Driver");
 		Connection con = DriverManager.getConnection(url);
 		Statement statement = con.createStatement();
 		return statement;
