@@ -5,6 +5,7 @@ import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.ext.cassandra.database.CassandraDatabase;
+import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.logging.LogFactory;
 
 import java.net.URI;
@@ -29,7 +30,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         boolean hasChangeLogTable;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from DATABASECHANGELOG");
+            statement.executeQuery("select ID from " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {

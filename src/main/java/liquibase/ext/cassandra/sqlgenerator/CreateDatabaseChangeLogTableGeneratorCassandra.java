@@ -45,7 +45,7 @@ public class CreateDatabaseChangeLogTableGeneratorCassandra extends CreateDataba
     public Sql[] generateSql(CreateDatabaseChangeLogTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
     	
     	
-    	RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE DATABASECHANGELOG ( ID TEXT, AUTHOR TEXT, FILENAME TEXT, DATEEXECUTED timestamp, ORDEREXECUTED INT, EXECTYPE TEXT, MD5SUM TEXT, DESCRIPTION TEXT, COMMENTS TEXT, TAG TEXT, LIQUIBASE TEXT, CONTEXTS TEXT, LABELS TEXT, DEPLOYMENT_ID TEXT,PRIMARY KEY (ID))");
+    	RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE IF NOT EXISTS DATABASECHANGELOG ( ID TEXT, AUTHOR TEXT, FILENAME TEXT, DATEEXECUTED timestamp, ORDEREXECUTED INT, EXECTYPE TEXT, MD5SUM TEXT, DESCRIPTION TEXT, COMMENTS TEXT, TAG TEXT, LIQUIBASE TEXT, CONTEXTS TEXT, LABELS TEXT, DEPLOYMENT_ID TEXT,PRIMARY KEY (ID))");
 
         // no support for AND in update
         InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());

@@ -4,11 +4,7 @@
 
 	<changeSet id="1" author="r2">
 	
-		<createTable tableName="immatable">
-		
-			<column name="foo" type="varchar"/>
-			
-		</createTable>
+		<sql>CREATE TABLE immatable (foo VARCHAR, PRIMARY KEY (foo))</sql>
 		
 	</changeSet>
 

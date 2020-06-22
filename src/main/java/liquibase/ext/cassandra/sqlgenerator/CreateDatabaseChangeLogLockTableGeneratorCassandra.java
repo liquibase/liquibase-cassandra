@@ -13,6 +13,7 @@ import liquibase.statement.core.CreateTableStatement;
 import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.RawSqlStatement;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +33,7 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
     @Override
     public Sql[] generateSql(CreateDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
     	
-    	RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE DATABASECHANGELOGLOCK (ID INT, LOCKED BOOLEAN, LOCKGRANTED timestamp, LOCKEDBY TEXT, PRIMARY KEY (ID))");
+    	RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE IF NOT EXISTS " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK (ID INT, LOCKED BOOLEAN, LOCKGRANTED timestamp, LOCKEDBY TEXT, PRIMARY KEY (ID))");
 
         // no support for AND in update
         InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());

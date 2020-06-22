@@ -1,5 +1,6 @@
 package liquibase.ext.cassandra.sqlgenerator;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,8 @@ public class InitializeDatabaseChangeLogLockTableGeneratorCassandra extends Init
     @Override
     public Sql[] generateSql(InitializeDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
     	
-    	RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE DATABASECHANGELOGLOCK");
+    	
+    	RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK");
 
     	List<Sql> sql = new ArrayList<>();
 
