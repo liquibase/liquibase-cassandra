@@ -58,7 +58,7 @@ public class LockServiceCassandra extends StandardLockService {
 
 	        
 	        	Boolean locked = executor.queryForInt(
-	        			new RawSqlStatement("SELECT COUNT(*) FROM " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK")
+	        			new RawSqlStatement("SELECT COUNT(*) FROM " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK where locked = TRUE ALLOW FILTERING")
 	        			) > 0;
 
 	            if (locked) {
@@ -181,7 +181,7 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("DESCRIBE " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK");
+            statement.executeQuery("SELECT ID from " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK");
             statement.close();
             hasChangeLogLockTable = true;
         } catch (SQLException e) {
