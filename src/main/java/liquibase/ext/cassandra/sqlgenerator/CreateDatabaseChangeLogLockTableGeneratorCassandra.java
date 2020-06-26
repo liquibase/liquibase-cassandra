@@ -11,7 +11,9 @@ import liquibase.statement.NotNullConstraint;
 import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
 import liquibase.statement.core.CreateTableStatement;
 import liquibase.statement.core.InsertStatement;
+import liquibase.statement.core.RawSqlStatement;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,13 +30,10 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
         return super.supports(statement, database) && database instanceof CassandraDatabase;
     }
 
+    @Override
     public Sql[] generateSql(CreateDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        CreateTableStatement createTableStatement = new CreateTableStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName())
-                .setTablespace(database.getLiquibaseTablespaceName())
-                .addPrimaryKeyColumn("ID", DataTypeFactory.getInstance().fromDescription("INT", database), null, null, null, new NotNullConstraint())
-                .addColumn("LOCKED", DataTypeFactory.getInstance().fromDescription("BOOLEAN", database), null, null, new NotNullConstraint())
-                .addColumn("LOCKGRANTED", DataTypeFactory.getInstance().fromDescription("TIMESTAMP", database))
-                .addColumn("LOCKEDBY", DataTypeFactory.getInstance().fromDescription("TEXT", database));
+    	
+    	RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE IF NOT EXISTS " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK (ID INT, LOCKED BOOLEAN, LOCKGRANTED timestamp, LOCKEDBY TEXT, PRIMARY KEY (ID))");
 
         // no support for AND in update
         InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName());
@@ -42,7 +41,7 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
         List<Sql> sql = new ArrayList<Sql>();
 
         sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(createTableStatement, database)));
-        sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(insertStatement, database)));
+        //sql.addAll(Arrays.asList(SqlGeneratorFactory.getInstance().generateSql(insertStatement, database)));
 
         return sql.toArray(new Sql[sql.size()]);
     }

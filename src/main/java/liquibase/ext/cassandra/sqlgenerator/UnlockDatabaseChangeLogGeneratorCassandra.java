@@ -15,6 +15,7 @@ public class UnlockDatabaseChangeLogGeneratorCassandra extends UnlockDatabaseCha
         return PRIORITY_DATABASE;
     }
 
+    @Override
     public Sql[] generateSql(UnlockDatabaseChangeLogStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         String liquibaseSchema = database.getLiquibaseSchemaName();
 

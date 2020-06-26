@@ -15,6 +15,7 @@ import java.sql.Statement;
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
 
+	@Override
 	public String getShortName() {
 		return "cassandra";
 	}
@@ -23,6 +24,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		setDefaultSchemaName("");
 	}
 
+	@Override
 	public int getPriority() {
 		return PRIORITY_DEFAULT;
 	}
@@ -32,10 +34,12 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return "Cassandra";
 	}
 
+	@Override
 	public Integer getDefaultPort() {
 		return 9160;
 	}
 
+	@Override
 	public boolean supportsInitiallyDeferrableColumns() {
 		return false;
 	}
@@ -45,15 +49,18 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return false;
 	}
 
+	@Override
 	public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
 		String databaseProductName = conn.getDatabaseProductName();
 		return PRODUCT_NAME.equalsIgnoreCase(databaseProductName);
 	}
 
+	@Override
 	public String getDefaultDriver(String url) {
-		return "org.apache.cassandra.cql.jdbc.CassandraDriver";
+		return "com.simba.cassandra.jdbc42.Driver";
 	}
 
+	@Override
 	public boolean supportsTablespaces() {
 		return false;
 	}
@@ -82,18 +89,18 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return true;
 	}
 
-	public Statement getStatement() throws ClassNotFoundException, SQLException {
-		String url = super.getConnection().getURL();
-		Class.forName("org.apache.cassandra.cql.jdbc.CassandraDriver");
-		Connection con = DriverManager.getConnection(url);
-		Statement statement = con.createStatement();
-		return statement;
-	}
-
-
+	@Override
 	public String getCurrentDateTimeFunction() {
 		// no alternative in cassandra, using client time
 		return String.valueOf(System.currentTimeMillis());
+	}
+
+	public Statement getStatement() throws ClassNotFoundException, SQLException {
+		String url = super.getConnection().getURL();
+		Class.forName("com.simba.cassandra.jdbc42.Driver");
+		Connection con = DriverManager.getConnection(url);
+		Statement statement = con.createStatement();
+		return statement;
 	}
 
 }
