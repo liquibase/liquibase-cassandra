@@ -27,10 +27,9 @@
 	</issueManagement>
 
 	<scm>
-        <connection>scm:git:git@github.com:liquibase/liquibase-cassandra.git</connection>
-        <url>scm:git:https://github.com/liquibase/liquibase-cassandra.git</url>
-        <developerConnection>scm:git:git@github.com:liquibase/liquibase-cassandra.git</developerConnection>
-	  <tag>HEAD</tag>
+        <connection>scm:git:http://github.com/liquibase/liquibase-cassandra.git</connection>
+        <url>https://github.com/liquibase/liquibase-cassandra.git</url>
+	<tag>HEAD</tag>
   </scm>
 
 	<developers>
