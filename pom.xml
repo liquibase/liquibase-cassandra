@@ -4,7 +4,7 @@
 
 	<groupId>org.liquibase.ext</groupId>
 	<artifactId>liquibase-cassandra</artifactId>
-	<version>4.0.0-beta2</version>
+	<version>4.0.0-beta3-SNAPSHOT</version>
 
 	<name>Liquibase Extension: Cassandra Database Support</name>
 	<description>Adds support for Cassandra database</description>
@@ -30,7 +30,7 @@
         <connection>scm:git:git@github.com:liquibase/liquibase-cassandra.git</connection>
         <url>scm:git:https://github.com/liquibase/liquibase-cassandra.git</url>
         <developerConnection>scm:git:git@github.com:liquibase/liquibase-cassandra.git</developerConnection>
-	  <tag>liquibase-cassandra-4.0.0-beta2</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<developers>
