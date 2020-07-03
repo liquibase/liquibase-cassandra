@@ -8,7 +8,7 @@ import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.SelectFromDatabaseChangeLogLockGenerator;
 import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
-import liquibase.util.StringUtils;
+import liquibase.util.StringUtil;
 
 public class SelectFromDatabaseChangeLogLockGeneratorCassandra extends SelectFromDatabaseChangeLogLockGenerator  {
 	
@@ -25,7 +25,7 @@ public class SelectFromDatabaseChangeLogLockGeneratorCassandra extends SelectFro
 		ColumnConfig[] columns = statement.getColumnsToSelect();
 		int numberOfColumns = columns.length;
 
-        String sql = "SELECT " + StringUtils.join(statement.getColumnsToSelect(), ",", new StringUtils.StringUtilsFormatter<ColumnConfig>() {
+        String sql = "SELECT " + StringUtil.join(statement.getColumnsToSelect(), ",", new StringUtil.StringUtilFormatter<ColumnConfig>() {
             @Override
             public String toString(ColumnConfig col) {
                 if ((col.getComputed() != null) && col.getComputed()) {

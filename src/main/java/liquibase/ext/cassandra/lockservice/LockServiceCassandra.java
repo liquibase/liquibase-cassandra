@@ -49,7 +49,7 @@ public class LockServiceCassandra extends StandardLockService {
 			return true;
 		}
 		
-        Executor executor = ExecutorService.getInstance().getExecutor(database);
+        Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
 
         try {
 
@@ -118,7 +118,7 @@ public class LockServiceCassandra extends StandardLockService {
             database.setObjectQuotingStrategy(this.quotingStrategy);
         }
 
-        Executor executor = ExecutorService.getInstance().getExecutor(database);
+        Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
         try {
             if (this.hasDatabaseChangeLogLockTable()) {
                 executor.comment("Release Database Lock");
@@ -199,7 +199,7 @@ public class LockServiceCassandra extends StandardLockService {
 	@Override
 	public boolean isDatabaseChangeLogLockTableInitialized(final boolean tableJustCreated) throws DatabaseException {
         if (!isDatabaseChangeLogLockTableInitialized) {
-            Executor executor = ExecutorService.getInstance().getExecutor(database);
+            Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
 
 			try {
                 isDatabaseChangeLogLockTableInitialized = executor.queryForInt(

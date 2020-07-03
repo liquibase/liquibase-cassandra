@@ -1,15 +1,6 @@
 package liquibase.ext.cassandra.changelog;
 
-<<<<<<< HEAD
 import liquibase.Scope;
-=======
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
-
->>>>>>> origin/main
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
@@ -17,8 +8,13 @@ import liquibase.exception.LiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
-import liquibase.logging.LogFactory;
 import liquibase.statement.core.RawSqlStatement;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
@@ -72,12 +68,12 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         }
         return next + 1;
     }
-    
+
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
-        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + CassandraUtil.getKeyspace(getDatabase())+ ".DATABASECHANGELOG");
-        return ExecutorService.getInstance().getExecutor(database).queryForList(select);
-    }    
-    
-    
+        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+        return Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
+    }
+
+
 }
