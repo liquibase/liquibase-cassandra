@@ -8,5 +8,11 @@
 		
 	</changeSet>
 
+	<changeSet id="2" author="r2">
+	
+		<sql>CREATE TABLE immatable2 (foo VARCHAR, PRIMARY KEY (foo))</sql>
+		
+	</changeSet>
+
 
 </databaseChangeLog>
