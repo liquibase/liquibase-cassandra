@@ -3,3 +3,4 @@ liquibase.ext.cassandra.sqlgenerator.CreateDatabaseChangeLogTableGeneratorCassan
 liquibase.ext.cassandra.sqlgenerator.GetNextChangeSetSequenceValueGeneratorCassandra
 liquibase.ext.cassandra.sqlgenerator.LockDatabaseChangeLogGeneratorCassandra
 liquibase.ext.cassandra.sqlgenerator.UnlockDatabaseChangeLogGeneratorCassandra
+liquibase.ext.cassandra.sqlgenerator.DeleteGeneratorCassandra
