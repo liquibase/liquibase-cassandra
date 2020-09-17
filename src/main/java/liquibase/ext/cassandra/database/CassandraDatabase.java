@@ -3,6 +3,7 @@ package liquibase.ext.cassandra.database;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.exception.DatabaseException;
+import liquibase.ext.cassandra.database.CassandraClientDriver;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -57,7 +58,10 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public String getDefaultDriver(String url) {
-		return "com.simba.cassandra.jdbc42.Driver";
+        if (url.startsWith("jdbc:cassandra://")) {
+            return CassandraClientDriver.class.getName();
+        }
+        return null;
 	}
 
 	@Override
