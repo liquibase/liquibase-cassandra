@@ -45,7 +45,7 @@ public class CassandraConnection implements DatabaseConnection {
         
         this.db = CqlSession.builder()
         	    .addContactPoint(new InetSocketAddress(myUri.getHost(), myUri.getPort()))
-        	    .withLocalDatacenter("dc1")
+        	    .withLocalDatacenter("dc1") //TODO: need to get user to pass in datacenter in liquibase.properties. Found in cassandra-rackdc.properties
         	    .build();
 		
 		
@@ -95,8 +95,7 @@ public class CassandraConnection implements DatabaseConnection {
 
 	@Override
 	public String getDatabaseProductName() throws DatabaseException {
-		// TODO Auto-generated method stub
-		return null;
+		return CassandraDatabase.PRODUCT_NAME;
 	}
 
 	@Override

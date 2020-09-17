@@ -13,7 +13,9 @@ Prior to using Liquibase to manager your schema, you need to have Cassandra runn
 `docker inspect mycassandra`
 
 #### Start another instance for cqlsh
+
 `docker run -it --rm cassandra bash`
+
 `> cqlsh 172.17.0.2`
 
 #### Create the keyspace
