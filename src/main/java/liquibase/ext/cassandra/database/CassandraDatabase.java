@@ -57,7 +57,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public String getDefaultDriver(String url) {
-		return "com.simba.cassandra.jdbc42.Driver";
+		return "com.github.cassandra.jdbc.CassandraDriver";
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	public Statement getStatement() throws ClassNotFoundException, SQLException {
 		String url = super.getConnection().getURL();
-		Class.forName("com.simba.cassandra.jdbc42.Driver");
+		Class.forName("com.github.cassandra.jdbc.CassandraDriver");
 		Connection con = DriverManager.getConnection(url);
 		Statement statement = con.createStatement();
 		return statement;
