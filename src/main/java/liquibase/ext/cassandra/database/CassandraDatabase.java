@@ -26,7 +26,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public int getPriority() {
-		return PRIORITY_DEFAULT;
+		return PRIORITY_DATABASE;
 	}
 
 	@Override

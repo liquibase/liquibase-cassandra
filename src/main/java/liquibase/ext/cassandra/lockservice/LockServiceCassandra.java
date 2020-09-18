@@ -34,7 +34,7 @@ public class LockServiceCassandra extends StandardLockService {
 	
 	@Override
 	public int getPriority() {
-		return PRIORITY_DATABASE + 500;
+		return PRIORITY_DATABASE;
 	}
 
 	@Override
