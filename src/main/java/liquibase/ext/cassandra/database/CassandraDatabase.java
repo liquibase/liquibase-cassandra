@@ -14,6 +14,7 @@ import java.sql.Statement;
  */
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
+	public static final String CASSANDRA_DRIVER = "com.github.cassandra.jdbc.CassandraDriver";
 
 	@Override
 	public String getShortName() {
@@ -57,7 +58,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public String getDefaultDriver(String url) {
-		return "com.simba.cassandra.jdbc42.Driver";
+		return CASSANDRA_DRIVER;
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	public Statement getStatement() throws ClassNotFoundException, SQLException {
 		String url = super.getConnection().getURL();
-		Class.forName("com.simba.cassandra.jdbc42.Driver");
+		Class.forName(CASSANDRA_DRIVER);
 		Connection con = DriverManager.getConnection(url);
 		Statement statement = con.createStatement();
 		return statement;
