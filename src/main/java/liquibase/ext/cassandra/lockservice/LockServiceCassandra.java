@@ -188,7 +188,8 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT table_name  FROM system_schema.tables WHERE keyspace_name='" + CassandraUtil.getKeyspace(database) + "' AND table_name = 'DATABASECHANGELOGLOCK'");
+            ResultSet rs = statement.executeQuery("SELECT table_name  FROM system_schema.tables WHERE keyspace_name='" + CassandraUtil.getKeyspace(database) + "' AND table_name = 'databasechangeloglock'");
+            // Cassandra will create the table as lower case even if you specify uppercase in the create statement
             if (rs.next() == false) {
             	hasChangeLogLockTable = false;
             } else {
