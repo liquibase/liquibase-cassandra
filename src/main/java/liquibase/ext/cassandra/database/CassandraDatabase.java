@@ -13,7 +13,7 @@ import java.sql.Statement;
  * Cassandra 1.2.0 NoSQL database support.
  */
 public class CassandraDatabase extends AbstractJdbcDatabase {
-	public static final String PRODUCT_NAME = "Cassandra";
+	//public static final String PRODUCT_NAME = "Cassandra";
 
 	@Override
 	public String getShortName() {
@@ -52,7 +52,11 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
 		String databaseProductName = conn.getDatabaseProductName();
-		return PRODUCT_NAME.equalsIgnoreCase(databaseProductName);
+		if (databaseProductName.contains("Cassandra")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

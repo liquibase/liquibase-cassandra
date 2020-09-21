@@ -3,6 +3,8 @@ package liquibase.ext.cassandra.lockservice;
 import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.database.ObjectQuotingStrategy;
+import liquibase.database.core.DB2Database;
+import liquibase.database.core.DerbyDatabase;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
@@ -14,8 +16,12 @@ import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.lockservice.StandardLockService;
 import liquibase.logging.LogFactory;
+import liquibase.snapshot.SnapshotGeneratorFactory;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
+import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
+import liquibase.statement.core.DropTableStatement;
+import liquibase.statement.core.InitializeDatabaseChangeLogLockTableStatement;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
@@ -29,6 +35,7 @@ import java.sql.Statement;
 public class LockServiceCassandra extends StandardLockService {
 
 	
+    private Boolean hasDatabaseChangeLogLockTable;
 	private boolean isDatabaseChangeLogLockTableInitialized;
 	private ObjectQuotingStrategy quotingStrategy;
 	
@@ -54,7 +61,7 @@ public class LockServiceCassandra extends StandardLockService {
         try {
 
         	database.rollback();
-	        super.init();
+	        init();
 
 	        
 	        	Boolean locked = executor.queryForInt(
@@ -181,9 +188,13 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID from " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK");
+            ResultSet rs = statement.executeQuery("SELECT table_name  FROM system_schema.tables WHERE keyspace_name='" + CassandraUtil.getKeyspace(database) + "' AND table_name = 'DATABASECHANGELOGLOCK'");
+            if (rs.next() == false) {
+            	hasChangeLogLockTable = false;
+            } else {
+            	hasChangeLogLockTable = true;
+            }
             statement.close();
-            hasChangeLogLockTable = true;
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
             hasChangeLogLockTable = false;
@@ -217,4 +228,75 @@ public class LockServiceCassandra extends StandardLockService {
         return isDatabaseChangeLogLockTableInitialized;
     }	
 
+    @Override
+    public void init() throws DatabaseException {
+        boolean createdTable = false;
+        Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",  database);
+
+        if (!hasDatabaseChangeLogLockTable()) {
+            try {
+                executor.comment("Create Database Lock Table");
+                //TODO: create databsechangeloglock table
+                executor.execute(new CreateDatabaseChangeLogLockTableStatement());
+                
+                database.commit();
+                Scope.getCurrentScope().getLog(getClass()).fine(
+                        "Created database lock table with name: " +
+                                database.escapeTableName(
+                                        database.getLiquibaseCatalogName(),
+                                        database.getLiquibaseSchemaName(),
+                                        database.getDatabaseChangeLogLockTableName()
+                                )
+                );
+            } catch (DatabaseException e) {
+                if ((e.getMessage() != null) && e.getMessage().contains("exists")) {
+                    //hit a race condition where the table got created by another node.
+                    Scope.getCurrentScope().getLog(getClass()).fine("Database lock table already appears to exist " +
+                            "due to exception: " + e.getMessage() + ". Continuing on");
+                }  else {
+                    throw e;
+                }
+            }
+            this.hasDatabaseChangeLogLockTable = true;
+            createdTable = true;
+            hasDatabaseChangeLogLockTable = true;
+        }
+
+        if (!isDatabaseChangeLogLockTableInitialized(createdTable)) {
+            executor.comment("Initialize Database Lock Table");
+            executor.execute(new InitializeDatabaseChangeLogLockTableStatement());
+            database.commit();
+        }
+
+        if (executor.updatesDatabase() && (database instanceof DerbyDatabase) && ((DerbyDatabase) database)
+                .supportsBooleanDataType() || database.getClass().isAssignableFrom(DB2Database.class) && ((DB2Database) database)
+    			.supportsBooleanDataType()) {
+            //check if the changelog table is of an old smallint vs. boolean format
+            String lockTable = database.escapeTableName(
+                    database.getLiquibaseCatalogName(),
+                    database.getLiquibaseSchemaName(),
+                    database.getDatabaseChangeLogLockTableName()
+            );
+            Object obj = executor.queryForObject(
+                    new RawSqlStatement(
+                            "SELECT MIN(locked) AS test FROM " + lockTable + " FETCH FIRST ROW ONLY"
+                    ), Object.class
+            );
+            if (!(obj instanceof Boolean)) { //wrong type, need to recreate table
+                executor.execute(
+                        new DropTableStatement(
+                                database.getLiquibaseCatalogName(),
+                                database.getLiquibaseSchemaName(),
+                                database.getDatabaseChangeLogLockTableName(),
+                                false
+                        )
+                );
+                executor.execute(new CreateDatabaseChangeLogLockTableStatement());
+                executor.execute(new InitializeDatabaseChangeLogLockTableStatement());
+            }
+        }
+
+    }
+	
+	
 }
