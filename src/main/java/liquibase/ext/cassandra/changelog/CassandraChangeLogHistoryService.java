@@ -16,6 +16,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
     @Override
@@ -32,15 +34,16 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     public boolean hasDatabaseChangeLogTable() {
         boolean hasChangeLogTable;
         try {
-            Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
-            statement.close();
-            hasChangeLogTable = true;
+            CqlSession session = ((CassandraDatabase) getDatabase()).getSession();
+            ResultSet rs = (ResultSet) session.execute("select ID from " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+            if (rs.next() == true) {
+            	hasChangeLogTable = true;
+            } else {
+            	hasChangeLogTable = false;
+            }
+            session.close();
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOG available in cassandra.");
-            hasChangeLogTable = false;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
             hasChangeLogTable = false;
         }
 
@@ -53,17 +56,15 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     public int getNextSequenceValue() throws LiquibaseException {
         int next = 0;
         try {
-            Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+            CqlSession session = ((CassandraDatabase) getDatabase()).getSession();
+            ResultSet rs = (ResultSet) session.execute("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
             }
-            statement.close();
+            session.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return next + 1;

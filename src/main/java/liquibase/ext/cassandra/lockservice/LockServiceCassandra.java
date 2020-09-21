@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class LockServiceCassandra extends StandardLockService {
 
 	
@@ -180,15 +182,16 @@ public class LockServiceCassandra extends StandardLockService {
     public boolean hasDatabaseChangeLogLockTable() throws DatabaseException {
         boolean hasChangeLogLockTable;
         try {
-            Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID from " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK");
-            statement.close();
-            hasChangeLogLockTable = true;
+            CqlSession session = ((CassandraDatabase) database).getSession();
+            ResultSet rs = (ResultSet) session.execute("SELECT table_name  FROM system_schema.tables WHERE keyspace_name='" + database.getDefaultSchemaName() + "' AND table_name = 'databasechangeloglock'");
+            if (rs.next() == true) {
+            	hasChangeLogLockTable = true;
+            } else {
+            	hasChangeLogLockTable = false;
+            }
+            session.close();
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
-            hasChangeLogLockTable = false;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
             hasChangeLogLockTable = false;
         }
 

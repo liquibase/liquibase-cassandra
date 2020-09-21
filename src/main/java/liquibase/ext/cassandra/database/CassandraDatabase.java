@@ -4,10 +4,7 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.exception.DatabaseException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
  * Cassandra 1.2.0 NoSQL database support.
@@ -57,8 +54,11 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public String getDefaultDriver(String url) {
-		return "com.simba.cassandra.jdbc42.Driver";
-	}
+        if (url.contains("cassandra://")) {
+            return CassandraClientDriver.class.getName();
+        }
+        return null;
+    }
 
 	@Override
 	public boolean supportsTablespaces() {
@@ -95,12 +95,17 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return String.valueOf(System.currentTimeMillis());
 	}
 
-	public Statement getStatement() throws ClassNotFoundException, SQLException {
-		String url = super.getConnection().getURL();
-		Class.forName("com.simba.cassandra.jdbc42.Driver");
-		Connection con = DriverManager.getConnection(url);
-		Statement statement = con.createStatement();
-		return statement;
+	public CqlSession getSession() {
+		CqlSession session = CqlSession.builder().build();
+		return session;
 	}
+
+//	public Statement getStatement() throws ClassNotFoundException, SQLException {
+//		String url = super.getConnection().getURL();
+//		Class.forName("com.simba.cassandra.jdbc42.Driver");
+//		Connection con = DriverManager.getConnection(url);
+//		Statement statement = con.createStatement();
+//		return statement;
+//	}
 
 }
