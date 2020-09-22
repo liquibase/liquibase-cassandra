@@ -62,6 +62,7 @@ public class LockServiceCassandra extends StandardLockService {
 			database.rollback();
 			init();
 
+			new RawSqlStatement("select * from foo") raw;
 			Boolean locked = executor
 					.queryForInt(new RawSqlStatement("SELECT COUNT(*) FROM " + CassandraUtil.getKeyspace(database)
 							+ ".DATABASECHANGELOGLOCK where locked = TRUE ALLOW FILTERING")) > 0;
