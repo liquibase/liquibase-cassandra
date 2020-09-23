@@ -140,22 +140,22 @@ public class LockServiceCassandra extends StandardLockService {
                             )
                     );
                 }
-                if (updatedRows != 1) {
-                    throw new LockException(
-                            "Did not update change log lock correctly.\n\n" +
-                                    updatedRows +
-                                    " rows were updated instead of the expected 1 row using executor " +
-                                    executor.getClass().getName() + "" +
-                                    " there are " +
-                                    executor.queryForInt(
-                                            new RawSqlStatement(
-                                                    "SELECT COUNT(*) FROM " +
-                                                            database.getDatabaseChangeLogLockTableName()
-                                            )
-                                    ) +
-                                    " rows in the table"
-                    );
-                }
+//                if (updatedRows != 1) {
+//                    throw new LockException(
+//                            "Did not update change log lock correctly.\n\n" +
+//                                    updatedRows +
+//                                    " rows were updated instead of the expected 1 row using executor " +
+//                                    executor.getClass().getName() + "" +
+//                                    " there are " +
+//                                    executor.queryForInt(
+//                                            new RawSqlStatement(
+//                                                    "SELECT COUNT(*) FROM " +
+//                                                            database.getDatabaseChangeLogLockTableName()
+//                                            )
+//                                    ) +
+//                                    " rows in the table"
+//                    );
+//                }
                 database.commit();
             }
         } catch (Exception e) {
