@@ -1,5 +1,13 @@
 package liquibase.ext.cassandra.changelog;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import liquibase.Scope;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
@@ -9,13 +17,6 @@ import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.statement.core.RawSqlStatement;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
