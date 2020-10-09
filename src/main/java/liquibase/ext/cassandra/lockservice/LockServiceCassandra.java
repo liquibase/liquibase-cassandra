@@ -123,39 +123,7 @@ public class LockServiceCassandra extends StandardLockService {
             if (this.hasDatabaseChangeLogLockTable()) {
                 executor.comment("Release Database Lock");
                 database.rollback();
-                int updatedRows = executor.update(new UnlockDatabaseChangeLogStatement());
-                if ((updatedRows == -1) && (database instanceof MSSQLDatabase)) {
-                	LogFactory.getLogger().info("Database did not return a proper row count (Might have NOCOUNT enabled.)");
-                    database.rollback();
-                    Sql[] sql = SqlGeneratorFactory.getInstance().generateSql(
-                            new UnlockDatabaseChangeLogStatement(), database
-                    );
-                    if (sql.length != 1) {
-                        throw new UnexpectedLiquibaseException("Did not expect "+sql.length+" statements");
-                    }
-                    updatedRows = executor.update(
-                            new RawSqlStatement(
-                                    "EXEC sp_executesql N'SET NOCOUNT OFF " +
-                                            sql[0].toSql().replace("'", "''") + "'"
-                            )
-                    );
-                }
-//                if (updatedRows != 1) {
-//                    throw new LockException(
-//                            "Did not update change log lock correctly.\n\n" +
-//                                    updatedRows +
-//                                    " rows were updated instead of the expected 1 row using executor " +
-//                                    executor.getClass().getName() + "" +
-//                                    " there are " +
-//                                    executor.queryForInt(
-//                                            new RawSqlStatement(
-//                                                    "SELECT COUNT(*) FROM " +
-//                                                            database.getDatabaseChangeLogLockTableName()
-//                                            )
-//                                    ) +
-//                                    " rows in the table"
-//                    );
-//                }
+                executor.update(new UnlockDatabaseChangeLogStatement());
                 database.commit();
             }
         } catch (Exception e) {

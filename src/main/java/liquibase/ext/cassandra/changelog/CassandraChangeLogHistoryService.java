@@ -1,5 +1,13 @@
 package liquibase.ext.cassandra.changelog;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import liquibase.Scope;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
@@ -9,12 +17,6 @@ import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.statement.core.RawSqlStatement;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
@@ -72,8 +74,10 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
         RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
-        return Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
-    }
-
+        final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
+        returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
+        return returnList;
+    }    
+    
 
 }
