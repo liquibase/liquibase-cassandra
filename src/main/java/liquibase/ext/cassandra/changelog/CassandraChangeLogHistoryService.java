@@ -80,19 +80,4 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         return returnList;
     }
 
-    @Override
-    public void clearAllCheckSums() throws LiquibaseException {
-        final List<Map<String, ?>> returnList = this.queryDatabaseChangeLogTable(getDatabase());
-        // interate list
-
-
-            // UPDATE databasechangelog set md5sum = null where id ='1';
-
-        Database database = getDatabase();
-        UpdateStatement updateStatement = new UpdateStatement(database.getLiquibaseCatalogName(), database
-                .getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName());
-        updateStatement.addNewColumnValue("MD5SUM", null);
-        Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).execute(updateStatement);
-        database.commit();
-    }
 }
