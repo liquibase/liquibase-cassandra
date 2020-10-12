@@ -24,20 +24,6 @@ class CassandraFunctionalTests extends Specification {
 
     }
 
-    def "changeLogSyncSQL"() {
-
-        when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz"
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
-        def stringWriter = new StringWriter()
-        liquibase.changeLogSync((Contexts) null, (LabelExpression) null, stringWriter)
-        then:
-        assert stringWriter.toString().contains("UPDATE betterbotz.DATABASECHANGELOGLOCK SET LOCKED = TRUE")
-
-    }
-
     def "changeLogSync"() {
 
         when:
@@ -52,19 +38,21 @@ class CassandraFunctionalTests extends Specification {
 
     }
 
-    def "clearCheckSums"() {
-
-        when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz"
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
-        def stringWriter = new StringWriter()
-        liquibase.clearCheckSums();
-        then:
-        database != null;
-
-    }
+    // TODO: need to make clearCheckSums extendable
+    //  https://github.com/liquibase/liquibase/issues/1472
+//    def "clearCheckSums"() {
+//
+//        when:
+//        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
+//        def defaultSchemaName = "betterbotz"
+//        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
+//        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+//        def stringWriter = new StringWriter()
+//        liquibase.clearCheckSums();
+//        then:
+//        database != null;
+//
+//    }
 
     def "update"() {
 
@@ -76,6 +64,20 @@ class CassandraFunctionalTests extends Specification {
         liquibase.update((Contexts) null);
         then:
         database != null;
+
+    }
+
+    def "changeLogSyncSQL"() {
+
+        when:
+        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
+        def defaultSchemaName = "betterbotz"
+        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
+        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        def stringWriter = new StringWriter()
+        liquibase.changeLogSync((Contexts) null, (LabelExpression) null, stringWriter)
+        then:
+        assert stringWriter.toString().contains("UPDATE betterbotz.DATABASECHANGELOGLOCK SET LOCKED = TRUE")
 
     }
 
