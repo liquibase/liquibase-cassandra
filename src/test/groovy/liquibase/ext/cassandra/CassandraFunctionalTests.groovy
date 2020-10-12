@@ -104,7 +104,20 @@ class CassandraFunctionalTests extends Specification {
         def historyService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database);
         def ranChangeSets = historyService.getRanChangeSets();
         then:
-            ranChangeSets.size() == 3;
+        ranChangeSets.size() == 3;
+
+    }
+
+    def "dbDoc"() {
+
+        when:
+        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
+        def defaultSchemaName = "betterbotz";
+        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null);
+        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database);
+        liquibase.generateDocumentation("target");
+        then:
+        database != null;
 
     }
 
