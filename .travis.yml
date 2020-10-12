@@ -6,4 +6,4 @@ services:
 
 before_script:
   - docker run -p 9042:9042 --rm --name mycassandra -d cassandra
-  - docker exec mycassandra bash -l -c "cqlsh -e \"CREATE KEYSPACE betterbotz WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};\""
+  - docker exec mycassandra bash -l -c "cqlsh -f betterbotz.cql"
