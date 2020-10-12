@@ -17,6 +17,7 @@ import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.statement.core.RawSqlStatement;
+import liquibase.statement.core.UpdateStatement;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
@@ -77,7 +78,21 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
         returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
         return returnList;
-    }    
-    
+    }
 
+    @Override
+    public void clearAllCheckSums() throws LiquibaseException {
+        final List<Map<String, ?>> returnList = this.queryDatabaseChangeLogTable(getDatabase());
+        // interate list
+
+
+            // UPDATE databasechangelog set md5sum = null where id ='1';
+
+        Database database = getDatabase();
+        UpdateStatement updateStatement = new UpdateStatement(database.getLiquibaseCatalogName(), database
+                .getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName());
+        updateStatement.addNewColumnValue("MD5SUM", null);
+        Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).execute(updateStatement);
+        database.commit();
+    }
 }
