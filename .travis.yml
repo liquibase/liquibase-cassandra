@@ -5,5 +5,6 @@ services:
   - docker
 
 before_script:
+  - docker network create mycassandranetwork
   - docker run -p 9042:9042 --rm --name mycassandra --network mycassandranetwork -d cassandra
   - docker run -it --network mycassandranetwork --rm cassandra cqlsh -f r2.cql mycassandra
