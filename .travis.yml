@@ -7,4 +7,4 @@ services:
 before_script:
   - docker network create mycassandranetwork
   - docker run -p 9042:9042 --rm --name mycassandra --network mycassandranetwork -d cassandra
-  - docker run -it --network mycassandranetwork --rm cassandra cqlsh -f test.cql mycassandra
+  - docker run -it --network mycassandranetwork --rm cassandra cqlsh -e "CREATE KEYSPACE betterbotz WITH REPLICATION = {'class'&#58; 'SimpleStrategy','replication_factor'&#58; 1};" mycassandra

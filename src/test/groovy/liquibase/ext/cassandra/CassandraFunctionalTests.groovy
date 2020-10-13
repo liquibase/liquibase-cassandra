@@ -9,13 +9,16 @@ import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.ClassLoaderResourceAccessor
 import spock.lang.Specification
 
+import javax.print.DocFlavor
+
 class CassandraFunctionalTests extends Specification {
+
+    def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
+    def defaultSchemaName = "betterbotz"
+    def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
 
     def "calculateCheckSum"() {
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz"
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
         def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
         CheckSum checkSum = liquibase.calculateCheckSum("changelog.xml", "1", "betterbotz")
         then:
@@ -27,14 +30,11 @@ class CassandraFunctionalTests extends Specification {
     def "changeLogSync"() {
 
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz"
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
         def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
         def stringWriter = new StringWriter()
         liquibase.changeLogSync((Contexts) null, (LabelExpression) null)
         then:
-        database != null;
+        database != null
 
     }
 
@@ -43,9 +43,6 @@ class CassandraFunctionalTests extends Specification {
 //    def "clearCheckSums"() {
 //
 //        when:
-//        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-//        def defaultSchemaName = "betterbotz"
-//        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
 //        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
 //        def stringWriter = new StringWriter()
 //        liquibase.clearCheckSums();
@@ -57,22 +54,16 @@ class CassandraFunctionalTests extends Specification {
     def "update"() {
 
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz";
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null);
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database);
-        liquibase.update((Contexts) null);
+        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        liquibase.update((Contexts) null)
         then:
-        database != null;
+        database != null
 
     }
 
     def "changeLogSyncSQL"() {
 
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz"
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
         def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
         def stringWriter = new StringWriter()
         liquibase.changeLogSync((Contexts) null, (LabelExpression) null, stringWriter)
@@ -84,41 +75,47 @@ class CassandraFunctionalTests extends Specification {
     def "status"() {
 
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz";
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null);
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database);
+        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
         def statusOutput = new StringWriter()
-        liquibase.reportStatus(false, (Contexts) null, statusOutput);
+        liquibase.reportStatus(false, (Contexts) null, statusOutput)
         then:
-        statusOutput.toString().trim() == "@jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz is up to date";
+        statusOutput.toString().trim() == "@jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz is up to date"
 
     }
 
     def "status2"() {
 
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz";
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null);
-        def historyService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database);
-        def ranChangeSets = historyService.getRanChangeSets();
+        def historyService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database)
+        def ranChangeSets = historyService.getRanChangeSets()
         then:
-        ranChangeSets.size() == 3;
+        ranChangeSets.size() == 3
 
     }
 
     def "dbDoc"() {
 
         when:
-        def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
-        def defaultSchemaName = "betterbotz";
-        def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null);
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database);
-        liquibase.generateDocumentation("target");
+        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        liquibase.generateDocumentation("target")
         then:
-        database != null;
+        database != null
 
+    }
+
+    def "rollbackCount1"() {
+
+        when:
+            def liquibase = new Liquibase("rollback.changelog.sql", new ClassLoaderResourceAccessor(), database)
+            liquibase.update((Contexts) null)
+            def output = new StringWriter()
+            liquibase.rollback(1, (String) null, output)
+        then:
+            assert output.toString().trim().contains("DROP TABLE betterbotz.TESTME5")
+        when:
+            liquibase.rollback(1, (String) null)
+        then:
+            database != null
     }
 
 }
