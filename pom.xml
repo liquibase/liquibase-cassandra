@@ -70,6 +70,7 @@
             <version>2.0-M3-groovy-3.0</version>
             <scope>test</scope>
         </dependency>
+	<!--
         <dependency>
             <groupId>com.datastax.jdbc</groupId>
             <artifactId>CassandraJDBC42</artifactId>
@@ -77,6 +78,7 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/CassandraJDBC42.jar</systemPath>
         </dependency>
+	-->
     </dependencies>
     <build>
             <plugins>
