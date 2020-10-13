@@ -79,6 +79,7 @@
         </dependency>
     </dependencies>
     <build>
+        <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -203,6 +204,7 @@
                     </executions>
                 </plugin>
             </plugins>
+        </pluginManagement>
     </build>
     <distributionManagement>
         <repository>
