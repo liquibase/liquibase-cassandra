@@ -1,4 +1,4 @@
 liquibase-cassandra
 ===================
 
-Liquibase extension for Cassandra Support
+Liquibase extension for Cassandra Support.
