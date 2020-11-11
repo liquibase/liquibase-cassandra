@@ -1,22 +1,18 @@
 package liquibase.ext.cassandra.sqlgenerator;
 
-import liquibase.ext.cassandra.database.CassandraDatabase;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import liquibase.database.Database;
-import liquibase.datatype.DataTypeFactory;
+import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.CreateDatabaseChangeLogLockTableGenerator;
-import liquibase.statement.NotNullConstraint;
 import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
-import liquibase.statement.core.CreateTableStatement;
 import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.RawSqlStatement;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDatabaseChangeLogLockTableGenerator {
 

@@ -19,8 +19,8 @@ class CassandraFunctionalTests extends Specification {
 
     def "calculateCheckSum"() {
         when:
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
-        CheckSum checkSum = liquibase.calculateCheckSum("changelog.xml", "1", "betterbotz")
+        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
+        CheckSum checkSum = liquibase.calculateCheckSum("test-changelog.xml", "1", "betterbotz")
         then:
         //TODO: need seperate changelog that actual has some stuff that needs to be sync'd
         assert checkSum.toString().trim() == "8:80f1a851837367ff74bdb07075c716af"
@@ -30,7 +30,7 @@ class CassandraFunctionalTests extends Specification {
     def "changeLogSync"() {
 
         when:
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
         def stringWriter = new StringWriter()
         liquibase.changeLogSync((Contexts) null, (LabelExpression) null)
         then:
@@ -43,7 +43,7 @@ class CassandraFunctionalTests extends Specification {
 //    def "clearCheckSums"() {
 //
 //        when:
-//        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+//        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
 //        def stringWriter = new StringWriter()
 //        liquibase.clearCheckSums();
 //        then:
@@ -54,7 +54,7 @@ class CassandraFunctionalTests extends Specification {
     def "update"() {
 
         when:
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
         liquibase.update((Contexts) null)
         then:
         database != null
@@ -64,7 +64,7 @@ class CassandraFunctionalTests extends Specification {
     def "changeLogSyncSQL"() {
 
         when:
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
         def stringWriter = new StringWriter()
         liquibase.changeLogSync((Contexts) null, (LabelExpression) null, stringWriter)
         then:
@@ -75,7 +75,7 @@ class CassandraFunctionalTests extends Specification {
     def "status"() {
 
         when:
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
         def statusOutput = new StringWriter()
         liquibase.reportStatus(false, (Contexts) null, statusOutput)
         then:
@@ -96,7 +96,7 @@ class CassandraFunctionalTests extends Specification {
     def "dbDoc"() {
 
         when:
-        def liquibase = new Liquibase("changelog.xml", new ClassLoaderResourceAccessor(), database)
+        def liquibase = new Liquibase("test-changelog.xml", new ClassLoaderResourceAccessor(), database)
         liquibase.generateDocumentation("target")
         then:
         database != null
