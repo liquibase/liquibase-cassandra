@@ -1,0 +1,11 @@
+inputFormat: xml
+context: testContext
+
+databasesUnderTest:
+
+  - name: cassandra
+    version: 3.11
+    url: jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz
+    username:
+    password:
+
