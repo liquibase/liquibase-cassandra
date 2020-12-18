@@ -34,7 +34,7 @@ public class SelectFromDatabaseChangeLogLockGeneratorCassandra extends SelectFro
                     return database.escapeColumnName(null, null, null, col.getName());
                 }
             }
-        }) + " FROM " + CassandraUtil.getKeyspace(database) + "." + database.escapeTableName(database.getLiquibaseCatalogName(), liquibaseSchema, database.getDatabaseChangeLogLockTableName()) +
+        }) + " FROM " + database.getDefaultCatalogName() + "." + database.escapeTableName(database.getLiquibaseCatalogName(), liquibaseSchema, database.getDatabaseChangeLogLockTableName()) +
                 " WHERE " + database.escapeColumnName(database.getLiquibaseCatalogName(), liquibaseSchema, database.getDatabaseChangeLogLockTableName(), "ID") + "=1";
 
         if (database instanceof OracleDatabase) {

@@ -4,6 +4,7 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.exception.DatabaseException;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,13 +16,15 @@ import java.sql.Statement;
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
 
+	private String keyspace;
+
 	@Override
 	public String getShortName() {
 		return "cassandra";
 	}
 
 	public CassandraDatabase() {
-		setDefaultSchemaName("");
+//		setDefaultSchemaName("");
 	}
 
 	@Override
@@ -76,12 +79,12 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	}
 
 	@Override
-	public boolean isAutoCommit() throws DatabaseException {
+	public boolean isAutoCommit(){
 		return true;
 	}
 
 	@Override
-	public void setAutoCommit(boolean b) throws DatabaseException {
+	public void setAutoCommit(boolean b){
 	}
 
 	@Override
@@ -95,12 +98,41 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return String.valueOf(System.currentTimeMillis());
 	}
 
+	public String getKeyspace() {
+		if(keyspace==null) {
+			try{
+			String conn = this.getConnection().getURL();
+			String cleanURI = conn.substring(5);
+			URI uri = URI.create(cleanURI);
+			keyspace = uri.getPath();
+			keyspace = keyspace.substring(1); // remove the slash
+			keyspace = keyspace.split(";")[0]; // remove arguments in the conn string
+			keyspace = keyspace.split("\\?")[0]; // remove arguments in the conn string
+			} catch (Exception e){
+			}
+		}
+			return keyspace;
+
+	}
+
+	@Override
+	public boolean supportsSchemas() {
+		return false;
+	}
+
+	/**
+	 * Cassandra actually doesn't support neither catalogs nor schemas, but Keyspace.
+	 * As default liquibase classes don't know what is keyspace we gonna use Keyspace instead of catalog
+	 */
+	@Override
+	public String getDefaultCatalogName() {
+		return getKeyspace();
+	}
+
 	public Statement getStatement() throws ClassNotFoundException, SQLException {
 		String url = super.getConnection().getURL();
 		Class.forName("com.simba.cassandra.jdbc42.Driver");
 		Connection con = DriverManager.getConnection(url);
-		Statement statement = con.createStatement();
-		return statement;
+		return con.createStatement();
 	}
-
 }

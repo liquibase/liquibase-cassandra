@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="sqlTest" author="kristyl">
+        <comment>Creates a table and inserts values into the table with actual SQL</comment>
+        <sql>
+            CREATE TABLE IF NOT EXISTS betterbotz.sqltest (id decimal PRIMARY KEY);
+            insert into betterbotz.sqltest (id) values (1);
+            insert into betterbotz.sqltest (id) values (2);
+            insert into betterbotz.sqltest (id) values (3);
+        </sql>
+        <rollback>
+<!--            <sql>-->
+<!--                DROP TABLE betterbotz.sqltest;-->
+<!--            </sql>-->
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

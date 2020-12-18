@@ -5,7 +5,7 @@ databasesUnderTest:
 
   - name: cassandra
     version: 3.11
-    url: jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz
-    username:
-    password:
-
+    url: jdbc:cassandra://localhost:9042/betterbotz
+    username: cassandra
+    password: cassandra
+    dbSchema: betterbotz

@@ -17,12 +17,13 @@ public class UnlockDatabaseChangeLogGeneratorCassandra extends UnlockDatabaseCha
 
     @Override
     public Sql[] generateSql(UnlockDatabaseChangeLogStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        String liquibaseSchema = database.getLiquibaseSchemaName();
 
-        UpdateStatement releaseStatement = new UpdateStatement(database.getLiquibaseCatalogName(), liquibaseSchema, database.getDatabaseChangeLogLockTableName());
+        UpdateStatement releaseStatement = new UpdateStatement(database.getLiquibaseCatalogName(), null,
+                database.getDatabaseChangeLogLockTableName());
         releaseStatement.addNewColumnValue("LOCKED", false);
         releaseStatement.addNewColumnValue("LOCKEDBY", null);
-        releaseStatement.setWhereClause(database.escapeColumnName(database.getLiquibaseCatalogName(), liquibaseSchema, database.getDatabaseChangeLogTableName(), "ID")+" = 1");
+        releaseStatement.setWhereClause(database.escapeColumnName(database.getLiquibaseCatalogName(), null,
+                database.getDatabaseChangeLogTableName(), "ID")+" = 1");
 
         return SqlGeneratorFactory.getInstance().generateSql(releaseStatement, database);
     }

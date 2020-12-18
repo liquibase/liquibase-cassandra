@@ -70,8 +70,6 @@
             <version>1.3-groovy-2.5</version>
             <scope>test</scope>
         </dependency>
-
-
         <dependency>
             <groupId>com.datastax.jdbc</groupId>
             <artifactId>CassandraJDBC42</artifactId>

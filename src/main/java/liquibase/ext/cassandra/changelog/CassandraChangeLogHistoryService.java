@@ -36,7 +36,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         boolean hasChangeLogTable;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+            statement.executeQuery("select ID from " + getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {
@@ -57,7 +57,9 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         int next = 0;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+            ResultSet rs =
+                    statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + getDatabase().getDefaultCatalogName() +
+                            ".DATABASECHANGELOG");
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
@@ -74,7 +76,8 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
-        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + database.getDefaultCatalogName() +
+                ".DATABASECHANGELOG");
         final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
         returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
         return returnList;

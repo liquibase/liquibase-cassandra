@@ -24,7 +24,7 @@ public class InitializeDatabaseChangeLogLockTableGeneratorCassandra extends Init
     public Sql[] generateSql(InitializeDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
     	
     	
-    	RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK");
+    	RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK");
 
     	List<Sql> sql = new ArrayList<>();
 
