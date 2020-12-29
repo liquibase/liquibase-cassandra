@@ -13,10 +13,15 @@ import liquibase.structure.core.UniqueConstraint;
 
 
 public class UniqueConstraintSnapshotGeneratorCassandra extends UniqueConstraintSnapshotGenerator {
+
     @Override
     public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
-        if (database instanceof CassandraDatabase && objectType.equals(UniqueConstraint.class)) {
-            return 1000;
+        if (database instanceof CassandraDatabase) {
+            if (super.getPriority(objectType, database) > 0) {
+                return PRIORITY_DATABASE;
+            } else {
+                return PRIORITY_NONE;
+            }
         } else {
             return PRIORITY_NONE;
         }
@@ -27,20 +32,10 @@ public class UniqueConstraintSnapshotGeneratorCassandra extends UniqueConstraint
         return new Class[] { UniqueConstraintSnapshotGenerator.class };
 
     }
-//    @Override
-//    public Class<? extends DatabaseObject>[] addsTo() {
-//        return null;
-//    }
-
 
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
     }
-
-//    @Override
-//    public DatabaseObject snapshot(DatabaseObject example, DatabaseSnapshot snapshot, SnapshotGeneratorChain chain) throws DatabaseException, InvalidExampleException {
-//        return null;
-//    }
 
     @Override
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
