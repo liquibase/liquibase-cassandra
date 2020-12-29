@@ -53,7 +53,7 @@ public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
         //TODO replace * when we know which fields we need
         String query =
                 String.format("SELECT * FROM system_schema.tables WHERE keyspace_name = '%s' AND TABLE_NAME = '%s'",
-                        example.getName().toLowerCase(), database.getDefaultCatalogName());
+                        database.getDefaultCatalogName(), example.getName().toLowerCase());
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
                 .getExecutor("jdbc", database).queryForList(new RawSqlStatement(query));
         if (returnList.size() != 1) {

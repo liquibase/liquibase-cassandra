@@ -1,7 +1,11 @@
 package liquibase.ext.cassandra.database;
 
+import com.datical.liquibase.ext.database.jvm.ProJdbcConnection;
+import com.simba.cassandra.cassandra.core.CDBJDBCConnection;
+import com.simba.cassandra.jdbc.jdbc42.S42Connection;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 
 import java.net.URI;
@@ -101,14 +105,12 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public String getKeyspace() {
 		if(keyspace==null) {
 			try{
-			String conn = this.getConnection().getURL();
-			String cleanURI = conn.substring(5);
-			URI uri = URI.create(cleanURI);
-			keyspace = uri.getPath();
-			keyspace = keyspace.substring(1); // remove the slash
-			keyspace = keyspace.split(";")[0]; // remove arguments in the conn string
-			keyspace = keyspace.split("\\?")[0]; // remove arguments in the conn string
-			} catch (Exception e){
+				//todo few more checks
+			if(this.getConnection() instanceof JdbcConnection) {
+				keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
+						.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
+			}} catch (Exception e){
+				//todo log
 			}
 		}
 			return keyspace;
@@ -135,4 +137,10 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		Connection con = DriverManager.getConnection(url);
 		return con.createStatement();
 	}
+
+	@Override
+	public boolean jdbcCallsCatalogsSchemas() {
+		return true;
+	}
+
 }

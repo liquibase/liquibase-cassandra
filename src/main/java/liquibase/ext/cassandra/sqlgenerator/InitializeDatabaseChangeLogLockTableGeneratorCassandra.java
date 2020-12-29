@@ -24,7 +24,7 @@ public class InitializeDatabaseChangeLogLockTableGeneratorCassandra extends Init
     public Sql[] generateSql(InitializeDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
     	
     	
-    	RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK");
+    	RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE " + database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangeloglock"));
 
     	List<Sql> sql = new ArrayList<>();
 

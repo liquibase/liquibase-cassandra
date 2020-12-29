@@ -13,6 +13,7 @@ import liquibase.database.core.MySQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.database.core.PostgresDatabase;
 import liquibase.exception.UnexpectedLiquibaseException;
+import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -21,6 +22,18 @@ import liquibase.statement.core.SelectFromDatabaseChangeLogStatement;
 import liquibase.util.StringUtil;
 
 public class SelectFromDatabaseChangeLogGeneratorCassandra extends SelectFromDatabaseChangeLogGenerator {
+
+
+
+	@Override
+	public int getPriority() {
+			return PRIORITY_DATABASE;
+	}
+
+	@Override
+	public boolean supports(SelectFromDatabaseChangeLogStatement statement, Database database) {
+		return database instanceof CassandraDatabase;
+	}
 
 	   @Override
 	    public Sql[] generateSql(SelectFromDatabaseChangeLogStatement statement, final Database database, SqlGeneratorChain sqlGeneratorChain) {
@@ -90,7 +103,5 @@ public class SelectFromDatabaseChangeLogGeneratorCassandra extends SelectFromDat
 	        } finally {
 	            database.setObjectQuotingStrategy(currentStrategy);
 	        }
-	    }	
-	
-	
+	    }
 }
