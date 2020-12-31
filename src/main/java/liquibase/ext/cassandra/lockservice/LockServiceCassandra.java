@@ -11,18 +11,14 @@ import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
-import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.lockservice.StandardLockService;
 import liquibase.logging.LogFactory;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
-import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
 import liquibase.statement.core.UnlockDatabaseChangeLogStatement;
 
-import java.net.URI;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 

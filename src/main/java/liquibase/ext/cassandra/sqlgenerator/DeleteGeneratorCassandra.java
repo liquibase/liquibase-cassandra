@@ -1,7 +1,5 @@
 package liquibase.ext.cassandra.sqlgenerator;
 
-import static liquibase.util.SqlUtil.replacePredicatePlaceholders;
-
 import liquibase.database.Database;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;

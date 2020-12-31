@@ -4,12 +4,9 @@ import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.snapshot.DatabaseSnapshot;
-import liquibase.snapshot.InvalidExampleException;
 import liquibase.snapshot.SnapshotGenerator;
-import liquibase.snapshot.SnapshotGeneratorChain;
 import liquibase.snapshot.jvm.UniqueConstraintSnapshotGenerator;
 import liquibase.structure.DatabaseObject;
-import liquibase.structure.core.UniqueConstraint;
 
 
 public class UniqueConstraintSnapshotGeneratorCassandra extends UniqueConstraintSnapshotGenerator {

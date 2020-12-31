@@ -15,9 +15,7 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
-import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.statement.core.RawSqlStatement;
-import liquibase.statement.core.UpdateStatement;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 

@@ -9,9 +9,11 @@
             <column name="test_id" type="int">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="test_column" type="varchar(50)">
-                <constraints/>
+            <column name="test_column" type="varchar">
             </column>
         </createTable>
+        <rollback>
+            <dropTable tableName="test_table"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

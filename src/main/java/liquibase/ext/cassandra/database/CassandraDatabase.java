@@ -143,4 +143,13 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return true;
 	}
 
+	@Override
+	public boolean supportsNotNullConstraintNames() {
+		return false;
+	}
+
+	@Override
+	public boolean supportsPrimaryKeyNames() {
+		return false;
+	}
 }

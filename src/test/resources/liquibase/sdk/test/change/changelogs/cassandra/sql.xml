@@ -13,9 +13,9 @@
             insert into betterbotz.sqltest (id) values (3);
         </sql>
         <rollback>
-<!--            <sql>-->
-<!--                DROP TABLE betterbotz.sqltest;-->
-<!--            </sql>-->
+            <sql>
+                DROP TABLE betterbotz.sqltest;
+            </sql>
         </rollback>
     </changeSet>
 </databaseChangeLog>
