@@ -7,3 +7,4 @@ liquibase.ext.cassandra.sqlgenerator.DeleteGeneratorCassandra
 liquibase.ext.cassandra.sqlgenerator.InitializeDatabaseChangeLogLockTableGeneratorCassandra
 liquibase.ext.cassandra.sqlgenerator.CreateTableGeneratorCassandra
 liquibase.ext.cassandra.sqlgenerator.DropColumnGeneratorCassandra
+liquibase.ext.cassandra.sqlgenerator.RenameColumnGeneratorCassandra

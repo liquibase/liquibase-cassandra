@@ -1,14 +1,13 @@
 package liquibase.ext.cassandra.database;
 
-import com.datical.liquibase.ext.database.jvm.ProJdbcConnection;
 import com.simba.cassandra.cassandra.core.CDBJDBCConnection;
 import com.simba.cassandra.jdbc.jdbc42.S42Connection;
+import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -103,17 +102,19 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	}
 
 	public String getKeyspace() {
-		if(keyspace==null) {
-			try{
-				//todo few more checks
-			if(this.getConnection() instanceof JdbcConnection) {
-				keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
-						.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
-			}} catch (Exception e){
-				//todo log
+		if (keyspace == null) {
+			try {
+				if (this.getConnection() instanceof JdbcConnection) {
+					keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
+							.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
+				}
+			} catch (Exception e) {
+				Scope.getCurrentScope().getLog(CassandraDatabase.class)
+						.severe("Could not get keyspace from connection", e);
+
 			}
 		}
-			return keyspace;
+		return keyspace;
 
 	}
 

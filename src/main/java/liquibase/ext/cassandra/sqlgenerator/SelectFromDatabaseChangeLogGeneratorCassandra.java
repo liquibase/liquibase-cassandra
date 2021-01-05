@@ -24,7 +24,7 @@ import liquibase.util.StringUtil;
 public class SelectFromDatabaseChangeLogGeneratorCassandra extends SelectFromDatabaseChangeLogGenerator {
 
 
-
+	//TODO class not used. Delete?
 	@Override
 	public int getPriority() {
 			return PRIORITY_DATABASE;

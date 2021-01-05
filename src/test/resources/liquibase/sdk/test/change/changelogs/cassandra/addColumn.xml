@@ -10,10 +10,5 @@
             <column name="intColumn" type="int"/>
             <column name="dateColumn" type="date"/>
         </addColumn>
-<!--        <rollback>-->
-<!--            <dropColumn tableName="authors" columnName="varcharColumn"/>-->
-<!--            <dropColumn tableName="authors" columnName="intColumn"/>-->
-<!--            <dropColumn tableName="authors" columnName="dateColumn"/>-->
-<!--        </rollback>-->
     </changeSet>
 </databaseChangeLog>

@@ -11,7 +11,7 @@ import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
 import liquibase.util.StringUtil;
 
 public class SelectFromDatabaseChangeLogLockGeneratorCassandra extends SelectFromDatabaseChangeLogLockGenerator  {
-	
+    //TODO class not used. Delete?
     @Override
     public int getPriority() {
         return PRIORITY_DATABASE;

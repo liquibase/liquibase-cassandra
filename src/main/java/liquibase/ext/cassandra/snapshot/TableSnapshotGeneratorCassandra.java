@@ -30,8 +30,7 @@ public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
             Database database = snapshot.getDatabase();
             Schema schema = (Schema) foundObject;
 
-            //TODO replace * when we know which fields we need
-            String query = String.format("SELECT * FROM system_schema.tables WHERE keyspace_name = '%s';",
+            String query = String.format("SELECT TABLE_NAME, KEYSPACE_NAME, COMMENT FROM system_schema.tables WHERE keyspace_name = '%s';",
                     database.getDefaultCatalogName());
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",
                     database);
@@ -40,25 +39,21 @@ public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
             for (Map<String, ?> tablePropertiesMap : returnList) {
                 schema.addDatabaseObject(readTable(tablePropertiesMap, database));
             }
-
         }
-
-
     }
 
     @Override
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
-        Database database = snapshot.getDatabase();
 
-        //TODO replace * when we know which fields we need
+        Database database = snapshot.getDatabase();
         String query =
-                String.format("SELECT * FROM system_schema.tables WHERE keyspace_name = '%s' AND TABLE_NAME = '%s'",
+                String.format("SELECT TABLE_NAME, KEYSPACE_NAME, COMMENT FROM system_schema.tables WHERE keyspace_name = '%s' AND TABLE_NAME = '%s'",
                         database.getDefaultCatalogName(), example.getName().toLowerCase());
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
                 .getExecutor("jdbc", database).queryForList(new RawSqlStatement(query));
         if (returnList.size() != 1) {
-            LogFactory.getLogger().info(String.format("expecting exactly 1 table with name {}, got {}",
-                    example.getName(), returnList.size()));
+            Scope.getCurrentScope().getLog(TableSnapshotGeneratorCassandra.class).warning(String.format(
+                    "expecting exactly 1 table with name %s, got %s", example.getName(), returnList.size()));
             return null;
         } else {
             return readTable(returnList.get(0), database);
