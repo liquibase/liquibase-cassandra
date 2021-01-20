@@ -29,7 +29,7 @@ public class UnlockDatabaseChangeLogGeneratorCassandra extends UnlockDatabaseCha
         releaseStatement.addNewColumnValue("LOCKED", false);
         releaseStatement.addNewColumnValue("LOCKEDBY", null);
         releaseStatement.setWhereClause(database.escapeColumnName(database.getLiquibaseCatalogName(), null,
-                database.getDatabaseChangeLogTableName(), "ID")+" = 1");
+                database.getDatabaseChangeLogTableName(), "ID") + " = 1");
 
         return SqlGeneratorFactory.getInstance().generateSql(releaseStatement, database);
     }

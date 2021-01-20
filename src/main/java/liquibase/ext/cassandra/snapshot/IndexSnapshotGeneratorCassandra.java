@@ -7,19 +7,12 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.snapshot.DatabaseSnapshot;
-import liquibase.snapshot.InvalidExampleException;
 import liquibase.snapshot.jvm.IndexSnapshotGenerator;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.*;
 import liquibase.util.StringUtil;
 
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +29,7 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
     }
 
     @Override
-    protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException, InvalidExampleException {
+    protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
         if (!snapshot.getSnapshotControl().shouldInclude(Index.class)) {
             return;
         }
@@ -88,7 +81,7 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
     }
 
     @Override
-    protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException, InvalidExampleException {
+    protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
         Relation relation = ((Index) example).getRelation();
         Database database = snapshot.getDatabase();
 

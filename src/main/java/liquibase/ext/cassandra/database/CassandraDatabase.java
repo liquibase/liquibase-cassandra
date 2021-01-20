@@ -26,10 +26,6 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return "cassandra";
 	}
 
-	public CassandraDatabase() {
-//		setDefaultSchemaName("");
-	}
-
 	@Override
 	public int getPriority() {
 		return PRIORITY_DEFAULT;
@@ -124,8 +120,8 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	}
 
 	/**
-	 * Cassandra actually doesn't support neither catalogs nor schemas, but Keyspace.
-	 * As default liquibase classes don't know what is keyspace we gonna use Keyspace instead of catalog
+	 * Cassandra actually doesn't support neither catalogs nor schemas, but keyspaces.
+	 * As default liquibase classes don't know what is keyspace we gonna use keyspace instead of catalog
 	 */
 	@Override
 	public String getDefaultCatalogName() {

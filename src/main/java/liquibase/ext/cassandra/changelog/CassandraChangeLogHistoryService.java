@@ -12,7 +12,6 @@ import liquibase.Scope;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.statement.core.RawSqlStatement;
@@ -51,22 +50,19 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
 
     @Override
-    public int getNextSequenceValue() throws LiquibaseException {
+    public int getNextSequenceValue() {
         int next = 0;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs =
-                    statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + getDatabase().getDefaultCatalogName() +
-                            ".DATABASECHANGELOG");
+            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " +
+                    getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
             }
             statement.close();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return next + 1;

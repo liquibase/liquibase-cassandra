@@ -1,7 +1,6 @@
 package liquibase.ext.cassandra.sqlgenerator;
 
 import liquibase.database.Database;
-import liquibase.database.core.*;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -35,13 +34,13 @@ public class DropColumnGeneratorCassandra extends DropColumnGenerator {
 
     private Sql[] generateMultipleColumnSql(List<DropColumnStatement> columns, Database database) {
         List<Sql> result = new ArrayList<>();
-            for (DropColumnStatement column : columns) {
-                result.add(generateSingleColumnSql(column, database)[0]);
-            }
+        for (DropColumnStatement column : columns) {
+            result.add(generateSingleColumnSql(column, database)[0]);
+        }
         return result.toArray(new Sql[result.size()]);
     }
 
     private Sql[] generateSingleColumnSql(DropColumnStatement statement, Database database) {
-        return new Sql[] {new UnparsedSql("ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) + " DROP " + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()), getAffectedColumn(statement))};
+        return new Sql[]{new UnparsedSql("ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) + " DROP " + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()), getAffectedColumn(statement))};
     }
 }

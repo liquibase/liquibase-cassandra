@@ -25,10 +25,9 @@ public class DeleteGeneratorCassandra extends DeleteGenerator {
 
 		if (statement.getWhere() == null) {
 
-			StringBuilder sql = new StringBuilder("TRUNCATE ").append(database
-					.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()));
-
-			return new Sql[] { new UnparsedSql(sql.toString(), getAffectedTable(statement)) };
+			String sql = "TRUNCATE " + database
+					.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName());
+			return new Sql[] { new UnparsedSql(sql, getAffectedTable(statement)) };
 		} else {
 
 			return super.generateSql(statement, database, sqlGeneratorChain);

@@ -22,16 +22,16 @@ public class UniqueConstraintSnapshotGeneratorCassandra extends UniqueConstraint
 
     @Override
     public Class<? extends SnapshotGenerator>[] replaces() {
-        return new Class[] { UniqueConstraintSnapshotGenerator.class };
+        return new Class[]{UniqueConstraintSnapshotGenerator.class};
 
     }
 
     @Override
-    protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
+    protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) {
     }
 
     @Override
-    protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
+    protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) {
         return null;
     }
 }
