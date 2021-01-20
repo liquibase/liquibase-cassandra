@@ -68,7 +68,7 @@ class CassandraFunctionalTests extends Specification {
         def stringWriter = new StringWriter()
         liquibase.changeLogSync((Contexts) null, (LabelExpression) null, stringWriter)
         then:
-        assert stringWriter.toString().contains("UPDATE betterbotz.DATABASECHANGELOGLOCK SET LOCKED = TRUE")
+        assert stringWriter.toString().contains("UPDATE betterbotz.databasechangeloglock SET LOCKED = TRUE")
 
     }
 
@@ -89,7 +89,7 @@ class CassandraFunctionalTests extends Specification {
         def historyService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database)
         def ranChangeSets = historyService.getRanChangeSets()
         then:
-        ranChangeSets.size() == 3
+        ranChangeSets.size() == 6
 
     }
 
