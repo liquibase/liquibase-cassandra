@@ -30,11 +30,4 @@ public class CassandraDataTypeFactory extends DataTypeFactory {
 		return super.fromObject(object, database);
 	}
 
-	@Override
-	public LiquibaseDataType fromDescription(String dataTypeDefinition, Database database) {
-		System.out.println("from description: "+dataTypeDefinition);
-		LiquibaseDataType dataType = super.fromDescription(dataTypeDefinition, database);
-
-		return new CassandraDataType(dataType);
-	}
 }

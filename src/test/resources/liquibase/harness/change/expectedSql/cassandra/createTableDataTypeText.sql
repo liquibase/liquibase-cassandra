@@ -1,0 +1,1 @@
+CREATE TABLE createTableDataTypeText (textCol TEXT, PRIMARY KEY (textCol))
