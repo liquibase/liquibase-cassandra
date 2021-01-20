@@ -26,7 +26,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         if (foundObject instanceof Relation) {
             Database database = snapshot.getDatabase();
             Relation relation = (Relation) foundObject;
-            String query = String.format("SELECT COLUMN_NAME, TYPE FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s';"
+            String query = String.format("SELECT COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s';"
                     , database.getDefaultCatalogName(), relation.getName());
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",
                     database);
@@ -42,7 +42,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
         Database database = snapshot.getDatabase();
         Relation relation = ((Column) example).getRelation();
-        String query = String.format("SELECT COLUMN_NAME, TYPE FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s' AND column_name='%s';"
+        String query = String.format("SELECT COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s' AND column_name='%s';"
                 , database.getDefaultCatalogName(), relation, example.getName());
 
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
@@ -60,10 +60,13 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
 
         String rawColumnName = StringUtil.trimToNull((String) tableMap.get("COLUMN_NAME"));
         String rawColumnType = StringUtil.trimToNull((String) tableMap.get("TYPE"));
-
+        String rawColumnKind = StringUtil.trimToNull((String) tableMap.get("KIND"));
         Column column = new Column();
         column.setName(rawColumnName);
         column.setRelation(table);
+        // Cassandra doesn't actually store somewhere separately if column could nullable or not,
+        // but it doesn't allow primary keys to be missing, so gonna use this field as nullable indicator
+        column.setNullable("partition_key".equalsIgnoreCase(rawColumnKind));
         //TODO extend datatype parsing when needed to include DataTypeId
         column.setType(new DataType(rawColumnType));
         return column;
