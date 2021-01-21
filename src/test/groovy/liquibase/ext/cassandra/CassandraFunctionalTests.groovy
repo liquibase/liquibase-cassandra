@@ -89,7 +89,7 @@ class CassandraFunctionalTests extends Specification {
         def historyService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database)
         def ranChangeSets = historyService.getRanChangeSets()
         then:
-        ranChangeSets.size() == 6
+        ranChangeSets.size() == 3
 
     }
 
