@@ -7,7 +7,6 @@ import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.LockDatabaseChangeLogGenerator;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
-import liquibase.statement.core.UpdateStatement;
 
 public class LockDatabaseChangeLogGeneratorCassandra extends LockDatabaseChangeLogGenerator {
 
@@ -18,7 +17,9 @@ public class LockDatabaseChangeLogGeneratorCassandra extends LockDatabaseChangeL
 
     @Override
     public Sql[] generateSql(LockDatabaseChangeLogStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-    	RawSqlStatement updateStatement = new RawSqlStatement("UPDATE " + CassandraUtil.getKeyspace(database) + ".DATABASECHANGELOGLOCK SET LOCKED = TRUE, LOCKEDBY = '" + hostname + " (" + hostaddress + ")" + "', LOCKGRANTED = " + System.currentTimeMillis() + " WHERE ID = 1");
+        RawSqlStatement updateStatement = new RawSqlStatement("UPDATE " +
+                database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangeloglock") +
+                " SET LOCKED = TRUE, LOCKEDBY = '" + hostname + " (" + hostaddress + ")" + "', LOCKGRANTED = " + System.currentTimeMillis() + " WHERE ID = 1");
         return SqlGeneratorFactory.getInstance().generateSql(updateStatement, database);
     }
 

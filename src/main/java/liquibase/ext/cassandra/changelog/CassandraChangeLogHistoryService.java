@@ -12,12 +12,9 @@ import liquibase.Scope;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
-import liquibase.ext.cassandra.sqlgenerator.CassandraUtil;
 import liquibase.statement.core.RawSqlStatement;
-import liquibase.statement.core.UpdateStatement;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
@@ -36,7 +33,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         boolean hasChangeLogTable;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+            statement.executeQuery("select ID from " + getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {
@@ -53,20 +50,19 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
 
     @Override
-    public int getNextSequenceValue() throws LiquibaseException {
+    public int getNextSequenceValue() {
         int next = 0;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " +
+                    getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
             }
             statement.close();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return next + 1;
@@ -74,7 +70,8 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
-        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + CassandraUtil.getKeyspace(getDatabase()) + ".DATABASECHANGELOG");
+        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + database.getDefaultCatalogName() +
+                ".DATABASECHANGELOG");
         final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
         returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
         return returnList;

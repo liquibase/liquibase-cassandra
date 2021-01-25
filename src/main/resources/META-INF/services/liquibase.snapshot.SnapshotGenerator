@@ -1,0 +1,4 @@
+liquibase.ext.cassandra.snapshot.TableSnapshotGeneratorCassandra
+liquibase.ext.cassandra.snapshot.ColumnSnapshotGeneratorCassandra
+liquibase.ext.cassandra.snapshot.UniqueConstraintSnapshotGeneratorCassandra
+liquibase.ext.cassandra.snapshot.IndexSnapshotGeneratorCassandra

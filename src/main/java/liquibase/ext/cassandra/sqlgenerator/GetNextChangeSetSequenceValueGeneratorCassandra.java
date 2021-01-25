@@ -17,6 +17,4 @@ public class GetNextChangeSetSequenceValueGeneratorCassandra extends GetNextChan
         return super.supports(statement, database) && database instanceof CassandraDatabase;
     }
 
-
-
 }

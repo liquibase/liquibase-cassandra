@@ -64,7 +64,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
@@ -77,6 +76,12 @@
             <version>4.2</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/CassandraJDBC42.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-test-harness</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
