@@ -10,10 +10,10 @@ We have provided a `harness-config.yml` file in `src/test/resources` directory.
 This file should contain the connection information for all the databases you want the Cassandra extension to be tested against.
 
 #### Configuring test DB
-Test-harness requires test DB to be created beforehand, so tests have some data to manipulate, are independent and don't rely on specific run order.
-To be able to run test locally setting up docker container might be the easiest way. If you already have test instance running somewhere, use `test.cql` to fill it with test data
-To create local docker container do the following steps:
-- Run main cassandra instance `docker run -p 9042:9042 --rm --name mycassandra -d cassandra`, give it few seconds to start
+Test-harness requires the database under test to be created beforehand, so that the tests might have some data to manipulate, are independent of each other and don't rely on any specific run order.
+To be able to run the harness tests locally setting up docker container is currently the simplest route. But if you already have a test instance running elsewhere, use the `test.cql` script to populate it with test data.
+To create a local test database docker container, execute the following steps:
+- Run main cassandra instance `docker run -p 9042:9042 --rm --name mycassandra -d cassandra`, and give it few seconds to start
 - To execute init script run second container `docker run -it --rm cassandra bash`
 - enter cql console `cqlsh 172.17.0.2`
 - copy and paste `test.cql` file content
