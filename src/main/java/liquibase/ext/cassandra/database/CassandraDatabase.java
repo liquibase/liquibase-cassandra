@@ -3,15 +3,21 @@ package liquibase.ext.cassandra.database;
 import com.simba.cassandra.cassandra.core.CDBJDBCConnection;
 import com.simba.cassandra.jdbc.jdbc42.S42Connection;
 import liquibase.Scope;
+import liquibase.change.Change;
+import liquibase.change.core.CreateTableChange;
+import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.sql.visitor.SqlVisitor;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 /**
  * Cassandra 1.2.0 NoSQL database support.
@@ -111,6 +117,31 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 			}
 		}
 		return keyspace;
+
+	}
+
+	@Override
+	public void executeStatements(Change change, DatabaseChangeLog changeLog, List<SqlVisitor> sqlVisitors) throws LiquibaseException {
+
+
+		super.executeStatements(change, changeLog, sqlVisitors);
+
+		if (change instanceof CreateTableChange) {
+
+			// check to see if the table is created
+
+			//todo: for loop to query that table is active
+
+			SELECT keyspace_name, table_name, status FROM system_schema_mcs.tables WHERE keyspace_name = 'mykeyspace' AND table_name = 'DATABASECHANGELOGLOCK';
+			// CHECK STATUS
+			if creating
+			continue loop
+			if active
+			exit loop
+			if something else or no records throw error
+
+
+		}
 
 	}
 

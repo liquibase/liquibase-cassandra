@@ -69,6 +69,21 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     }
 
     @Override
+    public void init() throws DatabaseException {
+        super.init();
+        //todo: for loop to query that table is active
+
+        SELECT keyspace_name, table_name, status FROM system_schema_mcs.tables WHERE keyspace_name = 'mykeyspace' AND table_name = 'DATABASECHANGELOG';
+        // CHECK STATUS
+        if creating
+                continue loop
+        if active
+                exit loop
+        if something else or no records throw error
+
+    }
+
+    @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
         RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + database.getDefaultCatalogName() +
                 ".DATABASECHANGELOG");

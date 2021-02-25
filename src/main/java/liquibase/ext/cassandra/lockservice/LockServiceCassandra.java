@@ -104,6 +104,23 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     @Override
+    public void init() throws DatabaseException {
+        super.init();
+        //todo: for loop to query that table is active
+
+        SELECT keyspace_name, table_name, status FROM system_schema_mcs.tables WHERE keyspace_name = 'mykeyspace' AND table_name = 'DATABASECHANGELOGLOCK';
+        // CHECK STATUS
+        if creating
+        continue loop
+        if active
+        exit loop
+        if something else or no records throw error
+
+    }
+
+
+
+    @Override
     public void releaseLock() throws LockException {
 
         ObjectQuotingStrategy incomingQuotingStrategy = null;
