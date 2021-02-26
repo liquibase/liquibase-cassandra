@@ -13,11 +13,9 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.sql.visitor.SqlVisitor;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Cassandra 1.2.0 NoSQL database support.
@@ -128,17 +126,39 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 		if (change instanceof CreateTableChange) {
 
-			// check to see if the table is created
+			// table creation in AWS Keyspaces is not immediate like other Cassandras
+			// https://docs.aws.amazon.com/keyspaces/latest/devguide/working-with-tables.html#tables-create
+			// let's see if the DATABASECHANGELOG table is active before doing stuff
 
-			//todo: for loop to query that table is active
+			int DBCL_TABLE_ACTIVE = 0;
+			while (DBCL_TABLE_ACTIVE == 0) {
 
-			SELECT keyspace_name, table_name, status FROM system_schema_mcs.tables WHERE keyspace_name = 'mykeyspace' AND table_name = 'DATABASECHANGELOGLOCK';
-			// CHECK STATUS
-			if creating
-			continue loop
-			if active
-			exit loop
-			if something else or no records throw error
+				try {
+					Statement statement = getStatement();
+					ResultSet rs = statement.executeQuery("SELECT keyspace_name, table_name, status FROM " +
+							"system_schema_mcs.tables WHERE keyspace_name = '" + getDefaultCatalogName() +
+							"' AND table_name = '" + ((CreateTableChange) change).getTableName() + "'");
+					while (rs.next()) {
+						String status = rs.getString("status");
+						if (status.equals("ACTIVE")) {
+							DBCL_TABLE_ACTIVE = 1;
+							//table is active, we're done here
+						} else if (status.equals("CREATING")) {
+							TimeUnit.SECONDS.sleep(3);
+						} else {
+							// something went very wrong, are we having issues with another Cassandra platform...?
+						}
+
+					}
+				} catch (ClassNotFoundException e) {
+					throw new DatabaseException(e);
+				} catch (InterruptedException e) {
+					throw new DatabaseException(e);
+				} catch (SQLException e) {
+					throw new DatabaseException(e);
+				}
+
+			}
 
 
 		}
