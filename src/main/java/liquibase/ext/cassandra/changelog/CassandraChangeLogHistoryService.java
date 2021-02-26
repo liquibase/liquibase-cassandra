@@ -84,7 +84,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
                 Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
                 ResultSet rs = statement.executeQuery("SELECT keyspace_name, table_name, status FROM " +
                         "system_schema_mcs.tables WHERE keyspace_name = '" + getDatabase().getDefaultCatalogName() +
-                        "' AND table_name = 'DATABASECHANGELOG'");
+                        "' AND table_name = 'databasechangelog'");
                 while (rs.next()) {
                     String status = rs.getString("status");
                     if (status.equals("ACTIVE")) {

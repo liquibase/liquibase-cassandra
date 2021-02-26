@@ -13,6 +13,7 @@ import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.lockservice.StandardLockService;
 import liquibase.logging.LogFactory;
+import liquibase.pro.packaged.is;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
@@ -53,11 +54,20 @@ public class LockServiceCassandra extends StandardLockService {
             database.rollback();
             super.init();
 
+            //SELECT locked FROM betterbotz.DATABASECHANGELOGLOCK where locked = TRUE ALLOW FILTERING
+            Statement statement = ((CassandraDatabase) database).getStatement();
+            ResultSet rs = statement.executeQuery("SELECT locked FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where locked = TRUE ALLOW FILTERING");
 
-            boolean locked = executor.queryForInt(
-                    new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where " +
-                            "locked = TRUE ALLOW FILTERING")
-            ) > 0;
+            boolean locked;
+            if (rs.next() == true) {
+                if (rs.getBoolean("locked"))  {
+                    locked = true;
+                } else {
+                    locked = false;
+                }
+            } else {
+                locked = false;
+            }
 
             if (locked) {
                 return false;
@@ -106,45 +116,6 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     @Override
-    public void init() throws DatabaseException {
-        super.init();
-
-        // table creation in AWS Keyspaces is not immediate like other Cassandras
-        // https://docs.aws.amazon.com/keyspaces/latest/devguide/working-with-tables.html#tables-create
-        // let's see if the DATABASECHANGELOG table is active before doing stuff
-
-        int DBCL_TABLE_ACTIVE = 0;
-        while (DBCL_TABLE_ACTIVE == 0) {
-
-            try {
-                Statement statement = ((CassandraDatabase) database).getStatement();
-                ResultSet rs = statement.executeQuery("SELECT keyspace_name, table_name, status FROM " +
-                        "system_schema_mcs.tables WHERE keyspace_name = '" + database.getDefaultCatalogName() +
-                        "' AND table_name = 'DATABASECHANGELOGLOCK'");
-                while (rs.next()) {
-                    String status = rs.getString("status");
-                    if (status.equals("ACTIVE")) {
-                        DBCL_TABLE_ACTIVE = 1;
-                        //table is active, we're done here
-                    } else if (status.equals("CREATING")) {
-                        TimeUnit.SECONDS.sleep(3);
-                    } else {
-                        // something went very wrong, are we having issues with another Cassandra platform...?
-                    }
-
-                }
-            } catch (ClassNotFoundException e) {
-                throw new DatabaseException(e);
-            } catch (InterruptedException e) {
-                throw new DatabaseException(e);
-            } catch (SQLException e) {
-                throw new DatabaseException(e);
-            }
-
-        }
-    }
-
-    @Override
     public void releaseLock() throws LockException {
 
         ObjectQuotingStrategy incomingQuotingStrategy = null;
@@ -178,7 +149,6 @@ public class LockServiceCassandra extends StandardLockService {
         }
     }
 
-
     @Override
     public boolean hasDatabaseChangeLogLockTable() {
         boolean hasChangeLogLockTable;
@@ -188,7 +158,7 @@ public class LockServiceCassandra extends StandardLockService {
             statement.close();
             hasChangeLogLockTable = true;
         } catch (SQLException e) {
-            Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
+            Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available.");
             hasChangeLogLockTable = false;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -204,17 +174,51 @@ public class LockServiceCassandra extends StandardLockService {
         if (!isDatabaseChangeLogLockTableInitialized) {
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
 
+            // table creation in AWS Keyspaces is not immediate like other Cassandras
+            // https://docs.aws.amazon.com/keyspaces/latest/devguide/working-with-tables.html#tables-create
+            // let's see if the DATABASECHANGELOG table is active before doing stuff
+
             try {
-                isDatabaseChangeLogLockTableInitialized = executor.queryForInt(
-                        new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK")
-                ) > 0;
-            } catch (LiquibaseException e) {
-                if (executor.updatesDatabase()) {
-                    throw new UnexpectedLiquibaseException(e);
-                } else {
-                    //probably didn't actually create the table yet.
-                    isDatabaseChangeLogLockTableInitialized = !tableJustCreated;
+                int DBCL_TABLE_ACTIVE = 0;
+                while (DBCL_TABLE_ACTIVE == 0) {
+
+                    Statement statement = ((CassandraDatabase) database).getStatement();
+                    ResultSet rs = statement.executeQuery("SELECT keyspace_name, table_name, status FROM " +
+                            "system_schema_mcs.tables WHERE keyspace_name = '" + database.getDefaultCatalogName() +
+                            "' AND table_name = 'databasechangeloglock'"); //todo: aws keyspaces appears to be all lowercase, dunno if that's the same with other cassandras...
+                    if (rs.next() == false) {
+                        //need to create table
+                        return false;
+                    } else {
+                        do {
+
+                            String status = rs.getString("status");
+                            if (status.equals("ACTIVE")) {
+                                DBCL_TABLE_ACTIVE = 1;
+                                //table is active, we're done here
+                                return true;
+                            } else if (status.equals("CREATING")) {
+                                int timeout = 1;
+                                TimeUnit.SECONDS.sleep(timeout);
+                                Scope.getCurrentScope().getLog(this.getClass()).info("DATABASECHANGELOGLOCK table in CREATING state. Checking again in " + timeout + " seconds.");
+
+                            } else {
+                                // something went very wrong, are we having issues with another Cassandra platform...?
+                            }
+
+
+                        } while (rs.next());
+                    }
+
+
+                    isDatabaseChangeLogLockTableInitialized = true;
                 }
+            } catch (InterruptedException e) {
+                throw new UnexpectedLiquibaseException(e);
+            } catch (SQLException e) {
+                throw new UnexpectedLiquibaseException(e);
+            } catch (ClassNotFoundException e) {
+                throw new UnexpectedLiquibaseException(e);
             }
         }
         return isDatabaseChangeLogLockTableInitialized;
