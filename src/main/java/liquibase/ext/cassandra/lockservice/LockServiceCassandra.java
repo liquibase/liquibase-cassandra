@@ -16,6 +16,7 @@ import liquibase.logging.LogFactory;
 import liquibase.pro.packaged.is;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
+import liquibase.sqlgenerator.core.UnlockDatabaseChangeLogGenerator;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.statement.core.UnlockDatabaseChangeLogStatement;
