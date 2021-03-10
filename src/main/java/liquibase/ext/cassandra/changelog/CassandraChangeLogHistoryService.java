@@ -76,35 +76,37 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         // table creation in AWS Keyspaces is not immediate like other Cassandras
         // https://docs.aws.amazon.com/keyspaces/latest/devguide/working-with-tables.html#tables-create
         // let's see if the DATABASECHANGELOG table is active before doing stuff
+        //TODO improve this AWS check when we find out better way
+        if (getDatabase().getConnection().getURL().toLowerCase().contains("amazonaws")) {
+            int DBCL_GET_TABLE_ACTIVE_ATTEMPS = 10;
+            while (DBCL_GET_TABLE_ACTIVE_ATTEMPS >= 0) {
 
-        int DBCL_TABLE_ACTIVE = 0;
-        while (DBCL_TABLE_ACTIVE == 0) {
+                try {
+                    Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
+                    ResultSet rs = statement.executeQuery("SELECT keyspace_name, table_name, status FROM " +
+                            "system_schema_mcs.tables WHERE keyspace_name = '" + getDatabase().getDefaultCatalogName() +
+                            "' AND table_name = 'databasechangelog'");
+                    while (rs.next()) {
+                        String status = rs.getString("status");
+                        if (status.equals("ACTIVE")) {
+                            return;
+                        } else if (status.equals("CREATING")) {
+                            DBCL_GET_TABLE_ACTIVE_ATTEMPS--;
+                            int timeout = 3;
+                            Scope.getCurrentScope().getLog(this.getClass()).info("DATABASECHANGELOG table in CREATING state. Checking again in " + timeout + " seconds.");
+                            TimeUnit.SECONDS.sleep(3);
+                        } else {
+                            Scope.getCurrentScope().getLog(this.getClass()).severe(String.format("DATABASECHANGELOG table in %s state. ", status));
+                            // something went very wrong, are we having issues with another Cassandra platform...?
+                            return;
+                        }
 
-            try {
-                Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-                ResultSet rs = statement.executeQuery("SELECT keyspace_name, table_name, status FROM " +
-                        "system_schema_mcs.tables WHERE keyspace_name = '" + getDatabase().getDefaultCatalogName() +
-                        "' AND table_name = 'databasechangelog'");
-                while (rs.next()) {
-                    String status = rs.getString("status");
-                    if (status.equals("ACTIVE")) {
-                        DBCL_TABLE_ACTIVE = 1;
-                        //table is active, we're done here
-                    } else if (status.equals("CREATING")) {
-                        TimeUnit.SECONDS.sleep(3);
-                    } else {
-                        // something went very wrong, are we having issues with another Cassandra platform...?
                     }
-
+                } catch (ClassNotFoundException | InterruptedException | SQLException e) {
+                    throw new DatabaseException(e);
                 }
-            } catch (ClassNotFoundException e) {
-                throw new DatabaseException(e);
-            } catch (InterruptedException e) {
-                throw new DatabaseException(e);
-            } catch (SQLException e) {
-                throw new DatabaseException(e);
-            }
 
+            }
         }
     }
 
