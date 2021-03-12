@@ -15,5 +15,11 @@
             );
         </sql>
     </changeSet>
+    <changeSet id="3" author="okushniryk">
+        <sql>
+            insert into TEST_SCHEMA.products (id,name) values (1, 'John');
+            insert into TEST_SCHEMA.products (id,name) values (2, 'Jane');
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
