@@ -7,7 +7,7 @@ import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
-import liquibase.logging.LogFactory;
+import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.snapshot.*;
 import liquibase.snapshot.jvm.TableSnapshotGenerator;
 import liquibase.statement.core.RawSqlStatement;
@@ -20,6 +20,15 @@ import java.util.List;
 import java.util.Map;
 
 public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
+
+    @Override
+    public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
+        if (database instanceof CassandraDatabase) {
+            return super.getPriority(objectType, database);
+        }
+        return PRIORITY_NONE;
+    }
+
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
         if (!snapshot.getSnapshotControl().shouldInclude(Table.class)) {
