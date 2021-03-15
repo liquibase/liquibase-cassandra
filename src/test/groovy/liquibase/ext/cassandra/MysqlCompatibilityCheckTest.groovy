@@ -18,11 +18,6 @@ import java.sql.Statement
 
 class MysqlCompatibilityCheckTest extends  Specification{
 
-    /**
-     * This test show what happens without the fix on mysql compatibility
-     * Error: "TRUNCATE PUBLIC[*].DATABASECHANGELOGLOCK"; expected "TABLE";
-     *
-     */
     def "Liquibase should continue to work with Mysql when Cassandra Extension is in classpath"() throws SQLException, LiquibaseException {
 
         given: "starting H2 and initializing liquibase"
