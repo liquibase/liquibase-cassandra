@@ -53,11 +53,15 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
         Database database = snapshot.getDatabase();
         Relation relation = ((Column) example).getRelation();
-        String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE KEYSPACE_NAME = '%s' AND table_name='%s' AND column_name='%s';"
-                , database.getDefaultCatalogName(), relation, example.getName());
+        //we can't add column name as query parameter here as AWS keyspaces don't support such where statement
+        String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s';"
+                , database.getDefaultCatalogName(), relation);
 
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
                 .getExecutor("jdbc", database).queryForList(new RawSqlStatement(query));
+        returnList = returnList.stream()
+                .filter(stringMap -> ((String)stringMap.get("COLUMN_NAME")).equalsIgnoreCase(example.getName()))
+                .collect(Collectors.toList());
         if (returnList.size() != 1) {
             Scope.getCurrentScope().getLog(ColumnSnapshotGeneratorCassandra.class).warning(String.format(
                     "expecting exactly 1 column with name %s, got %s", example.getName(), returnList.size()));
