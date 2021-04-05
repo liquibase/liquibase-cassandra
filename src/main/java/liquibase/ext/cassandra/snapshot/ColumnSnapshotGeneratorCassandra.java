@@ -17,6 +17,7 @@ import liquibase.util.StringUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
 
@@ -36,7 +37,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         if (foundObject instanceof Relation) {
             Database database = snapshot.getDatabase();
             Relation relation = (Relation) foundObject;
-            String query = String.format("SELECT COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s';"
+            String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE KEYSPACE_NAME = '%s' AND table_name='%s';"
                     , database.getDefaultCatalogName(), relation.getName());
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",
                     database);
@@ -52,7 +53,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
         Database database = snapshot.getDatabase();
         Relation relation = ((Column) example).getRelation();
-        String query = String.format("SELECT COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s' AND column_name='%s';"
+        String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE KEYSPACE_NAME = '%s' AND table_name='%s' AND column_name='%s';"
                 , database.getDefaultCatalogName(), relation, example.getName());
 
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
@@ -71,6 +72,8 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         String rawColumnName = StringUtil.trimToNull((String) tableMap.get("COLUMN_NAME"));
         String rawColumnType = StringUtil.trimToNull((String) tableMap.get("TYPE"));
         String rawColumnKind = StringUtil.trimToNull((String) tableMap.get("KIND"));
+        // we don't really need KEYSPACE_NAME param in query to build Column obj, but Astra Cassandra implementation
+        // (and maybe some others) fails if it's missing
         Column column = new Column();
         column.setName(rawColumnName);
         column.setRelation(table);
