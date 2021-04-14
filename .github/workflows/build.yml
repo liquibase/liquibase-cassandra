@@ -18,13 +18,14 @@ jobs:
         image: cassandra:${{ matrix.cassandra }}
         env:
           name: mycassandra
+          network: localhost
         ports:
           - 9042:9042
       cassandra_2:
         image: cassandra:${{ matrix.cassandra }}
         env:
           name: mycassandra
-          network: cassandra_1
+          network: localhost
         ports:
           - 9042:9042
     steps:
