@@ -27,4 +27,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - run: docker image ls
+      - run: docker network create mycassandranetwork
+      - run: docker run -p 9042:9042 --rm --name mycassandra --network mycassandranetwork -d cassandra
+      - run: sleep 30
+      - run: docker run -it --network mycassandranetwork --rm -v $(pwd):/tmp cassandra cqlsh -f /tmp/test.cql mycassandra
