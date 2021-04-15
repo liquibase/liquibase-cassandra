@@ -33,7 +33,7 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
     - name: Init Cassandra Database
-      run: docker run --network cassandra --rm -v $(pwd):/tmp cassandra cqlsh -f /tmp/test.cql cassandra
+      run: docker run --network-alias cassandra --rm -v $(pwd):/tmp cassandra cqlsh -f /tmp/test.cql cassandra
     - name: Test With Maven
       run: mvn -B test --file pom.xml
       
