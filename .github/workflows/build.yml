@@ -35,7 +35,7 @@ jobs:
         distribution: 'adopt'
     - name: Init Cassandra Database
       run: |
-        sleep 30
+        sleep 45
         docker run --network ${{ job.services.cassandra.network }} --rm -v $(pwd):/tmp cassandra:${{ matrix.cassandra }} cqlsh -f /tmp/test.cql cassandra
     - name: Test With Maven
       run: mvn -B test --file pom.xml
