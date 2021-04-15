@@ -14,7 +14,7 @@ get ip
 
 `docker inspect mycassandra`
  
-start another instance for cqlsh
+start another instance for cqlsh, check for IP address, replace mentioned IP with the one inspect command shows
 
 `docker run -it --rm cassandra bash`
 
