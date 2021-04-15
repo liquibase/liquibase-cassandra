@@ -10,9 +10,10 @@ jobs:
     name: Java ${{ matrix.java }}, Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         java: [8, 11, 16]
-        cassandra: [2.1, 2.2, 3.0, 3.11, 4.0]
+        cassandra: ['2.1', '2.2', '3.0', '3.11', '4.0']
     services:
       cassandra:
         image: cassandra:${{ matrix.cassandra }}
