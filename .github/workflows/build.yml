@@ -6,22 +6,18 @@ name: Build and Test Extention
 on: [ pull_request]
 
 jobs:
-  container-job:
-    #name: Java ${{ matrix.java }}, Cassandra ${{ matrix.cassandra }}
+  test:
+    name: Java ${{ matrix.java }}, Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
-    container: cassandra:latest
-    # strategy:
-    #   matrix:
-    #     java: [8]
-    #     cassandra: [3.11]
-        # java: [8, 11, 16]
-        # cassandra: [2.1, 2.2, 3.0, 3.11, 4.0]
+    strategy:
+      matrix:
+        java: [8]
+        cassandra: [3.11]
     services:
       cassandra:
-        #image: cassandra:${{ matrix.cassandra }}
-        image: cassandra:latest
-        # ports:
-        #   - 9042:9042
+        image: cassandra:${{ matrix.cassandra }}
+        ports:
+          - 9042:9042
     steps:
     - uses: actions/checkout@v2
     - name: Cache Local Maven Repository
@@ -37,12 +33,12 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
     - name: Init Cassandra Database
-      run: cqlsh -f /tmp/test.cql cassandra
+      run: docker run -it --rm -v $(pwd):/tmp cassandra cqlsh -f /tmp/test.cql cassandra
     - name: Test With Maven
       run: mvn -B test --file pom.xml
       
   build:
-    needs: [container-job]
+    needs: [test]
     name: Build Artifacts
     runs-on: ubuntu-latest
     steps:
@@ -66,3 +62,5 @@ jobs:
       with:
         name: liquibase-cassandra
         path: target/*.jar
+    
+
