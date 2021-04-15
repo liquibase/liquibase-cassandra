@@ -6,9 +6,10 @@ name: Build and Test Extention
 on: [ pull_request]
 
 jobs:
-  test:
+  container-job:
     name: Java ${{ matrix.java }}, Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
+    container: cassandra:latest
     strategy:
       matrix:
         java: [8]
