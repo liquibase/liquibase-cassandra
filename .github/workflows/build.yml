@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         java: [8, 11]
-        cassandra: ['2.1', '2.2', '3.0', '3.11', '4.0']
+        cassandra: ['3.0', '3.11']
     services:
       cassandra:
         image: cassandra:${{ matrix.cassandra }}
