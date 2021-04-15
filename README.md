@@ -1,4 +1,4 @@
-liquibase-cassandra
+liquibase-cassandra [![Build and Test Extention](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml)
 ===================
 
 Liquibase extension for Cassandra Support.
