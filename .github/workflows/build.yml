@@ -10,15 +10,16 @@ jobs:
     name: Java ${{ matrix.java }}, Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
     container: cassandra:latest
-    strategy:
-      matrix:
-        java: [8]
-        cassandra: [3.11]
+    # strategy:
+    #   matrix:
+    #     java: [8]
+    #     cassandra: [3.11]
         # java: [8, 11, 16]
         # cassandra: [2.1, 2.2, 3.0, 3.11, 4.0]
     services:
       cassandra:
-        image: cassandra:${{ matrix.cassandra }}
+        #image: cassandra:${{ matrix.cassandra }}
+        image: cassandra:latest
         # ports:
         #   - 9042:9042
     steps:
