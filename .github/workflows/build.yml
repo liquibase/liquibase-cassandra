@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [8, 11]
+        java: [8, 11, 16]
         cassandra: ['3.0', '3.11']
     services:
       cassandra:
