@@ -42,7 +42,7 @@ jobs:
       run: mvn -B test --file pom.xml
       
   build:
-    needs: [test]
+    needs: [container-job]
     name: Build Artifacts
     runs-on: ubuntu-latest
     steps:
