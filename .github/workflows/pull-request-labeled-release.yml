@@ -9,21 +9,12 @@ on:
 
 jobs:
   integration-tests:
-    name: Java ${{ matrix.java }}, Postgres ${{ matrix.postgres }}
+    name: Java ${{ matrix.java }}
     runs-on: ubuntu-latest
     if: contains( github.event.pull_request.labels.*.name, 'Extension Release Candidate :rocket:' )
     strategy:
       matrix:
         java: [8, 11, 16]
-        postgres: [9, 10, 11, 12, 13]
-    services:
-      postgres:
-        image: postgres:${{ matrix.postgres }}
-        env:
-          POSTGRES_USER: lbtest
-          POSTGRES_PASSWORD: lbtest
-        ports:
-          - 5432:5432
     steps:
     - uses: actions/checkout@v2
     - name: Cache Local Maven Repository
