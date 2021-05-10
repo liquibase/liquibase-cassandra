@@ -16,9 +16,10 @@ To be able to run the harness tests locally setting up docker container is curre
 
 To create a local test database docker container, execute the following steps:
 - Run main cassandra instance `docker run -p 9042:9042 --rm --name mycassandra -d cassandra`, and give it few seconds to start
+- Run `docker inspect mycassandra` to get a main instance IP address. By default, it's 172.17.0.2 but may change in our local env.
 - To execute init script run second container `docker run -it --rm cassandra bash`
-- enter cql console `cqlsh 172.17.0.2`
-- copy and paste `test.cql` file content
+- enter cql console `cqlsh 172.17.0.2` (or other IP showed by `docker inspect mycassandra` if this doesn't work) 
+- copy and paste `test.cql` file content to create keyspace and tables for tests. 
 
 #### Executing the tests
 From your IDE, right click on the `LiquibaseHarnessSuiteTest` test class present in `src/test/groovy` directory. 
