@@ -1,0 +1,42 @@
+name: Build, Test, and Prepare Release Candidate
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - reopened
+      - synchronize
+
+jobs:
+  integration-tests:
+    name: Java ${{ matrix.java }}, Postgres ${{ matrix.postgres }}
+    runs-on: ubuntu-latest
+    if: contains( github.event.pull_request.labels.*.name, 'Extension Release Candidate :rocket:' )
+    strategy:
+      matrix:
+        java: [8, 11, 16]
+        postgres: [9, 10, 11, 12, 13]
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: lbtest
+          POSTGRES_PASSWORD: lbtest
+        ports:
+          - 5432:5432
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Local Maven Repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'adopt'
+    - name: Test With Maven
+      run: mvn clean verify --file pom.xml
