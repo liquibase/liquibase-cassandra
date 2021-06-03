@@ -4,20 +4,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-
-    <changeSet author="oleh" id="1">
-        <createTable tableName="test_table">
+    <changeSet id="1" author="oleh">
+        <createTable tableName="test_table_timestamp">
             <column name="test_id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true"/>
             </column>
-            <column name="test_column" type="varchar">
-                <constraints nullable="false"/>
-            </column>
+            <column name="test_column" type="timestamp"/>
         </createTable>
-        <rollback/>
-    </changeSet>
-    <changeSet author="r2" id="2">
-        <dropTable tableName="test_table"/>
-        <rollback/>
     </changeSet>
 </databaseChangeLog>
