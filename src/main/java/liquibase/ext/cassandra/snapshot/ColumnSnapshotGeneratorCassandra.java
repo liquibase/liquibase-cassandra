@@ -83,7 +83,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         column.setRelation(table);
         // Cassandra doesn't actually store somewhere separately if column could nullable or not,
         // but it doesn't allow primary keys to be missing, so gonna use this field as nullable indicator
-        column.setNullable("partition_key".equalsIgnoreCase(rawColumnKind));
+        column.setNullable(!"partition_key".equalsIgnoreCase(rawColumnKind));
         //TODO extend datatype parsing when needed to include DataTypeId
         column.setType(new DataType(rawColumnType));
         return column;
