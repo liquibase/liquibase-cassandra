@@ -1,4 +1,4 @@
-liquibase-cassandra [![Build and Test Extention](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml)
+liquibase-cassandra[![Build and Test Extention](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml)
 ===================
 
 Liquibase extension for Cassandra Support.
@@ -11,6 +11,8 @@ start cassandra
 `docker run -p 9042:9042 --rm --name cassandra3 -d cassandra:3`
 
 `docker run -p 9043:9042 --rm --name cassandra4 -d cassandra:4.0`
+
+NOTE: Cassandra 4.0-rc1 is not behaving on Windows 10, Docker Desktop 3.3.3. Have run successfully on Centos 8.
 
 get ip
 
