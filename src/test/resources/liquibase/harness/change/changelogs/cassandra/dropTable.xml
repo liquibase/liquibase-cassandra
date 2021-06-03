@@ -14,7 +14,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-            <dropTable tableName="test_table"/>
+        <rollback/>
+    </changeSet>
+    <changeSet author="r2" id="2">
+        <dropTable tableName="test_table"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>
