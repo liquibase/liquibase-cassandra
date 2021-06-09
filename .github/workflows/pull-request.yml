@@ -9,22 +9,22 @@ on:
 
 jobs:
   unit-test:
-    name: Java ${{ matrix.java }}, Cassandra ${{ matrix.cassandra }}
+    name: Java ${{ matrix.java }}
     runs-on: ubuntu-latest
     # Only run job if untagged as release. Will run for all PRs and release PRs during the first run.
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'Extension Release Candidate :rocket:' ) }}
     strategy:
       matrix:
         java: [8, 11, 16]
-        cassandra: [3, 4.0]
     services:
-      cassandra:
-        image: cassandra:${{ matrix.cassandra }}
-        env:
-          POSTGRES_USER: lbtest
-          POSTGRES_PASSWORD: lbtest
+      cassandra-3:
+        image: liquibase/liquibase:cassandra-test-3
         ports:
-          - 9042:9042
+          - "9042:9042"
+      cassandra-4:
+        image: liquibase/liquibase:cassandra-test-4
+        ports:
+          - "9043:9042"
     steps:
     - uses: actions/checkout@v2
     - name: Cache Local Maven Repository

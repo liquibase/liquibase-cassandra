@@ -15,6 +15,15 @@ jobs:
     strategy:
       matrix:
         java: [8, 11, 16]
+    services:
+      cassandra-3:
+        image: liquibase/liquibase:cassandra-test-3
+        ports:
+        - "9042:9042"
+      cassandra-4:
+        image: liquibase/liquibase:cassandra-test-4
+        ports:
+          - "9043:9042"
     steps:
     - uses: actions/checkout@v2
     - name: Cache Local Maven Repository
@@ -30,4 +39,4 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
     - name: Test With Maven
-      run: mvn clean verify --file pom.xml
+      run: mvn surefire:test --file pom.xml
