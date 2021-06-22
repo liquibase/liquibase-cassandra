@@ -22,7 +22,7 @@ To create a local test database docker container, execute the following steps:
 - copy and paste `test.cql` file content to create keyspace and tables for tests. 
 
 #### Executing the tests
-From your IDE, right click on the `LiquibaseHarnessSuiteTest` test class present in `src/test/groovy` directory. 
+From your IDE, right click on the `LiquibaseHarnessSuiteIT` test class present in `src/test/groovy` directory. 
 Doing so, will allow you to execute all the standard change object tests in the liquibase-test-harness as well as the
 Cassandra specific change objects tests created exclusively to test this extension (You can find this in the 
 `src/test/resources/liquibase/harness/change/changelogs/cassandra` directory).
