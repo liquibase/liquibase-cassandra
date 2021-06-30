@@ -36,13 +36,8 @@ jobs:
     - name: Sleep for 30 Seconds
       run: sleep 30s
 
-    - name: Install CQLSH
-      run: |
-        pip install -U cqlsh==5.0.1
-        cqlsh --version
-
     - name: Load Cassandra Config
-      run: cqlsh -f test.cql
+      run: docker run --rm -v $(pwd):/tmp cassandra cqlsh 192.168.99.100 9042 -f /tmp/test.cql
 
     - name: Test With Maven
       run: mvn clean verify
