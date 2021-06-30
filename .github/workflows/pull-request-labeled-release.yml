@@ -90,4 +90,4 @@ jobs:
 
 
     - name: Test With Maven
-      run: mvn clean verify --file pom.xml
+      run: mvn clean verify
