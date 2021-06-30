@@ -9,9 +9,8 @@ import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.ClassLoaderResourceAccessor
 import spock.lang.Specification
 
-import javax.print.DocFlavor
 
-class CassandraFunctionalTests extends Specification {
+class CassandraFunctionalTest extends Specification {
 
     def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
     def defaultSchemaName = "betterbotz"
