@@ -36,12 +36,10 @@ jobs:
     - name: Start Cassandra Container
       run: docker run -p 9042:9042 -v $(pwd):/tmp --network cass-network --name mycassandra -d cassandra
 
-
-    - name: Sleep for 30 Seconds
-      run: sleep 60s
-
-    - name: Load Cassandra Config
-      run: docker exec mycassandra cqlsh localhost 9042 -f /tmp/test.cql
+    - name: Output
+      run: |
+        docker ps -a
+        docker logs mycassandra
 
     - name: Test With Maven
       run: mvn clean verify
