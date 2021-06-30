@@ -36,9 +36,9 @@ jobs:
     - name: Sleep for 30 Seconds
       run: sleep 30s
 
-    - name: Install CQSHL
+    - name: Install CQLSH
       run: |
-        pip3 install cqlsh
+        pip install -U cqlsh
         cqlsh --version
 
     - name: Load Cassandra Config
