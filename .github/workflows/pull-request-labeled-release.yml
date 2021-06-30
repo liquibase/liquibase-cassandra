@@ -30,14 +30,17 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
 
+    - name: Create Cassandra Docker Network
+      run: docker network create cass-network
+
     - name: Start Cassandra Container
-      run: docker run -p 9042:9042 --rm --name mycassandra -d cassandra
+      run: docker run -p 9042:9042 --network cass-network --name mycassandra -d cassandra
 
     - name: Sleep for 30 Seconds
       run: sleep 30s
 
     - name: Load Cassandra Config
-      run: docker run --rm -v $(pwd):/tmp cassandra cqlsh 192.168.99.100 9042 -f /tmp/test.cql
+      run: docker run --rm --network cass-network -v $(pwd):/tmp cassandra cqlsh 192.168.99.100 9042 -f /tmp/test.cql
 
     - name: Test With Maven
       run: mvn clean verify
