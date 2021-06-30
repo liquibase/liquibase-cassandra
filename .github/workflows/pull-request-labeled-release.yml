@@ -38,7 +38,7 @@ jobs:
 
     - name: Install CQLSH
       run: |
-        pip install -U cqlsh==5.0.5
+        pip install -U cqlsh==5.0.4
         cqlsh --version
 
     - name: Load Cassandra Config
