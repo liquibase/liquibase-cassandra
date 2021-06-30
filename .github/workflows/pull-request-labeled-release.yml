@@ -38,7 +38,7 @@ jobs:
 
 
     - name: Sleep for 30 Seconds
-      run: sleep 30s
+      run: sleep 60s
 
     - name: Load Cassandra Config
       run: docker exec mycassandra cqlsh localhost 9042 -f /tmp/test.cql
