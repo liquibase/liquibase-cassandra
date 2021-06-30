@@ -40,7 +40,7 @@ jobs:
       run: sleep 30s
 
     - name: Load Cassandra Config
-      run: docker run --rm --network cass-network -v $(pwd):/tmp cassandra cqlsh 192.168.99.100 9042 -f /tmp/test.cql
+      run: docker run --rm --network cass-network -v $(pwd):/tmp cassandra cqlsh -f /tmp/test.cql
 
     - name: Test With Maven
       run: mvn clean verify
