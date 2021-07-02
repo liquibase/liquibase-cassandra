@@ -22,7 +22,7 @@ To create a local test database docker container, execute the following steps:
 - copy and paste `test.cql` file content to create keyspace and tables for tests. 
 
 #### Executing the tests
-First you need to build project - `mvn package` will do the job
+First you need to build project - `mvn package` will do the job.
 
 ##### from IDE
 From your IDE, right click on the `liquibase.ext.cassandra.LiquibaseHarnessSuiteIT` test class present in `src/test/groovy` directory. 
