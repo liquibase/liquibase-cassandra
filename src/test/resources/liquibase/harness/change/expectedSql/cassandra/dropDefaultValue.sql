@@ -1,2 +1,2 @@
 INVALID TEST
--- Cassandra does not support default values
+-- Cassandra doesn't support default values

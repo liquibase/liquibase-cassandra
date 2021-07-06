@@ -1,2 +1,2 @@
 INVALID TEST
--- Cassandra does not support stored procedures
+-- Cassandra doesn't support stored procedures

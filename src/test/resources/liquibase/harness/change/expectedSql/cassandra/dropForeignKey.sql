@@ -1,2 +1,2 @@
 INVALID TEST
--- Cassandra does not support foreign keys
+-- Cassandra doesn't support foreign keys
