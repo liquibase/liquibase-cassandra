@@ -15,7 +15,7 @@ jobs:
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'Extension Release Candidate :rocket:' ) }}
     strategy:
       matrix:
-        java: [8, 11, 16]
+        java: [8, 11]
     services:
       cassandra-3:
         image: liquibase/liquibase:cassandra-test-3
@@ -40,7 +40,7 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
     - name: Run Unit Tests With Maven
-      run: mvn surefire:test --file pom.xml
+      run: mvn test
 
   # This step is the automation to create a release based on a liquibase core bump
   # If a manual release is required, the steps below will need to be done manually prior
