@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.liquibase.ext</groupId>
     <artifactId>liquibase-cassandra</artifactId>
-    <version>4.3.6-SNAPSHOT</version>
+    <version>4.4.2-SNAPSHOT</version>
     <name>Liquibase Extension: Cassandra Database Support</name>
     <description>Adds support for Cassandra database</description>
     <url>https://github.com/liquibase/liquibase-cassandra</url>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.3.5</version>
+            <version>4.4.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-test-harness</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -102,6 +102,24 @@
             </plugin>
 
             <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.12.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>compile</goal>
+                            <goal>compileTests</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.8</source>
@@ -115,7 +133,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>false</skipTests>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <reportFormat>plain</reportFormat>
                 </configuration>
@@ -126,11 +143,6 @@
                         <goals>
                             <goal>test</goal>
                         </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>integration-tests</id>
@@ -141,7 +153,6 @@
                         <configuration>
                             <includes>
                                 <include>**/*IT.java</include>
-                                <include>**/*Test.java</include>
                             </includes>
                         </configuration>
                     </execution>
