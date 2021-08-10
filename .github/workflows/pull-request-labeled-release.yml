@@ -30,11 +30,8 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
 
-    - name: Create Cassandra Docker Network
-      run: docker network create cass-network
-
     - name: Start Cassandra Container
-      run: docker run -p 9042:9042 -v $(pwd):/app --network cass-network --name mycassandra -d cassandra
+      run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -d cassandra
 
     - name: Output
       run: |
