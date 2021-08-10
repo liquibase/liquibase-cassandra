@@ -33,13 +33,14 @@ jobs:
     - name: Start Cassandra Container
       run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -d cassandra
 
-    - name: Output
-      run: |
-        docker ps -a
-        docker logs mycassandra
-
     - name: Sleep for 30 Seconds
       run: sleep 30s
+
+    - name: Check cassandra status
+      run: docker ps -a
+
+    - name: Check cassandra logs
+      run: docker logs mycassandra
 
     - name: Load Cassandra Config
       run: docker exec mycassandra cqlsh localhost 9042 -f /app/test.cql
