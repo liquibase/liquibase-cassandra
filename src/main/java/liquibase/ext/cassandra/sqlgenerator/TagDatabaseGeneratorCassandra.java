@@ -42,45 +42,42 @@ public class TagDatabaseGeneratorCassandra extends TagDatabaseGenerator {
 
 		try {
 			String tagEscaped = DataTypeFactory.getInstance().fromObject(statement.getTag(), database).objectToSql(statement.getTag(), database);
-			//Added condition to check database type = cassandra to execute below code
-			if (database instanceof CassandraDatabase) {
+			
 
-				Statement statement1 = ((CassandraDatabase) database).getStatement();
-				//Query to get last executed changeset date
-				String query1 = "SELECT TOUNIXTIMESTAMP(MAX(DATEEXECUTED)) as DATEEXECUTED FROM " + 
-						database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog");
-				ResultSet rs1 = statement1.executeQuery(query1);
-				String date = "";
-				while (rs1.next()) {
-					date =  rs1.getString("DATEEXECUTED");
-				}
-				rs1.close();
-				//Query to get composite key details of last executed change set
-				String query2 = "select id,author, filename from " + 
-						database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog")
-								+ " where dateexecuted = '"+date+"' ALLOW FILTERING";
-				ResultSet rs2 = statement1.executeQuery(query2);
-				String id = "", author = "", filename = "";
-				while (rs2.next()) {
-					id = rs2.getString("id");
-					author = rs2.getString("author");
-					filename = rs2.getString("filename");
-				}
-				rs2.close();
-				statement1.close();
-				//Query to update tag 
-				String updateQuery = "UPDATE " 
-						+ database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog")
-						+ " SET TAG = "+tagEscaped
-						+ " WHERE id = '"+ id +"' and author = '"+ author +"' and filename = '"+ filename+ "'";
-
-				return new Sql[]{
-					new UnparsedSql(updateQuery)
-				};
-
-			} else {
-				return super.generateSql(statement, database, sqlGeneratorChain);
+			Statement statement1 = ((CassandraDatabase) database).getStatement();
+			//Query to get last executed changeset date
+			String query1 = "SELECT TOUNIXTIMESTAMP(MAX(DATEEXECUTED)) as DATEEXECUTED FROM " + 
+					database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog");
+			ResultSet rs1 = statement1.executeQuery(query1);
+			String date = "";
+			while (rs1.next()) {
+				date =  rs1.getString("DATEEXECUTED");
 			}
+			rs1.close();
+			//Query to get composite key details of last executed change set
+			String query2 = "select id,author, filename from " + 
+					database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog")
+							+ " where dateexecuted = '"+date+"' ALLOW FILTERING";
+			ResultSet rs2 = statement1.executeQuery(query2);
+			String id = "", author = "", filename = "";
+			while (rs2.next()) {
+				id = rs2.getString("id");
+				author = rs2.getString("author");
+				filename = rs2.getString("filename");
+			}
+			rs2.close();
+			statement1.close();
+			//Query to update tag 
+			String updateQuery = "UPDATE " 
+					+ database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog")
+					+ " SET TAG = "+tagEscaped
+					+ " WHERE id = '"+ id +"' and author = '"+ author +"' and filename = '"+ filename+ "'";
+
+			return new Sql[]{
+				new UnparsedSql(updateQuery)
+			};
+
+			
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
