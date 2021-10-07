@@ -14,7 +14,8 @@ public class UniqueConstraintSnapshotGeneratorCassandra extends UniqueConstraint
     @Override
     public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
         if (database instanceof CassandraDatabase) {
-            return PRIORITY_DATABASE;
+            int priority = super.getPriority(objectType, database);
+            return priority == 0 ? priority : priority + PRIORITY_DATABASE;
         } else {
             return PRIORITY_NONE;
         }

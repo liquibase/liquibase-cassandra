@@ -24,7 +24,8 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
     @Override
     public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
         if (database instanceof CassandraDatabase) {
-            return super.getPriority(objectType, database);
+            int priority = super.getPriority(objectType, database);
+            return priority == 0 ? priority : priority + PRIORITY_DATABASE;
         }
         return PRIORITY_NONE;
     }

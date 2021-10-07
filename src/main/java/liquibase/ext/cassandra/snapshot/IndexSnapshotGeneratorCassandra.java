@@ -21,11 +21,11 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
 
     @Override
     public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
-        int priority = super.getPriority(objectType, database);
         if (database instanceof CassandraDatabase) {
-            priority += PRIORITY_DATABASE;
+            int priority = super.getPriority(objectType, database);
+            return priority == 0 ? priority : priority + PRIORITY_DATABASE;
         }
-        return priority;
+        return PRIORITY_NONE;
     }
 
     @Override
