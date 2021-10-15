@@ -18,7 +18,10 @@ import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.statement.core.UnlockDatabaseChangeLogStatement;
+import liquibase.util.NetUtil;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -52,17 +55,16 @@ public class LockServiceCassandra extends StandardLockService {
             super.init();
 
 
-            boolean locked = executor.queryForInt(
-                    new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where " +
-                            "locked = TRUE ALLOW FILTERING")
-            ) > 0;
-
-            if (locked) {
+            if (isLocked(executor)) {
                 return false;
             } else {
 
                 executor.comment("Lock Database");
                 int rowsUpdated = executor.update(new LockDatabaseChangeLogStatement());
+                if (rowsUpdated == -1 && !isLockedByCurrentInstance(executor)) {
+                    // another node was faster
+                    return false;
+                }
                 if ((rowsUpdated == -1) && (database instanceof MSSQLDatabase)) {
 
                     Scope.getCurrentScope().getLog(this.getClass()).info("Database did not return a proper row count (Might have NOCOUNT enabled)");
@@ -177,6 +179,25 @@ public class LockServiceCassandra extends StandardLockService {
             }
         }
         return isDatabaseChangeLogLockTableInitialized;
+    }
+
+    private boolean isLocked(Executor executor) throws DatabaseException {
+        return executor.queryForInt(
+                new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where " +
+                        "locked = TRUE ALLOW FILTERING")
+        ) > 0;
+    }
+
+    private boolean isLockedByCurrentInstance(Executor executor) throws DatabaseException {
+        try {
+            final String lockedBy = NetUtil.getLocalHostName() + " (" + NetUtil.getLocalHostAddress() + ")";
+            return executor.queryForInt(
+                    new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where " +
+                            "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING")
+            ) > 0;
+        } catch (SocketException | UnknownHostException e) {
+            throw new UnexpectedLiquibaseException(e);
+        }
     }
 
 }
