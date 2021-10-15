@@ -33,7 +33,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         boolean hasChangeLogTable;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from " + getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
+            statement.executeQuery("select ID from " + getChangeLogTableName());
             statement.close();
             hasChangeLogTable = true;
         } catch (SQLException e) {
@@ -54,8 +54,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         int next = 0;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " +
-                    getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
+            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + getChangeLogTableName());
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
@@ -70,11 +69,17 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
-        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + database.getDefaultCatalogName() +
-                ".DATABASECHANGELOG");
+        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + getChangeLogTableName());
         final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
         returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
         return returnList;
     }
 
+    private String getChangeLogTableName() {
+        if(getDatabase().getDefaultCatalogName() != null) {
+            return getDatabase().getDefaultCatalogName() + "." + getDatabase().getDatabaseChangeLogTableName();
+        } else {
+            return getDatabase().getDatabaseChangeLogTableName();
+        }
+    }
 }

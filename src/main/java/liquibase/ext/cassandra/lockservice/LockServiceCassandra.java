@@ -53,7 +53,7 @@ public class LockServiceCassandra extends StandardLockService {
 
 
             boolean locked = executor.queryForInt(
-                    new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where " +
+                    new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogTableName() + " where " +
                             "locked = TRUE ALLOW FILTERING")
             ) > 0;
 
@@ -143,7 +143,7 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID from " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK");
+            statement.executeQuery("SELECT ID from " + getChangeLogTableName());
             statement.close();
             hasChangeLogLockTable = true;
         } catch (SQLException e) {
@@ -165,7 +165,7 @@ public class LockServiceCassandra extends StandardLockService {
 
             try {
                 isDatabaseChangeLogLockTableInitialized = executor.queryForInt(
-                        new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK")
+                        new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogTableName())
                 ) > 0;
             } catch (LiquibaseException e) {
                 if (executor.updatesDatabase()) {
@@ -177,6 +177,14 @@ public class LockServiceCassandra extends StandardLockService {
             }
         }
         return isDatabaseChangeLogLockTableInitialized;
+    }
+
+    private String getChangeLogTableName() {
+        if(database.getDefaultCatalogName() != null) {
+            return database.getDefaultCatalogName() + "." + database.getDatabaseChangeLogTableName();
+        } else {
+            return database.getDatabaseChangeLogTableName();
+        }
     }
 
 }
