@@ -87,7 +87,7 @@ jobs:
       - name: Install liquibase.jar
         run: |
           mvn -B org.apache.maven.plugins:maven-install-plugin:3.0.0-M1:install-file -Dfile=liquibase.jar
-          rm liquibase.jark
+          rm liquibase.jar
 
       - name: Update pom.xml with release versions and commit changes
         run: |
