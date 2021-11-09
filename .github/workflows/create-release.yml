@@ -87,17 +87,21 @@ jobs:
       - name: Install liquibase.jar
         run: |
           mvn -B org.apache.maven.plugins:maven-install-plugin:3.0.0-M1:install-file -Dfile=liquibase.jar
-          rm liquibase.jar
 
       - name: Update pom.xml with release versions and commit changes
         run: |
           mvn -B versions:set -DnewVersion=${{ needs.setup.outputs.extensionVersion }} -DallowSnapshots=false -DoldVersion="*"
           mvn -B versions:use-dep-version -Dincludes=org.liquibase:liquibase-core -DdepVersion=${{ needs.setup.outputs.liquibaseVersion }} -DforceVersion=true
 
-          git add pom.xml
-          git commit -m "Version Bumped to ${{ needs.setup.outputs.extensionVersion }}"
-          git tag -a -m "Version Bumped to ${{ needs.setup.outputs.extensionVersion }}" liquibase-cassandra-${{ needs.setup.outputs.extensionVersion }}
-          git push "https://liquibot:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${{ github.ref }} --follow-tags --tags
+          if git diff-index --cached --quiet HEAD --
+          then
+            echo "Nothing new to commit"
+          else
+            git add pom.xml
+            git commit -m "Version Bumped to ${{ needs.setup.outputs.extensionVersion }}"
+            git tag -a -m "Version Bumped to ${{ needs.setup.outputs.extensionVersion }}" liquibase-cassandra-${{ needs.setup.outputs.extensionVersion }}
+            git push "https://liquibot:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${{ github.ref }} --follow-tags --tags
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
 
