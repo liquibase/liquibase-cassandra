@@ -30,22 +30,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public boolean hasDatabaseChangeLogTable() {
-        boolean hasChangeLogTable;
-        try {
-            Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from " + getDatabase().getDefaultCatalogName() + ".DATABASECHANGELOG");
-            statement.close();
-            hasChangeLogTable = true;
-        } catch (SQLException e) {
-            Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOG available in cassandra.");
-            hasChangeLogTable = false;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            hasChangeLogTable = false;
-        }
-
-        // needs to be generated up front
-        return hasChangeLogTable;
+        return ((CassandraDatabase)getDatabase()).hasDatabaseChangeLogLockTable();
     }
 
 
@@ -62,7 +47,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
             }
             statement.close();
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException | DatabaseException e) {
             e.printStackTrace();
         }
         return next + 1;
