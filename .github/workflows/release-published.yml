@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ needs.setup.outputs.version }}
+          ref: ${{ needs.setup.outputs.tag }}
 
       - name: Set up Java for publishing to Maven Central Repository
         uses: actions/setup-java@v2
