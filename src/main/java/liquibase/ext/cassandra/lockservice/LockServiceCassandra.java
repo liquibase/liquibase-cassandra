@@ -12,7 +12,6 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.lockservice.StandardLockService;
-import liquibase.logging.LogFactory;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
@@ -53,7 +52,7 @@ public class LockServiceCassandra extends StandardLockService {
 
 
             boolean locked = executor.queryForInt(
-                    new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK where " +
+                    new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " where " +
                             "locked = TRUE ALLOW FILTERING")
             ) > 0;
 
@@ -140,7 +139,22 @@ public class LockServiceCassandra extends StandardLockService {
 
     @Override
     public boolean hasDatabaseChangeLogLockTable() {
-        return ((CassandraDatabase)database).hasDatabaseChangeLogLockTable();
+        boolean hasChangeLogLockTable;
+        try {
+            Statement statement = ((CassandraDatabase) database).getStatement();
+            statement.executeQuery("SELECT ID from " + getChangeLogLockTableName());
+            statement.close();
+            hasChangeLogLockTable = true;
+        } catch (SQLException e) {
+            Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogLockTableName() + " available in cassandra.");
+            hasChangeLogLockTable = false;
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+            hasChangeLogLockTable = false;
+        }
+
+        // needs to be generated up front
+        return hasChangeLogLockTable;
     }
 
     @Override
@@ -150,7 +164,7 @@ public class LockServiceCassandra extends StandardLockService {
 
             try {
                 isDatabaseChangeLogLockTableInitialized = executor.queryForInt(
-                        new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK")
+                        new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName())
                 ) > 0;
             } catch (LiquibaseException e) {
                 if (executor.updatesDatabase()) {
@@ -164,4 +178,11 @@ public class LockServiceCassandra extends StandardLockService {
         return isDatabaseChangeLogLockTableInitialized;
     }
 
+    private String getChangeLogLockTableName() {
+        if(database.getLiquibaseCatalogName() != null) {
+            return database.getLiquibaseCatalogName() + "." + database.getDatabaseChangeLogLockTableName();
+        } else {
+            return database.getDatabaseChangeLogLockTableName();
+        }
+    }
 }
