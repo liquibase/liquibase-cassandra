@@ -59,7 +59,10 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public String getDefaultDriver(String url) {
-		return "com.simba.cassandra.jdbc42.Driver";
+		if (url.startsWith("jdbc:cassandra:")) {
+			return "com.simba.cassandra.jdbc42.Driver";
+		}
+		return null;
 	}
 
 	@Override
