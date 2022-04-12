@@ -15,6 +15,7 @@ import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.database.ObjectQuotingStrategy;
 import liquibase.datatype.DataTypeFactory;
+import liquibase.exception.DatabaseException;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -79,13 +80,7 @@ public class TagDatabaseGeneratorCassandra extends TagDatabaseGenerator {
 
 			
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return super.generateSql(statement, database, sqlGeneratorChain);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException | DatabaseException e) {
 			return super.generateSql(statement, database, sqlGeneratorChain);
 		} finally {
 			database.setObjectQuotingStrategy(currentStrategy);
