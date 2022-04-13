@@ -21,11 +21,11 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
 
     @Override
     public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
-        int priority = super.getPriority(objectType, database);
         if (database instanceof CassandraDatabase) {
-            priority += PRIORITY_DATABASE;
+            int priority = super.getPriority(objectType, database);
+            return priority == 0 ? priority : priority + PRIORITY_DATABASE;
         }
-        return priority;
+        return PRIORITY_NONE;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
             Relation relation = (Relation) foundObject;
             Database database = snapshot.getDatabase();
 
-            String query = String.format("SELECT INDEX_NAME, OPTIONS FROM system_schema.indexes WHERE keyspace_name = '%s' AND TABLE_NAME='%s';",
+            String query = String.format("SELECT KEYSPACE_NAME, INDEX_NAME, OPTIONS FROM system_schema.indexes WHERE KEYSPACE_NAME = '%s' AND TABLE_NAME='%s';",
                     database.getDefaultCatalogName(), relation.getName());
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",
                     database);
@@ -52,7 +52,8 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
     private Index readIndex(Map<String, ?> tableMap, Relation relation) {
         String indexName = StringUtil.trimToNull((String) tableMap.get("INDEX_NAME"));
         String options = StringUtil.trimToNull((String) tableMap.get("OPTIONS"));
-
+        // we don't really need KEYSPACE_NAME param in query to build Column obj, but Astra Cassandra implementation
+        // (and maybe some others) fails if it's missing
         Index index = new Index();
         index.setName(indexName);
         index.setRelation(relation);
@@ -85,7 +86,7 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
         Relation relation = ((Index) example).getRelation();
         Database database = snapshot.getDatabase();
 
-        String query = String.format("SELECT INDEX_NAME, OPTIONS FROM system_schema.indexes WHERE keyspace_name = '%s' AND TABLE_NAME='%s' AND INDEX_NAME= '%s';",
+        String query = String.format("SELECT KEYSPACE_NAME, INDEX_NAME, OPTIONS FROM system_schema.indexes WHERE KEYSPACE_NAME = '%s' AND TABLE_NAME='%s' AND INDEX_NAME= '%s';",
                 database.getDefaultCatalogName(), relation.getName(), example.getName());
         Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",
                 database);

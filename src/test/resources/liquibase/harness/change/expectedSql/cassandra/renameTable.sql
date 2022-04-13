@@ -1,2 +1,2 @@
 INVALID TEST
--- Cassandra does not support renaming tables
+-- Cassandra doesn't support renaming tables

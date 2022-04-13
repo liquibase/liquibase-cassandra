@@ -1,6 +1,7 @@
 package liquibase.ext.cassandra.sqlgenerator;
 
 import liquibase.database.Database;
+import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
@@ -13,6 +14,11 @@ public class LockDatabaseChangeLogGeneratorCassandra extends LockDatabaseChangeL
     @Override
     public int getPriority() {
         return PRIORITY_DATABASE;
+    }
+
+    @Override
+    public boolean supports(LockDatabaseChangeLogStatement statement, Database database) {
+        return super.supports(statement, database) && database instanceof CassandraDatabase;
     }
 
     @Override

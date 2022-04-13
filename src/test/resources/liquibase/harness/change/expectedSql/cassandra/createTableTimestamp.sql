@@ -1,0 +1,1 @@
+CREATE TABLE test_table_timestamp (test_id INT, test_column timestamp, PRIMARY KEY (test_id))

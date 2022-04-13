@@ -1,4 +1,4 @@
-liquibase-cassandra
+liquibase-cassandra [![Build and Test Extention](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml)
 ===================
 
 Liquibase extension for Cassandra Support.
@@ -14,7 +14,7 @@ get ip
 
 `docker inspect mycassandra`
  
-start another instance for cqlsh
+start another instance for cqlsh, check for IP address, replace mentioned IP with the one inspect command shows
 
 `docker run -it --rm cassandra bash`
 

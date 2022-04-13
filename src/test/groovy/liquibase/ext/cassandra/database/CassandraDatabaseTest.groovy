@@ -9,4 +9,11 @@ class CassandraDatabaseTest extends Specification {
         new CassandraDatabase().getShortName() == "cassandra"
     }
 
+    def getDefaultDriver() {
+        expect:
+        new CassandraDatabase().getDefaultDriver(null) == null
+        new CassandraDatabase().getDefaultDriver("jdbc:mysql://localhost") == null
+        new CassandraDatabase().getDefaultDriver("jdbc:cassandra://localhost") != null
+    }
+
 }

@@ -63,7 +63,10 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public String getDefaultDriver(String url) {
-		return "com.simba.cassandra.jdbc42.Driver";
+		if (String.valueOf(url).startsWith("jdbc:cassandra:")) {
+			return "com.simba.cassandra.jdbc42.Driver";
+		}
+		return null;
 	}
 
 	@Override
@@ -180,11 +183,27 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return getKeyspace();
 	}
 
-	public Statement getStatement() throws ClassNotFoundException, SQLException {
-		String url = super.getConnection().getURL();
-		Class.forName("com.simba.cassandra.jdbc42.Driver");
-		Connection con = DriverManager.getConnection(url);
-		return con.createStatement();
+	public Statement getStatement() throws DatabaseException {
+		return ((JdbcConnection) super.getConnection()).createStatement();
+	}
+
+	public boolean hasDatabaseChangeLogLockTable() {
+		boolean hasChangeLogLockTable;
+		try {
+			Statement statement = getStatement();
+			statement.executeQuery("SELECT ID from " + getDefaultCatalogName() + ".DATABASECHANGELOGLOCK");
+			statement.close();
+			hasChangeLogLockTable = true;
+		} catch (SQLException e) {
+			Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
+			hasChangeLogLockTable = false;
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			hasChangeLogLockTable = false;
+		}
+
+		// needs to be generated up front
+		return hasChangeLogLockTable;
 	}
 
 	@Override
