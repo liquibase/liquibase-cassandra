@@ -10,17 +10,9 @@ databasesUnderTest:
     password: cassandra
     dbSchema: betterbotz
 
-
 - name: cassandra
     version: 4
     url: jdbc:cassandra://localhost:9043;DefaultKeyspace=betterbotz
     username: cassandra
     password: cassandra
     dbSchema: betterbotz
-
-#  - name: cassandra
-#    version: astra-cloud
-#    url: jdbc:cassandra://353ebebb-14fb-4327-9438-a766616f6d1d-eu-central-1.db.astra.datastax.com:29080;DefaultKeyspace=liquibase;AuthMech=2;UID=kushnirykoleh@gmail.com;PWD=CfBiemMxp2nR8s@;SecureConnectionBundlePath=/Users/okush/Downloads/secure-connect-lbcat.zip;TunableConsistency=6
-#    username: kushnirykoleh@gmail.com
-#    password: CfBiemMxp2nR8s@
-#    dbSchema: liquibase

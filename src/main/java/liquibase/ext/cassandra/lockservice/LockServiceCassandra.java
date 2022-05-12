@@ -140,22 +140,7 @@ public class LockServiceCassandra extends StandardLockService {
 
     @Override
     public boolean hasDatabaseChangeLogLockTable() {
-        boolean hasChangeLogLockTable;
-        try {
-            Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID from " + database.getDefaultCatalogName() + ".DATABASECHANGELOGLOCK");
-            statement.close();
-            hasChangeLogLockTable = true;
-        } catch (SQLException e) {
-            Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
-            hasChangeLogLockTable = false;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            hasChangeLogLockTable = false;
-        }
-
-        // needs to be generated up front
-        return hasChangeLogLockTable;
+        return ((CassandraDatabase)database).hasDatabaseChangeLogLockTable();
     }
 
     @Override
