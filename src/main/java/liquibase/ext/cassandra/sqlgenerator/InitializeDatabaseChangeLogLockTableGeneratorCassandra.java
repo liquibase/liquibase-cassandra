@@ -27,7 +27,7 @@ public class InitializeDatabaseChangeLogLockTableGeneratorCassandra extends Init
         RawSqlStatement deleteStatement = new RawSqlStatement("TRUNCATE TABLE " + database.escapeTableName(
                 database.getLiquibaseCatalogName(),
                 database.getLiquibaseSchemaName(),
-                "databasechangeloglock".toUpperCase()));
+                database.getDatabaseChangeLogLockTableName().toUpperCase()));
 
         return SqlGeneratorFactory.getInstance().generateSql(deleteStatement, database);
 

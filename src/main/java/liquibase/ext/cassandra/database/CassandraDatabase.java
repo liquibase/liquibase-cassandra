@@ -135,25 +135,6 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		return ((JdbcConnection) super.getConnection()).createStatement();
 	}
 
-	public boolean hasDatabaseChangeLogLockTable() {
-		boolean hasChangeLogLockTable;
-		try {
-			Statement statement = getStatement();
-			statement.executeQuery("SELECT ID from " + getDefaultCatalogName() + ".DATABASECHANGELOGLOCK");
-			statement.close();
-			hasChangeLogLockTable = true;
-		} catch (SQLException e) {
-			Scope.getCurrentScope().getLog(getClass()).info("No DATABASECHANGELOGLOCK available in cassandra.");
-			hasChangeLogLockTable = false;
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			hasChangeLogLockTable = false;
-		}
-
-		// needs to be generated up front
-		return hasChangeLogLockTable;
-	}
-
 	@Override
 	public boolean jdbcCallsCatalogsSchemas() {
 		return true;

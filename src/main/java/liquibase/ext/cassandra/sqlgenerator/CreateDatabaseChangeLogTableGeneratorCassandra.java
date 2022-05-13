@@ -36,7 +36,7 @@ public class CreateDatabaseChangeLogTableGeneratorCassandra extends CreateDataba
 
 
         RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE IF NOT EXISTS " +
-                database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), "databasechangelog") +
+                database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName()) +
                 "( ID TEXT, AUTHOR TEXT, FILENAME TEXT, DATEEXECUTED timestamp, ORDEREXECUTED INT, EXECTYPE TEXT, MD5SUM TEXT, DESCRIPTION TEXT, COMMENTS TEXT, TAG TEXT, LIQUIBASE TEXT, CONTEXTS TEXT, LABELS TEXT, DEPLOYMENT_ID TEXT,PRIMARY KEY (ID, AUTHOR, FILENAME))");
 
         return SqlGeneratorFactory.getInstance().generateSql(createTableStatement, database);
