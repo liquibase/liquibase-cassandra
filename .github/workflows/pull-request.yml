@@ -25,7 +25,7 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
     - name: Run Unit Tests With Maven
-      run: mvn test package
+      run: mvn -B test package
 
     - name: Cache Built Code
       uses: actions/cache@v2
@@ -86,7 +86,7 @@ jobs:
         run: docker exec mycassandra cqlsh localhost 9042 -f /app/test.cql
 
       - name: Run Tests
-        run: mvn -B verify
+        run: mvn -B test verify
 
       - name: Archive Test Results
         if: ${{ always() }}
