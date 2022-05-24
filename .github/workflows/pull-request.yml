@@ -14,15 +14,6 @@ jobs:
     strategy:
       matrix:
         java: [8, 11]
-    services:
-      cassandra-3:
-        image: liquibase/liquibase:cassandra-test-3
-        ports:
-          - "9042:9042"
-      cassandra-4:
-        image: liquibase/liquibase:cassandra-test-4
-        ports:
-          - "9043:9042"
     steps:
     - uses: actions/checkout@v2
 
@@ -62,6 +53,15 @@ jobs:
     strategy:
       matrix:
         java: [8, 11]
+    services:
+      cassandra-3:
+        image: liquibase/liquibase:cassandra-test-3
+        ports:
+          - "9042:9042"
+      cassandra-4:
+        image: liquibase/liquibase:cassandra-test-4
+        ports:
+          - "9043:9042"
     steps:
       - uses: actions/checkout@v2
 
