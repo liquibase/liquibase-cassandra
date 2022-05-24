@@ -42,6 +42,11 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	}
 
 	@Override
+	public int getDatabaseMinorVersion() throws DatabaseException {
+		return 0;
+	}
+
+	@Override
 	public boolean supportsInitiallyDeferrableColumns() {
 		return false;
 	}
