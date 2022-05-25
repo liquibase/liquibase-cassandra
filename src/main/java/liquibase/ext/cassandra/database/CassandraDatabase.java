@@ -109,8 +109,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		if (keyspace == null) {
 			try {
 				if (this.getConnection() instanceof JdbcConnection) {
-					keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
-							.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
+					keyspace = ((JdbcConnection)this.getConnection()).getUnderlyingConnection().getSchema();
 				}
 			} catch (Exception e) {
 				Scope.getCurrentScope().getLog(CassandraDatabase.class)
