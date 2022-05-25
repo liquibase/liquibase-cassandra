@@ -67,7 +67,7 @@ class CassandraFunctionalIT extends Specification {
         def stringWriter = new StringWriter()
         liquibase.changeLogSync((Contexts) null, (LabelExpression) null, stringWriter)
         then:
-        assert stringWriter.toString().contains("UPDATE betterbotz.databasechangeloglock SET LOCKED = TRUE")
+        assert stringWriter.toString().contains("UPDATE betterbotz.DATABASECHANGELOGLOCK SET LOCKED = TRUE")
 
     }
 
@@ -78,7 +78,7 @@ class CassandraFunctionalIT extends Specification {
         def statusOutput = new StringWriter()
         liquibase.reportStatus(false, (Contexts) null, statusOutput)
         then:
-        statusOutput.toString().trim() == "@jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz is up to date"
+        statusOutput.toString().trim() == "@$url is up to date"
 
     }
 
