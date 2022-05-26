@@ -10,7 +10,7 @@
     <changeSet id="2" author="ylacaute">
         <sql>
             CREATE TABLE IF NOT EXISTS TEST_SCHEMA.products (
-              id uuid,
+              id int,
               name text
             );
         </sql>

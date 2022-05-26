@@ -8,9 +8,6 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -39,6 +36,11 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public Integer getDefaultPort() {
 		return 9160;
+	}
+
+	@Override
+	public int getDatabaseMinorVersion() throws DatabaseException {
+		return 0;
 	}
 
 	@Override
