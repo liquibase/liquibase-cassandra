@@ -47,7 +47,7 @@ jobs:
           target/*.jar
 
   integration-tests:
-    name: Integration Tests -- Java ${{ matrix.java }}
+    name: Integration Tests -- Java ${{ matrix.java }} on Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
     needs: unit-test
     strategy:
