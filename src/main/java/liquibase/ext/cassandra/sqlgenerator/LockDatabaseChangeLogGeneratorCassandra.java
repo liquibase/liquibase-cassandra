@@ -25,7 +25,7 @@ public class LockDatabaseChangeLogGeneratorCassandra extends LockDatabaseChangeL
     public Sql[] generateSql(LockDatabaseChangeLogStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         RawSqlStatement updateStatement = new RawSqlStatement("UPDATE " +
                 database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName()) +
-                " SET LOCKED = TRUE, LOCKEDBY = '" + hostname + " (" + hostaddress + ")" + "', LOCKGRANTED = " + System.currentTimeMillis() + " WHERE ID = 1");
+                " SET LOCKED = TRUE, LOCKEDBY = '" + hostname + " (" + hostaddress + ")" + "', LOCKGRANTED = " + System.currentTimeMillis() + " WHERE ID = 1 IF LOCKED = FALSE");
         return SqlGeneratorFactory.getInstance().generateSql(updateStatement, database);
     }
 
