@@ -123,7 +123,7 @@ jobs:
             target/*.jar
 
   integration-tests:
-    name: Java ${{ matrix.java }}
+    name: Integration Tests -- Java ${{ matrix.java }} on Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
     needs: build
     strategy:
@@ -132,24 +132,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache Local Maven Repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Cache Built Code
+      - name: Restore Built Code
         uses: actions/cache@v2
         with:
           key: built-code-${{ github.run_id }}
           path: ./**/target
 
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'adopt'
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: Start Cassandra Container
         run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -d cassandra
@@ -167,7 +161,7 @@ jobs:
         run: docker exec mycassandra cqlsh localhost 9042 -f /app/test.cql
 
       - name: Run Tests
-        run: mvn -B verify
+        run: mvn -B test verify
 
       - name: Archive Test Results
         if: ${{ always() }}
