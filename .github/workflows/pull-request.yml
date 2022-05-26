@@ -1,4 +1,4 @@
-name: Run Unit Tests
+name: Build & Test
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   unit-test:
-    name: Java ${{ matrix.java }}
+    name: Unit Test -- Java ${{ matrix.java }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -47,7 +47,7 @@ jobs:
           target/*.jar
 
   integration-tests:
-    name: Java ${{ matrix.java }}
+    name: Integration Tests -- Java ${{ matrix.java }}
     runs-on: ubuntu-latest
     needs: unit-test
     strategy:

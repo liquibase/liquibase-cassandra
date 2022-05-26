@@ -182,7 +182,7 @@ public class LockServiceCassandra extends StandardLockService {
 
     private boolean isLocked(Executor executor) throws DatabaseException {
         return executor.queryForInt(
-                new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + "." + getChangeLogLockTableName() + " where " +
+                new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " where " +
                         "locked = TRUE ALLOW FILTERING")
         ) > 0;
     }
@@ -191,7 +191,7 @@ public class LockServiceCassandra extends StandardLockService {
         try {
             final String lockedBy = NetUtil.getLocalHostName() + " (" + NetUtil.getLocalHostAddress() + ")";
             return executor.queryForInt(
-                    new RawSqlStatement("SELECT COUNT(*) FROM " + database.getDefaultCatalogName() + "." + getChangeLogLockTableName() + " where " +
+                    new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " where " +
                             "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING")
             ) > 0;
         } catch (SocketException | UnknownHostException e) {

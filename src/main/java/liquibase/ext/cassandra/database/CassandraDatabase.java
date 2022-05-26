@@ -111,10 +111,6 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 				if (this.getConnection() instanceof JdbcConnection) {
 					keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
 							.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
-					if (keyspace.contains(".")) {
-						//sometimes seem to return it in "catalog.schema" like format
-						keyspace = keyspace.split("\\.")[1];
-					}
 				}
 			} catch (Exception e) {
 				Scope.getCurrentScope().getLog(CassandraDatabase.class)
