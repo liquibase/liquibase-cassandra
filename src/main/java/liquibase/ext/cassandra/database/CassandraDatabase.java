@@ -1,7 +1,5 @@
 package liquibase.ext.cassandra.database;
 
-import com.simba.cassandra.cassandra.core.CDBJDBCConnection;
-import com.simba.cassandra.jdbc.jdbc42.S42Connection;
 import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
@@ -106,8 +104,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		if (keyspace == null) {
 			try {
 				if (this.getConnection() instanceof JdbcConnection) {
-					keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
-							.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
+					keyspace = ((JdbcConnection)this.getConnection()).getUnderlyingConnection().getSchema();          
 				}
 			} catch (Exception e) {
 				Scope.getCurrentScope().getLog(CassandraDatabase.class)
