@@ -6,7 +6,9 @@ import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.InitializeDatabaseChangeLogLockTableGenerator;
+import liquibase.statement.SqlStatement;
 import liquibase.statement.core.InitializeDatabaseChangeLogLockTableStatement;
+import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.RawSqlStatement;
 
 public class InitializeDatabaseChangeLogLockTableGeneratorCassandra extends InitializeDatabaseChangeLogLockTableGenerator {
@@ -29,7 +31,11 @@ public class InitializeDatabaseChangeLogLockTableGeneratorCassandra extends Init
                 database.getLiquibaseSchemaName(),
                 database.getDatabaseChangeLogLockTableName().toUpperCase()));
 
-        return SqlGeneratorFactory.getInstance().generateSql(deleteStatement, database);
+        InsertStatement insertStatement = new InsertStatement(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName().toUpperCase())
+                .addColumnValue("ID", 1)
+                .addColumnValue("LOCKED", Boolean.FALSE);
+
+        return SqlGeneratorFactory.getInstance().generateSql(new SqlStatement[]{deleteStatement, insertStatement}, database);
 
     }
 
