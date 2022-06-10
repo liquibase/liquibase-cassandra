@@ -80,3 +80,13 @@ INSERT INTO posts(id, author_id, title, description, content, inserted_date) VAL
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
 (5,5,'deserunt','temporibus','Mollitia reiciendis debitis est voluptatem est neque.','1979-12-06');
 ```
+
+## Contributing
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+<a name="license"></a>
+## License
+
+This project is licensed under the Apache License Version 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+
