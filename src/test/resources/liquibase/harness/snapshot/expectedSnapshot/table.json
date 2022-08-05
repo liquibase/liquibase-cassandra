@@ -1,0 +1,25 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "snapshot_test_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "snapshot_table_test_int"
+          }
+        },
+        {
+          "column": {
+            "name": "snapshot_table_test_varchar"
+          }
+        }
+      ]
+    }
+  }
+}
