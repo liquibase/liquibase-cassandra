@@ -4,8 +4,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<!--    This changelog overrides default inherited from test harness because-->
+    <!-- varchar type doesn't have length in Cassandra-->
     <changeSet id="1" author="oleh">
-        <renameColumn columnDataType="varchar(50) NOT NULL"
+        <renameColumn columnDataType="varchar NOT NULL"
                       newColumnName="id_renameColumn_test"
                       oldColumnName="id"
                       tableName="authors"/>

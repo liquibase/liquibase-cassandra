@@ -4,8 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-<!--https://docs.liquibase.com/change-types/community/add-default-value.html-->
-        <changeSet author="oleh" id="1">
+    <!--    This changelog overrides default inherited from test harness because-->
+    <!-- varchar type doesn't have length in Cassandra-->
+    <changeSet author="oleh" id="1">
             <addColumn tableName="posts">
                 <column name="varcharColumn" type="varchar"/>
             </addColumn>

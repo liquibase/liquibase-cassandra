@@ -16,15 +16,15 @@ CREATE TABLE authors (
 );
 
 INSERT INTO authors(id, first_name, last_name, email, birthdate, added) VALUES
-(1,'Courtney','Hodkiewicz','borer.edison@example.org','1986-01-22','1983-08-23 14:55:09');
+(1,'Eileen','Lubowitz','ppaucek@example.org','1991-03-04','2004-05-30 02:08:25');
 INSERT INTO authors(id, first_name, last_name, email, birthdate, added) VALUES
-(2,'Marielle','Kuhlman','llakin@example.org','1995-08-08','1984-03-05 01:25:02');
+(2,'Tamia','Mayert','shansen@example.org','2016-03-27','2014-03-21 02:52:00');
 INSERT INTO authors(id, first_name, last_name, email, birthdate, added) VALUES
-(3,'Emmanuel','Gleichner','jean.zemlak@example.net','1997-05-09','1977-08-09 10:28:04');
+(3,'Cyril','Funk','reynolds.godfrey@example.com','1988-04-21','2011-06-24 18:17:48');
 INSERT INTO authors(id, first_name, last_name, email, birthdate, added) VALUES
-(4,'Hertha','Goodwin','hollis.gusikowski@example.org','2014-08-21','2009-01-28 11:02:56');
+(4,'Nicolas','Buckridge','xhoeger@example.net','2017-02-03','2019-04-22 02:04:41');
 INSERT INTO authors(id, first_name, last_name, email, birthdate, added) VALUES
-(5,'Ewald','Sauer','juvenal35@example.com','1988-10-10','2000-11-02 00:37:53');
+(5,'Jayden','Walter','lillian66@example.com','2010-02-27','1990-02-04 02:32:00');
 
 
 DROP TABLE IF EXISTS posts;
@@ -39,12 +39,12 @@ CREATE TABLE posts (
 );
 
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
-(1,1,'sit','in','At corporis est sint beatae beatae.','1996-05-04');
+(1,1,'temporibus','voluptatum','Fugit non et doloribus repudiandae.','2015-11-18');
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
-(2,2,'nisi','et','Sunt nemo magni et tenetur debitis blanditiis.','2000-05-25');
+(2,2,'ea','aut','Tempora molestias maiores provident molestiae sint possimus quasi.','1975-06-08');
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
-(3,3,'ratione','blanditiis','Ipsa distinctio doloremque et ut.','1997-09-22');
+(3,3,'illum','rerum','Delectus recusandae sit officiis dolor.','1975-02-25');
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
-(4,4,'ad','et','Repudiandae porro explicabo officiis sed quis voluptate et.','1978-12-13');
+(4,4,'itaque','deleniti','Magni nam optio id recusandae.','2010-07-28');
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
-(5,5,'deserunt','temporibus','Mollitia reiciendis debitis est voluptatem est neque.','1979-12-06');
+(5,5,'ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');

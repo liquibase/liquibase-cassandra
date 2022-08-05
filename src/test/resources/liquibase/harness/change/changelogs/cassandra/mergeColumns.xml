@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <!--    This changelog overrides default inherited from test harness because-->
+    <!--   tables in Cassandra need a primary key, added column `id`-->
+    <changeSet id="1" author="as">
+        <createTable tableName="full_name_table">
+            <column name="id"
+                    type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="first_name"
+                    type="varchar"/>
+            <column name="last_name"
+                    type="varchar"/>
+        </createTable>
+        <rollback/>
+    </changeSet>
+    <changeSet id="2" author="as">
+        <insert tableName="full_name_table">
+            <column name="id" value="1"/>
+            <column name="first_name" value="John"/>
+            <column name="last_name" value="Doe"/>
+        </insert>
+        <insert tableName="full_name_table">
+            <column name="id" value="2"/>
+            <column name="first_name" value="Jane"/>
+            <column name="last_name" value="Doe"/>
+        </insert>
+        <rollback/>
+    </changeSet>
+    <changeSet id="3" author="as">
+        <mergeColumns  column1Name="first_name"
+                       column2Name="last_name"
+                       finalColumnName="full_name"
+                       finalColumnType="varchar"
+                       joinString=" "
+                       tableName="full_name_table"/>
+        <rollback>
+            <dropTable tableName="full_name_table"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

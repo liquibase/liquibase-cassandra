@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="as">
+        <comment>Creates a table and inserts values into the table with actual SQL</comment>
+        <createTable tableName="sqltest">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+        <rollback/>
+    </changeSet>
+    <changeSet id="2" author="as">
+        <sqlFile path="sqlFile.txt"
+                 relativeToChangelogFile="true"
+                 stripComments="true"/>
+        <rollback>
+            <dropTable tableName="sqltest"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
