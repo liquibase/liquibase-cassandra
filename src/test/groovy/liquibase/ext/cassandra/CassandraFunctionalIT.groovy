@@ -12,9 +12,11 @@ import spock.lang.Specification
 
 class CassandraFunctionalIT extends Specification {
 
-    def url = "jdbc:cassandra://localhost:9042/betterbotz;DefaultKeyspace=betterbotz"
+    def url = "jdbc:cassandra://localhost:9042;AuthMech=1;DefaultKeyspace=betterbotz"
     def defaultSchemaName = "betterbotz"
-    def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, null, null, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
+    def username = "cassandra"
+    def password = "Password1"
+    def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, username, password, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
 
     def "calculateCheckSum"() {
         when:
@@ -78,7 +80,7 @@ class CassandraFunctionalIT extends Specification {
         def statusOutput = new StringWriter()
         liquibase.reportStatus(false, (Contexts) null, statusOutput)
         then:
-        statusOutput.toString().trim() == "@$url is up to date"
+        statusOutput.toString().trim() == "$username@$url is up to date"
 
     }
 

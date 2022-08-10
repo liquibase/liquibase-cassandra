@@ -83,7 +83,7 @@ jobs:
           cache: 'maven'
 
       - name: Start Cassandra Container
-        run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -d bitnami/cassandra -e CASSANDRA_PASSWORD=Password1 -e CASSANDRA_PASSWORD_SEEDER=yes
+        run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -e CASSANDRA_PASSWORD=Password1 -e CASSANDRA_PASSWORD_SEEDER=yes -d bitnami/cassandra
 
       - name: Wait for cassandra to start up
         run: sleep 90s
