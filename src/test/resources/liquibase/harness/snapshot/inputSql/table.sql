@@ -1,0 +1,1 @@
+create table snapshot_test_table (snapshot_table_test_int int, snapshot_table_test_varchar varchar, PRIMARY KEY (snapshot_table_test_int ))

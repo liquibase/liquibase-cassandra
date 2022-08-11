@@ -1,3 +1,3 @@
-ALTER TABLE authors ADD varcharColumn VARCHAR
-ALTER TABLE authors ADD intColumn INT
-ALTER TABLE authors ADD dateColumn date
+ALTER TABLE betterbotz.authors ADD varcharColumn VARCHAR
+ALTER TABLE betterbotz.authors ADD intColumn INT
+ALTER TABLE betterbotz.authors ADD dateColumn date

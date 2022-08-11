@@ -1,0 +1,21 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+
+          "table": {
+            "name": "full_name_table"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "full_name"
+          }
+        }
+      ]
+    }
+  }
+}

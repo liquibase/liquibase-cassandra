@@ -1,1 +1,1 @@
-CREATE TABLE createTableDataTypeText (textCol TEXT, PRIMARY KEY (textCol))
+CREATE TABLE betterbotz.createTableDataTypeText (textCol TEXT, PRIMARY KEY (textCol))

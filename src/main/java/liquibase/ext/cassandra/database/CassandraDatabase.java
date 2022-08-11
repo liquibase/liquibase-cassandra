@@ -7,6 +7,7 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
+import liquibase.structure.core.Index;
 
 import java.sql.Statement;
 
@@ -150,5 +151,13 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public boolean supportsPrimaryKeyNames() {
 		return false;
+	}
+
+   /**
+   * there shouldn't be keyspace name before the index name, queries fail otherwise
+   */
+	@Override
+	public String escapeIndexName(String catalogName, String schemaName, String indexName) {
+		return this.escapeObjectName(indexName, Index.class);
 	}
 }

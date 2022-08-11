@@ -1,2 +1,2 @@
-ALTER TABLE posts ADD varcharColumn VARCHAR
-ALTER TABLE posts DROP varcharColumn
+ALTER TABLE betterbotz.posts ADD varcharColumn VARCHAR
+ALTER TABLE betterbotz.posts DROP varcharColumn

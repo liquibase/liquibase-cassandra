@@ -4,6 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <!--    This changelog overrides default inherited from test harness because-->
+    <!--    tables in Cassandra has to have primary key-->
     <changeSet id="1" author="oleh">
         <createTable tableName="test_table">
             <column name="test_id" type="int">
