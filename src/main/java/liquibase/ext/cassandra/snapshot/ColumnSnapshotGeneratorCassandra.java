@@ -61,7 +61,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
                 .getExecutor("jdbc", database).queryForList(new RawSqlStatement(query));
         returnList = returnList.stream()
-                .filter(stringMap -> ((String)stringMap.get("COLUMN_NAME")).equalsIgnoreCase(example.getName()))
+                .filter(stringMap -> ((String)stringMap.get("column_name")).equalsIgnoreCase(example.getName()))
                 .collect(Collectors.toList());
         if (returnList.size() != 1) {
             Scope.getCurrentScope().getLog(ColumnSnapshotGeneratorCassandra.class).warning(String.format(
@@ -74,9 +74,9 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
 
     protected Column readColumn(Map<String, ?> tableMap, Relation table) {
 
-        String rawColumnName = StringUtil.trimToNull((String) tableMap.get("COLUMN_NAME"));
-        String rawColumnType = StringUtil.trimToNull((String) tableMap.get("TYPE"));
-        String rawColumnKind = StringUtil.trimToNull((String) tableMap.get("KIND"));
+        String rawColumnName = StringUtil.trimToNull((String) tableMap.get("column_name"));
+        String rawColumnType = StringUtil.trimToNull((String) tableMap.get("type"));
+        String rawColumnKind = StringUtil.trimToNull((String) tableMap.get("kind"));
         // we don't really need KEYSPACE_NAME param in query to build Column obj, but Astra Cassandra implementation
         // (and maybe some others) fails if it's missing
         Column column = new Column();

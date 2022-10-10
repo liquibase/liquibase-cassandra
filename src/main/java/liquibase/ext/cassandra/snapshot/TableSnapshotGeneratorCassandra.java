@@ -73,9 +73,9 @@ public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
 
     protected Table readTable(Map<String, ?> tableMap, Database database) {
 
-        String rawTableName = StringUtil.trimToNull((String) tableMap.get("TABLE_NAME"));
-        String rawKeyspaceName = StringUtil.trimToNull((String) tableMap.get("KEYSPACE_NAME"));
-        String comment = StringUtil.trimToNull((String) tableMap.get("COMMENT"));
+        String rawTableName = StringUtil.trimToNull((String) tableMap.get("table_name"));
+        String rawKeyspaceName = StringUtil.trimToNull((String) tableMap.get("keyspace_name"));
+        String comment = StringUtil.trimToNull((String) tableMap.get("comment"));
 
         Table table = new Table();
         table.setName(cleanNameFromDatabase(rawTableName, database));

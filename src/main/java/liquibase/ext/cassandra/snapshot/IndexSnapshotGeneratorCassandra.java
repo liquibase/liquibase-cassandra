@@ -50,8 +50,8 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
     }
 
     private Index readIndex(Map<String, ?> tableMap, Relation relation) {
-        String indexName = StringUtil.trimToNull((String) tableMap.get("INDEX_NAME"));
-        String options = StringUtil.trimToNull((String) tableMap.get("OPTIONS"));
+        String indexName = StringUtil.trimToNull((String) tableMap.get("index_name"));
+        String options = StringUtil.trimToNull((String) tableMap.get("options"));
         // we don't really need KEYSPACE_NAME param in query to build Column obj, but Astra Cassandra implementation
         // (and maybe some others) fails if it's missing
         Index index = new Index();

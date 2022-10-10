@@ -54,7 +54,22 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         int next = 0;
         try {
             Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT ID, AUTHOR, ORDEREXECUTED FROM " + getChangeLogTableName());
+            ResultSet rs = statement.executeQuery("SELECT " +
+                    "ID as \"ID\", " +
+                    "AUTHOR as \"AUTHOR\", " +
+                    "FILENAME as \"FILENAME\", " +
+                    "COMMENTS AS \"COMMENTS\", " +
+                    "CONTEXTS AS \"CONTEXTS\", " +
+                    "DATEEXECUTED AS \"DATEEXECUTED\", " +
+                    "ORDEREXECUTED AS \"ORDEREXECUTED\", " +
+                    "DEPLOYMENT_ID AS \"DEPLOYMENT_ID\", " +
+                    "DESCRIPTION AS \"DESCRIPTION\", " +
+                    "EXECTYPE AS \"EXECTYPE\", " +
+                    "LABELS AS \"LABELS\", " +
+                    "LIQUIBASE AS \"LIQUIBASE\", " +
+                    "MD5SUM AS \"MD5SUM\", " +
+                    "TAG AS \"TAG\" " +
+                    "FROM " + getChangeLogTableName());
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
@@ -69,7 +84,22 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
-        RawSqlStatement select = new RawSqlStatement("SELECT * FROM " + getChangeLogTableName());
+        RawSqlStatement select = new RawSqlStatement("SELECT " +
+                "ID as \"ID\", " +
+                "AUTHOR as \"AUTHOR\", " +
+                "FILENAME as \"FILENAME\", " +
+                "COMMENTS AS \"COMMENTS\", " +
+                "CONTEXTS AS \"CONTEXTS\", " +
+                "DATEEXECUTED AS \"DATEEXECUTED\", " +
+                "ORDEREXECUTED AS \"ORDEREXECUTED\", " +
+                "DEPLOYMENT_ID AS \"DEPLOYMENT_ID\", " +
+                "DESCRIPTION AS \"DESCRIPTION\", " +
+                "EXECTYPE AS \"EXECTYPE\", " +
+                "LABELS AS \"LABELS\", " +
+                "LIQUIBASE AS \"LIQUIBASE\", " +
+                "MD5SUM AS \"MD5SUM\", " +
+                "TAG AS \"TAG\" " +
+                "FROM " + getChangeLogTableName());
         final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
         returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
         return returnList;
