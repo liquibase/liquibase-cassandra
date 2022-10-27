@@ -225,7 +225,7 @@
             <plugin>
                 <!-- the simba driver shades its slf4j, so we shade the slf4j-jdk14 binding to avoid the "can't find binding" error -->
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>create-module-jar</id>
