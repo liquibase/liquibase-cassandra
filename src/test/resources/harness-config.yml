@@ -3,7 +3,7 @@ context: testContext
 
 databasesUnderTest:
 - name: cassandra
-  version: 3.11
+  version: 3
   url: jdbc:cassandra://localhost:9042;AuthMech=1;DefaultKeyspace=betterbotz
   username: cassandra
   password: Password1
