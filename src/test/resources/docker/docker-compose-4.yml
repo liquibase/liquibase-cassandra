@@ -2,12 +2,6 @@ version: '3.5'
 
 services:
 
-  cassandra-3:
-    image: liquibase/liquibase:cassandra-test-3
-    ports:
-      - "9042:9042"
-    restart: always
-
   cassandra-4:
     image: liquibase/liquibase:cassandra-test-4
     ports:
