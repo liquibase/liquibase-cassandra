@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  cassandra3:
+    image: "cassandra:3"
+    container_name: "cassandra3"
+    ports:
+      - "9043:9042"
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe cluster"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  cassandra4:
+    image: "cassandra:4"
+    container_name: "cassandra4"
+    ports:
+      - "9044:9042"
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe cluster"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  cassandra-init:
+    image: "cassandra:latest"
+    container_name: "cassandra-init"
+    volumes:
+      - "./cql:/cql"
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - "cqlsh cassandra3 -f /cql/test.cql && cqlsh cassandra4 -f /cql/test.cql"
+    depends_on:
+      cassandra3:
+        condition: service_healthy
+      cassandra4:
+        condition: service_healthy
