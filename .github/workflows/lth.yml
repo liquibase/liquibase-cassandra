@@ -47,4 +47,4 @@ jobs:
           fail-on-error: false # Set fail-on-error to false to show report even if it has failed tests
 
       - name: Stop database container # Stop the database container using Docker Compose
-        run: docker-compose -f src/test/resources/docker/docker-compose-${{ matrix.database-version }}.yml down
+        run: docker-compose -f src/test/resources/docker/docker-compose.yml down
