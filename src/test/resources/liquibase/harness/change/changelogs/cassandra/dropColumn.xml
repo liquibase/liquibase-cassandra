@@ -8,9 +8,9 @@
     <!-- varchar type doesn't have length in Cassandra-->
     <changeSet author="oleh" id="1">
             <addColumn tableName="posts">
-                <column name="varcharColumn" type="varchar"/>
+                <column name="dropColumnTestColumn" type="varchar"/>
             </addColumn>
-            <dropColumn tableName="posts" columnName="varcharColumn"/>
+            <dropColumn tableName="posts" columnName="dropColumnTestColumn"/>
             <rollback/>
         </changeSet>
 </databaseChangeLog>
