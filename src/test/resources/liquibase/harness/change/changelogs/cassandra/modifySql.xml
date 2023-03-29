@@ -5,23 +5,16 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
   <changeSet id="1" author="yodzh">
-
-    <createTable tableName="modify_sql_test_table">
+    <createTable tableName="123modify_sql_test_table45">
       <column name="test_id" type="int">
         <constraints primaryKey="true"/>
       </column>
       <column name="test_column" type="varchar"/>
     </createTable>
     <modifySql>
-      <prepend value="/* prepend 123message45 */ "/>
-    </modifySql>
-    <modifySql>
-      <append value=" -- append comment"/>
-    </modifySql>
-    <modifySql>
       <!-- testing regExpReplace -->
-      <!-- removing first 3 digits, last 2 digits and replacing all letters with "comment" -->
-      <regExpReplace replace="[0-9]{3}[A-z]+[0-9]{2}" with="comment"/>
+      <!-- removing first 3 digits, last 2 digits and replacing all letters with "modify_sql_test_table" -->
+      <regExpReplace replace="[0-9]{3}[A-z]+[0-9]{2}" with="modify_sql_test_table"/>
     </modifySql>
   </changeSet>
 </databaseChangeLog>

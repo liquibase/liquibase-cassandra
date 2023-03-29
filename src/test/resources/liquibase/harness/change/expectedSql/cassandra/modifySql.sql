@@ -1,1 +1,1 @@
-/* prepend comment */ CREATE TABLE betterbotz.modify_sql_test_table (test_id INT, test_column VARCHAR, PRIMARY KEY (test_id)) -- append comment
+CREATE TABLE betterbotz."modify_sql_test_table" (test_id INT, test_column VARCHAR, PRIMARY KEY (test_id))
