@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "objects": {
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "sql_file_test"
+          }
+        }
+      ],
+      "liquibase.structure.core.Column": [
+        {
+          "column": {
+            "name": "id"
+          }
+        }
+      ]
+    }
+  }
+}
