@@ -28,7 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
     - name: Run Unit Tests With Maven
-      run: mvn -B clean test-compile test package
+      run: mvn -B test package
 
     - name: Cache Built Code
       uses: actions/cache@v2
