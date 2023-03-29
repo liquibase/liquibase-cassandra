@@ -12,7 +12,7 @@
       <column name="test_column" type="varchar"/>
     </createTable>
     <rollback>
-      <dropTable tableName="123modify_sql_test_table45"/>
+      <dropTable tableName="modify_sql_test_table"/>
     </rollback>
     <modifySql>
       <!-- testing regExpReplace -->
