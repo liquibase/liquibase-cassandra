@@ -11,6 +11,9 @@
       </column>
       <column name="test_column" type="varchar"/>
     </createTable>
+    <rollback>
+      <dropTable tableName="123modify_sql_test_table45"/>
+    </rollback>
     <modifySql>
       <!-- testing regExpReplace -->
       <!-- removing first 3 digits, last 2 digits and replacing all letters with "modify_sql_test_table" -->
