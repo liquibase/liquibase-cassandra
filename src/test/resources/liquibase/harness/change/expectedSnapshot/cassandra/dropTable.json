@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "liquibase.structure.core.Table": [
+        {
+          "table": {
+            "name": "drop_table_test"
+          }
+        }
+      ]
+    }
+  }
+}

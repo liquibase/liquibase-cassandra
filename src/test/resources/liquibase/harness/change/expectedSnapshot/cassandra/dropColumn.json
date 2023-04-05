@@ -1,13 +1,11 @@
 {
   "snapshot": {
     "objects": {
+      "_noMatch": true,
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "id_renameColumn_test",
-            "type": {
-              "typeName": "int"
-            }
+            "name": "dropColumnTestColumn"
           }
         }
       ]

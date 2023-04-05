@@ -1,0 +1,68 @@
+{
+  "loadData": [
+    {
+      "description": "voluptatum",
+      "id": 1,
+      "inserted_date": "2015-11-18",
+      "author_id": 1,
+      "title": "temporibus",
+      "content": "Fugit non et doloribus repudiandae."
+    },
+    {
+      "description": "aut",
+      "id": 2,
+      "inserted_date": "1975-06-08",
+      "author_id": 2,
+      "title": "ea",
+      "content": "Tempora molestias maiores provident molestiae sint possimus quasi."
+    },
+    {
+      "description": "rerum",
+      "id": 3,
+      "inserted_date": "1975-02-25",
+      "author_id": 3,
+      "title": "illum",
+      "content": "Delectus recusandae sit officiis dolor."
+    },
+    {
+      "description": "deleniti",
+      "id": 4,
+      "inserted_date": "2010-07-28",
+      "author_id": 4,
+      "title": "itaque",
+      "content": "Magni nam optio id recusandae."
+    },
+    {
+      "description": "similique",
+      "id": 5,
+      "inserted_date": "2006-10-09",
+      "author_id": 5,
+      "title": "ad",
+      "content": "Rerum tempore quis ut nesciunt qui excepturi est."
+    },
+    {
+      "description": "test1@example.com",
+      "id": 6,
+      "inserted_date": "2000-01-01",
+      "author_id": 1,
+      "title": "Title1",
+      "content": "Content1"
+    },
+    {
+      "description": "test2@example.com",
+      "id": 7,
+      "inserted_date": "2000-01-01",
+      "author_id": 2,
+      "title": "Title2",
+      "content": "Content2"
+    },
+    {
+      "description": "test3@example.com",
+      "id": 8,
+      "inserted_date": "2000-01-01",
+      "author_id": 3,
+      "title": "Title3",
+      "content": "Content3"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
     <!--    This changelog overrides default inherited from test harness because-->
     <!--    tables in Cassandra has to have primary key-->
     <changeSet author="oleh" id="1">
-        <createTable tableName="test_table">
+        <createTable tableName="drop_table_test">
             <column name="test_id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -18,7 +18,7 @@
         <rollback/>
     </changeSet>
     <changeSet author="r2" id="2">
-        <dropTable tableName="test_table"/>
+        <dropTable tableName="drop_table_test"/>
         <rollback/>
     </changeSet>
 </databaseChangeLog>

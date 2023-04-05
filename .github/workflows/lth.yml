@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true # Continue to run the action even if the previous steps fail
         env:
           LIQUIBASE_PRO_LICENSE_KEY: ${{ secrets.PRO_LICENSE_KEY }} # Set the environment variable for the Liquibase Pro license key
-        run: mvn -ntp -DdbVersion=${{ matrix.database-version }} -Dtest=${{ matrix.liquibase-support-level }}ExtensionHarnessSuite test # Run the Liquibase test harness at each test level
+        run: mvn -ntp -DdbVersion=${{ matrix.database-version }} -Dtest=liquibase.ext.cassandra.${{ matrix.liquibase-support-level }}ExtensionHarnessSuite test # Run the Liquibase test harness at each test level
 
       - name: Test Reporter # Generate a test report using the Test Reporter action
         uses: dorny/test-reporter@v1.6.0

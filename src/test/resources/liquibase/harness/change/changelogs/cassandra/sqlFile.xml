@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="as">
         <comment>Creates a table and inserts values into the table with actual SQL</comment>
-        <createTable tableName="sqltest">
+        <createTable tableName="sql_file_test">
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
@@ -18,7 +18,7 @@
                  relativeToChangelogFile="true"
                  stripComments="true"/>
         <rollback>
-            <dropTable tableName="sqltest"/>
+            <dropTable tableName="sql_file_test"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
