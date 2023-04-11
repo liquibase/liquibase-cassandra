@@ -27,7 +27,7 @@ services:
     image: "cassandra:latest"
     container_name: "cassandra-init"
     volumes:
-      - "./cql:/cql"
+      - "../../../../test.cql:/cql/test.cql"
     entrypoint: /bin/bash
     command:
       - -c
