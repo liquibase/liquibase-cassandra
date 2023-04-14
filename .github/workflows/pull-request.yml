@@ -31,7 +31,8 @@ jobs:
       run: mvn -B test package
 
     - name: Cache Built Code
-      uses: actions/cache@v2
+      if: ${{ matrix.java == 11}}
+      uses: actions/cache@v3.3.1
       with:
         key: built-code-${{ github.run_id }}
         path: ./**/target

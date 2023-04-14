@@ -67,7 +67,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'adopt'
 
       - name: Configure git user
@@ -127,7 +127,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        java: [8, 11]
+        java: [11, 17]
     steps:
       - uses: actions/checkout@v2
 
@@ -214,7 +214,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'adopt'
 
       - name: Configure git user
