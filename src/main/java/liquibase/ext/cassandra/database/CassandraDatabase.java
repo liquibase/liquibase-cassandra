@@ -16,12 +16,15 @@ import java.sql.Statement;
  */
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
+	public static final String SHORT_PRODUCT_NAME = "cassandra";
+	public static final Integer DEFAULT_PORT = 9160;
+	public static final String DEFULT_DRIVER = "com.simba.cassandra.jdbc.Driver";
 
 	private String keyspace;
 
 	@Override
 	public String getShortName() {
-		return "cassandra";
+		return SHORT_PRODUCT_NAME;
 	}
 
 	@Override
@@ -31,12 +34,12 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	protected String getDefaultDatabaseProductName() {
-		return "Cassandra";
+		return PRODUCT_NAME;
 	}
 
 	@Override
 	public Integer getDefaultPort() {
-		return 9160;
+		return DEFAULT_PORT;
 	}
 
 	@Override
@@ -63,7 +66,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public String getDefaultDriver(String url) {
 		if (String.valueOf(url).startsWith("jdbc:cassandra:")) {
-			return "com.simba.cassandra.jdbc42.Driver";
+			return DEFULT_DRIVER;
 		}
 		return null;
 	}
