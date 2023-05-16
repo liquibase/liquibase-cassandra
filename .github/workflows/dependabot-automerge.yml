@@ -10,6 +10,7 @@ jobs:
   merge-me:
     name: Dependabot automerge
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - name: Automerge dependabot issue
