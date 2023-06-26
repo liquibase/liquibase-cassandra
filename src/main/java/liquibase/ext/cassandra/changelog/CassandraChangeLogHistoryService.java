@@ -6,6 +6,7 @@ import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
+import liquibase.servicelocator.PrioritizedService;
 import liquibase.statement.core.RawSqlStatement;
 
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public int getPriority() {
-        return PRIORITY_DATABASE;
+        return PrioritizedService.PRIORITY_DATABASE;
     }
 
     @Override
