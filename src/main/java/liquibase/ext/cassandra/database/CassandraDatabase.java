@@ -1,7 +1,9 @@
 package liquibase.ext.cassandra.database;
 
-import com.simba.cassandra.cassandra.core.CDBJDBCConnection;
-import com.simba.cassandra.jdbc.jdbc42.S42Connection;
+import com.datastax.oss.driver.api.core.session.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.ing.data.cassandra.jdbc.CassandraConnection;
+
 import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
@@ -13,12 +15,16 @@ import java.sql.Statement;
 
 /**
  * Cassandra 1.2.0 NoSQL database support.
+ * Javadocs for ING Cassandra JDBC Wrapper: https://javadoc.io/doc/com.ing.data/cassandra-jdbc-wrapper/latest/index.html
+ *
+ * Javadocs for DataStax OSS Driver: https://javadoc.io/doc/com.datastax.oss/java-driver-core/latest/index.html
+ * Jar file for DataStax OSS Driver: https://search.maven.org/search?q=com.DataStax.oss
  */
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
 	public static final String SHORT_PRODUCT_NAME = "cassandra";
 	public static final Integer DEFAULT_PORT = 9160;
-	public static final String DEFULT_DRIVER = "com.simba.cassandra.jdbc.Driver";
+	public static final String DEFULT_DRIVER = "com.ing.data.cassandra.jdbc.CassandraDriver";
 
 	private String keyspace;
 
@@ -110,8 +116,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 		if (keyspace == null) {
 			try {
 				if (this.getConnection() instanceof JdbcConnection) {
-					keyspace = ((CDBJDBCConnection) ((S42Connection) ((JdbcConnection) (this).getConnection())
-							.getUnderlyingConnection()).getConnection()).getSession().getLoggedKeyspace();
+					keyspace = ((CqlSession)((CassandraConnection) ((JdbcConnection) (this).getConnection()).getSession())).getKeyspace();
 				}
 			} catch (Exception e) {
 				Scope.getCurrentScope().getLog(CassandraDatabase.class)
