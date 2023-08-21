@@ -19,6 +19,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String SHORT_PRODUCT_NAME = "cassandra";
 	public static final Integer DEFAULT_PORT = 9160;
 	public static final String DEFAULT_DRIVER = "com.simba.cassandra.jdbc42.Driver";
+	public static final String NO_JDBC_VERSION_DRIVER = "com.simba.cassandra.jdbc.Driver";
 
 	private String keyspace;
 
@@ -66,7 +67,12 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public String getDefaultDriver(String url) {
 		if (String.valueOf(url).startsWith("jdbc:cassandra:")) {
-			return DEFAULT_DRIVER;
+			try {
+                Class.forName(DEFAULT_DRIVER);
+                return DEFAULT_DRIVER;
+            } catch (ClassNotFoundException e) {
+				return NO_JDBC_VERSION_DRIVER;
+			}
 		}
 		return null;
 	}
