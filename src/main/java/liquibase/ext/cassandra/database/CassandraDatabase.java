@@ -115,9 +115,9 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public String getKeyspace() {
 		if (keyspace == null) {
 			try {
-				if (this.getConnection() instanceof JdbcConnection) {
-					keyspace = ((CqlSession)((CassandraConnection) ((JdbcConnection) (this).getConnection()).getSession())).getKeyspace();
-				}
+				//if (this.getConnection() instanceof JdbcConnection) {
+					keyspace = ((CqlSession)((CassandraConnection) (this).getConnection()).getSession()).getKeyspace().toString();
+				//}
 			} catch (Exception e) {
 				Scope.getCurrentScope().getLog(CassandraDatabase.class)
 						.severe("Could not get keyspace from connection", e);
