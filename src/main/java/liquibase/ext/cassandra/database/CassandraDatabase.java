@@ -1,9 +1,6 @@
 package liquibase.ext.cassandra.database;
 
-import com.datastax.oss.driver.api.core.session.Session;
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.ing.data.cassandra.jdbc.CassandraConnection;
-
 import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
@@ -24,10 +21,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
 	public static final String SHORT_PRODUCT_NAME = "cassandra";
 	public static final Integer DEFAULT_PORT = 9160;
-	public static final String DEFULT_DRIVER = "com.ing.data.cassandra.jdbc.CassandraDriver";
-	public static final String DEFAULT_DRIVER = "com.simba.cassandra.jdbc42.Driver";
-	public static final String NO_JDBC_VERSION_DRIVER = "com.simba.cassandra.jdbc.Driver";
-
+	public static final String DEFAULT_DRIVER = "com.ing.data.cassandra.jdbc.CassandraDriver";
 	private String keyspace;
 
 	@Override
@@ -74,12 +68,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public String getDefaultDriver(String url) {
 		if (String.valueOf(url).startsWith("jdbc:cassandra:")) {
-			try {
-                Class.forName(DEFAULT_DRIVER);
-                return DEFAULT_DRIVER;
-            } catch (ClassNotFoundException e) {
-				return NO_JDBC_VERSION_DRIVER;
-			}
+			return DEFAULT_DRIVER;
 		}
 		return null;
 	}
@@ -122,9 +111,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public String getKeyspace() {
 		if (keyspace == null) {
 			try {
-				//if (this.getConnection() instanceof JdbcConnection) {
-					keyspace = ((CqlSession)((CassandraConnection) (this).getConnection()).getSession()).getKeyspace().toString();
-				//}
+				keyspace = ((CassandraConnection) (this).getConnection()).getSession().getKeyspace().toString();
 			} catch (Exception e) {
 				Scope.getCurrentScope().getLog(CassandraDatabase.class)
 						.severe("Could not get keyspace from connection", e);

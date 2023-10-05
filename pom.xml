@@ -103,7 +103,7 @@
             <artifactId>cassandra-jdbc-wrapper</artifactId>
             <version>4.9.1</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/cassandra-jdbc-wrapper-4.9.0-bundle.jar</systemPath>
+            <systemPath>${basedir}/lib/cassandra-jdbc-wrapper-4.9.1-bundle.jar</systemPath>
         </dependency>
         <dependency>
           <groupId>com.datastax.oss</groupId>
