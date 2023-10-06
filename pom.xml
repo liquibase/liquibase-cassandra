@@ -99,11 +99,17 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.datastax.jdbc</groupId>
-            <artifactId>CassandraJDBC42</artifactId>
-            <version>4.2</version>
+            <groupId>com.ing.data</groupId>
+            <artifactId>cassandra-jdbc-wrapper</artifactId>
+            <version>4.9.1</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/CassandraJDBC42.jar</systemPath>
+            <systemPath>${basedir}/lib/cassandra-jdbc-wrapper-4.9.1-bundle.jar</systemPath>
+        </dependency>
+        <dependency>
+          <groupId>com.datastax.oss</groupId>
+          <artifactId>java-driver-parent</artifactId>
+          <version>4.17.0</version>
+          <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
