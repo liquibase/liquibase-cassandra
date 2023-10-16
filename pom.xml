@@ -3,6 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-parent-pom</artifactId>
+        <version>0.2.5</version> <!-- Replace with the desired version -->
+    </parent>
+
     <groupId>org.liquibase.ext</groupId>
     <artifactId>liquibase-cassandra</artifactId>
     <version>4.24.1-SNAPSHOT</version>
@@ -10,93 +16,22 @@
     <description>Adds support for Cassandra database</description>
     <url>https://github.com/liquibase/liquibase-cassandra</url>
 
-    <organization>
-        <name>Liquibase.org</name>
-        <url>http://www.liquibase.org</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <name>Apache License, Version 2.0</name>
-        </license>
-    </licenses>
-
-    <issueManagement>
-        <url>https://github.com/liquibase/liquibase-cassandra/issues</url>
-    </issueManagement>
-
-    <scm>
-        <connection>scm:git:http://github.com/liquibase/liquibase-cassandra.git</connection>
-        <url>https://github.com/liquibase/liquibase-cassandra</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>nvoxland</id>
-            <name>Nathan Voxland</name>
-            <email>nathan.voxland@liquibase.org</email>
-            <url>http://nathan.voxland.net</url>
-            <organizationUrl>http://nathan.voxland.net/</organizationUrl>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-            <timezone>-6</timezone>
-        </developer>
-    </developers>
-
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
-
         <liquibase.version>4.24.0</liquibase.version>
         <liquibase.sdk.github.token>${env.GITHUB_TOKEN}</liquibase.sdk.github.token>
-        <spock.version>1.3-groovy-2.4</spock.version>
-        <groovy.version>2.4.17</groovy.version>
-
-        <sonar.organization>liquibase</sonar.organization>
-        <sonar.projectKey>${project.artifactId}</sonar.projectKey>
-        <sonar.projectName>${project.name}</sonar.projectName>
-        <sonar.projectDescription>${project.description}</sonar.projectDescription>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.scm.provider>git</sonar.scm.provider>
-        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
-
-        <jacoco.fileset.directory>target</jacoco.fileset.directory>
+        <spock-core.version>1.3-groovy-2.4</spock-core.version>
+        <spock-reports.version>1.3.1</spock-reports.version>
+        <groovy-all.version>2.4.17</groovy-all.version>
+        <sonar.tests>src/test/groovy</sonar.tests>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-commercial</artifactId>
-            <version>${liquibase.version}</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
             <version>4.13.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-test-harness</artifactId>
-            <version>1.0.9</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>${spock.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.ing.data</groupId>
@@ -111,208 +46,24 @@
           <version>4.17.0</version>
           <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.2.224</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovy.version}</version>
-            <scope>test</scope>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-ant</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-testng</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <version>1.5.1</version>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>2.1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compileTests</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <optimize>true</optimize>
-                    <debug>true</debug>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <compilerArgs>
-                        <arg>-Xlint:all</arg>
-                    </compilerArgs>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <reportFormat>plain</reportFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.4.0</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
-                <configuration>
-                    <fileSets>
-                        <fileSet>
-                            <directory>${jacoco.fileset.directory}</directory>
-                            <includes>
-                                <include>**/jacoco.exec</include>
-                            </includes>
-                        </fileSet>
-                    </fileSets>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.10.0.2594</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.liquibase.ext</groupId>
-                <artifactId>liquibase-sdk-maven-plugin</artifactId>
-                <version>0.10.20</version>
-            </plugin>
+                 <artifactId>maven-surefire-plugin</artifactId>
+                 <dependencies>
+                     <dependency>
+                         <groupId>org.apache.maven.surefire</groupId>
+                         <artifactId>surefire-junit4</artifactId>
+                         <version>3.0.0</version>
+                     </dependency>
+                 </dependencies>
+                 <configuration>
+                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                 </configuration>
+             </plugin>
         </plugins>
-
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>sonatype-nexus-staging</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>non-jdk-8</id>
-            <activation>
-                <jdk>!1.8</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.release>8</maven.compiler.release>
-            </properties>
-        </profile>
-        <profile>
-            <!-- Required for deployment to Sonatype -->
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.0</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <author>false</author>
-                            <doctitle>Liquibase CDI ${project.version} API</doctitle>
-                            <quiet>true</quiet>
-                            <doclint>none</doclint>
-                            <encoding>UTF-8</encoding>
-                            <jarOutputDirectory>${project.basedir}/target</jarOutputDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>jar-javadoc</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <phase>package</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <configuration>
-                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                            <gpgArguments>
-                                <!-- This is necessary for gpg to not try to use the pinentry programs -->
-                                <arg>--batch</arg>
-                                <arg>--no-tty</arg>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
