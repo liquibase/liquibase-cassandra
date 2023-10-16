@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Restore Built Code
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: built-code-${{ github.run_id }}
           path: ./**/target
