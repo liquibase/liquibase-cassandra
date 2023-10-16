@@ -75,6 +75,6 @@ jobs:
           path: ./**/target/surefire-reports
 
   dependabot:
-    needs: build
+    needs: integration-tests
     uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.4.9
     secrets: inherit
