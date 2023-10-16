@@ -73,3 +73,8 @@ jobs:
         with:
           name: test-reports-integration-jdk${{ matrix.java }}-cassandra${{ matrix.cassandra }}
           path: ./**/target/surefire-reports
+
+dependabot:
+  needs: hibernate-test
+  uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.4.9
+  secrets: inherit
