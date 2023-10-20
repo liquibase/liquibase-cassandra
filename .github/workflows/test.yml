@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.5.0
+    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.5.2
     secrets: inherit
 
   integration-tests:
@@ -76,5 +76,5 @@ jobs:
 
   dependabot:
     needs: integration-tests
-    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.5.0
+    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.5.2
     secrets: inherit
