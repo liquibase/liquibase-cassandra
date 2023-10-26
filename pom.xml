@@ -26,6 +26,13 @@
         <sonar.tests>src/test/groovy</sonar.tests>
     </properties>
 
+    <scm>
+        <connection>scm:git:${project.scm.url}</connection>
+        <developerConnection>scm:git:${project.scm.url}</developerConnection>
+		<url>https://github.com/liquibase/liquibase-cassandra.git</url>
+		<tag>HEAD</tag>
+	</scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
