@@ -1,6 +1,6 @@
 
-name-template: 'Support for Liquibase Cassandra Extension v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+name-template: 'Support for $OWNER $REPOSITORY Extension v$NEXT_MINOR_VERSION'
+tag-template: 'v$NEXT_MINOR_VERSION'
 exclude-labels:
   - 'skipReleaseNotes'
 categories:
@@ -43,7 +43,7 @@ version-resolver:
       - 'patch'
       - 'bugfix'
       - 'sdou'
-  default: patch
+  default: minor
 template: |
   ## Changes
   
