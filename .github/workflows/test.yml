@@ -16,6 +16,8 @@ jobs:
   build:
     uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.5.5
     secrets: inherit
+    with:
+      java: '[11, 17, 18]'
 
   integration-tests:
     name: Integration Tests -- Java ${{ matrix.java }} on Cassandra ${{ matrix.cassandra }}
