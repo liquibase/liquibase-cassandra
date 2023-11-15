@@ -179,10 +179,8 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     private boolean isLocked(Executor executor) throws DatabaseException {
-        return executor.queryForInt(
-                new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " where " +
-                        "locked = TRUE ALLOW FILTERING")
-        ) > 0;
+        // Check to see if current process holds the lock each time
+        return isLockedByCurrentInstance(executor);
     }
 
     private boolean isLockedByCurrentInstance(Executor executor) throws DatabaseException {
