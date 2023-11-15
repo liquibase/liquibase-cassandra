@@ -113,7 +113,7 @@ public class LockServiceCassandra extends StandardLockService {
 
         Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
         try {
-            if (this.hasDatabaseChangeLogLockTable()) {
+            if (this.isDatabaseChangeLogLockTableCreated()) {
                 executor.comment("Release Database Lock");
                 database.rollback();
                 executor.update(new UnlockDatabaseChangeLogStatement());
@@ -138,7 +138,7 @@ public class LockServiceCassandra extends StandardLockService {
 
 
     @Override
-    public boolean hasDatabaseChangeLogLockTable() {
+    public boolean isDatabaseChangeLogLockTableCreated() {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
