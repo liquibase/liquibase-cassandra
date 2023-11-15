@@ -4,7 +4,7 @@ liquibase-cassandra[![Build and Test Extention](https://github.com/liquibase/liq
 Liquibase extension for Cassandra Support.
 
 # Using the Liquibase Test Harness in the Cassandra Extension
-The liquibase-snowflake extension now comes with integration test support via the liquibase-test-harness.
+The liquibase-cassandra extension now comes with integration test support via the liquibase-test-harness.
 This Liquibase test framework is designed to *also* make it easy for you to test your extensions.
 
 ### Configuring your project
