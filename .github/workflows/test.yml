@@ -13,14 +13,16 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
-    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.5.5
+  build-test:
+    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.5.7
     secrets: inherit
+    with:
+      java: "[11, 17, 21]"
 
   integration-tests:
     name: Integration Tests -- Java ${{ matrix.java }} on Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-test
     strategy:
       matrix:
         java: [11, 17]
