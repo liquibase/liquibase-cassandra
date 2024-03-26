@@ -36,7 +36,7 @@ jobs:
         ports:
           - "9043:9042"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Restore Built Code
         uses: actions/cache@v2
