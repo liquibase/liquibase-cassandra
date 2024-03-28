@@ -4,12 +4,8 @@ on:
   workflow_dispatch:
   release:
     types: [published]
-
-permissions:
-  contents: write
-  pull-requests: write
   
 jobs:
   release:
-    uses: liquibase/build-logic/.github/workflows/extension-release-published.yml@v0.6.7
+    uses: liquibase/build-logic/.github/workflows/extension-release-published.yml@v0.6.8
     secrets: inherit
