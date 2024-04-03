@@ -10,7 +10,7 @@
 
     <groupId>org.liquibase.ext</groupId>
     <artifactId>liquibase-cassandra</artifactId>
-    <version>4.27.0-SNAPSHOT</version>
+    <version>4.28.0-SNAPSHOT</version>
     <name>Liquibase Extension: Cassandra Database Support</name>
     <description>Adds support for Cassandra database</description>
     <url>https://github.com/liquibase/liquibase-cassandra</url>
