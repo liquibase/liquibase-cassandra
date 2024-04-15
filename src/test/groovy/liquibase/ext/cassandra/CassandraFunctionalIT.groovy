@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 
 class CassandraFunctionalIT extends Specification {
-    def url = "jdbc:cassandra://localhost:9042/betterbotz"
+    def url = "jdbc:cassandra://localhost:9042/betterbotz?compliancemode=Liquibase"
     def defaultSchemaName = "betterbotz"
     def username = "cassandra"
     def password = "Password1"
