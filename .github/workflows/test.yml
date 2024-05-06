@@ -25,7 +25,7 @@ jobs:
 
   build-test:
     needs: authorize
-    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.7.6
+    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.7.7
     secrets: inherit
     with:
       java: "[11, 17, 21]"
@@ -89,5 +89,5 @@ jobs:
 
   dependabot:
     needs: integration-tests
-    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.7.6
+    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.7.7
     secrets: inherit
