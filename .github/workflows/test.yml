@@ -2,27 +2,38 @@ name: Build and Test
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - reopened
       - synchronize
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  build:
-    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.5.5
+
+  authorize:
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
+
+  build-test:
+    needs: authorize
+    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@v0.7.7
     secrets: inherit
     with:
-      java: '[11, 17, 18]'
+      java: "[11, 17, 21]"
 
   integration-tests:
     name: Integration Tests -- Java ${{ matrix.java }} on Cassandra ${{ matrix.cassandra }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-test
     strategy:
       matrix:
         java: [11, 17]
@@ -78,5 +89,5 @@ jobs:
 
   dependabot:
     needs: integration-tests
-    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.5.3
+    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@v0.7.7
     secrets: inherit

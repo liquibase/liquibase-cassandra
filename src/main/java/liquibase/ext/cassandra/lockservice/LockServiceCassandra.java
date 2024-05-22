@@ -3,7 +3,6 @@ package liquibase.ext.cassandra.lockservice;
 import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.database.ObjectQuotingStrategy;
-import liquibase.database.core.MSSQLDatabase;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.LockException;
@@ -12,8 +11,6 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.lockservice.StandardLockService;
-import liquibase.sql.Sql;
-import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.statement.core.UnlockDatabaseChangeLogStatement;
@@ -21,6 +18,8 @@ import liquibase.util.NetUtil;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
 
 public class LockServiceCassandra extends StandardLockService {
 
@@ -62,19 +61,6 @@ public class LockServiceCassandra extends StandardLockService {
                     // another node was faster
                     return false;
                 }
-                if ((rowsUpdated == -1) && (database instanceof MSSQLDatabase)) {
-
-                    Scope.getCurrentScope().getLog(this.getClass()).info("Database did not return a proper row count (Might have NOCOUNT enabled)");
-                    database.rollback();
-                    Sql[] sql = SqlGeneratorFactory.getInstance().generateSql(
-                            new LockDatabaseChangeLogStatement(), database
-                    );
-                    if (sql.length != 1) {
-                        throw new UnexpectedLiquibaseException("Did not expect " + sql.length + " statements");
-                    }
-                    rowsUpdated = executor.update(new RawSqlStatement("EXEC sp_executesql N'SET NOCOUNT OFF " +
-                            sql[0].toSql().replace("'", "''") + "'"));
-                }
                 if (rowsUpdated > 1) {
                     throw new LockException("Did not update change log lock correctly");
                 }
@@ -113,7 +99,7 @@ public class LockServiceCassandra extends StandardLockService {
 
         Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
         try {
-            if (this.hasDatabaseChangeLogLockTable()) {
+            if (this.isDatabaseChangeLogLockTableCreated()) {
                 executor.comment("Release Database Lock");
                 database.rollback();
                 executor.update(new UnlockDatabaseChangeLogStatement());
@@ -138,15 +124,15 @@ public class LockServiceCassandra extends StandardLockService {
 
 
     @Override
-    public boolean hasDatabaseChangeLogLockTable() {
+    public boolean isDatabaseChangeLogLockTableCreated() {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID from " + getChangeLogLockTableName());
+            statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName());
             statement.close();
             hasChangeLogLockTable = true;
         } catch (SQLException e) {
-            Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogLockTableName() + " available in cassandra.");
+            Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogLockTableName() + " available in Cassandra.");
             hasChangeLogLockTable = false;
         } catch (DatabaseException e) {
             e.printStackTrace();
@@ -158,14 +144,13 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     @Override
-    public boolean isDatabaseChangeLogLockTableInitialized(final boolean tableJustCreated) {
-        if (!isDatabaseChangeLogLockTableInitialized) {
+    public boolean isDatabaseChangeLogLockTableInitialized(final boolean tableJustCreated, final boolean forceRecheck) {
+        if (!isDatabaseChangeLogLockTableInitialized || forceRecheck) {
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
 
             try {
-                isDatabaseChangeLogLockTableInitialized = executor.queryForInt(
-                        new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName())
-                ) > 0;
+                isDatabaseChangeLogLockTableInitialized =  executeCountQueryWithAlternative(executor,
+                        "SELECT COUNT(*) FROM " + getChangeLogLockTableName()) > 0;
             } catch (LiquibaseException e) {
                 if (executor.updatesDatabase()) {
                     throw new UnexpectedLiquibaseException(e);
@@ -179,18 +164,15 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     private boolean isLocked(Executor executor) throws DatabaseException {
-        return executor.queryForInt(
-                new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " where " +
-                        "locked = TRUE ALLOW FILTERING")
-        ) > 0;
+        // Check to see if current process holds the lock each time
+        return isLockedByCurrentInstance(executor);
     }
 
     private boolean isLockedByCurrentInstance(Executor executor) throws DatabaseException {
         final String lockedBy = NetUtil.getLocalHostName() + " (" + NetUtil.getLocalHostAddress() + ")";
-        return executor.queryForInt(
-                new RawSqlStatement("SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " where " +
-                        "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING")
-        ) > 0;
+        return executeCountQueryWithAlternative(executor,
+                "SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " WHERE " +
+                        "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING") > 0;
     }
 
     private String getChangeLogLockTableName() {
@@ -198,6 +180,23 @@ public class LockServiceCassandra extends StandardLockService {
             return database.getLiquibaseCatalogName() + "." + database.getDatabaseChangeLogLockTableName();
         } else {
             return database.getDatabaseChangeLogLockTableName();
+        }
+    }
+
+    private int executeCountQueryWithAlternative(final Executor executor, final String query) throws DatabaseException {
+        if (!query.contains("SELECT COUNT(*)")) {
+            throw new UnexpectedLiquibaseException("Invalid count query: " + query);
+        }
+        try {
+            return executor.queryForInt(new RawSqlStatement(query));
+        } catch (DatabaseException e) {
+            // If the count query failed (for example, because counting rows is not implemented - see issue #289 with
+            // AWS Keyspaces where aggregate functions like COUNT are not supported:
+            // https://docs.aws.amazon.com/keyspaces/latest/devguide/cassandra-apis.html#cassandra-functions), try to
+            // execute the same query without the COUNT function then programmatically count returned rows.
+            final String altQuery = query.replace("SELECT COUNT(*)", "SELECT *");
+            final List<Map<String, ?>> rows = executor.queryForList(new RawSqlStatement(altQuery));
+            return rows.size();
         }
     }
 }
