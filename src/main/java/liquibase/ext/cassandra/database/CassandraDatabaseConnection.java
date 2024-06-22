@@ -13,7 +13,7 @@ public class CassandraDatabaseConnection extends JdbcConnection {
 
     @Override
     public int getPriority() {
-        return 201;
+        return PRIORITY_DATABASE + 200;
     }
 
     @Override

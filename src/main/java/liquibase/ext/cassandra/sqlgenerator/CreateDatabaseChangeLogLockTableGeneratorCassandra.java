@@ -24,12 +24,20 @@ public class CreateDatabaseChangeLogLockTableGeneratorCassandra extends CreateDa
     @Override
     public Sql[] generateSql(CreateDatabaseChangeLogLockTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
 
-        RawSqlStatement createTableStatement = new RawSqlStatement("CREATE TABLE IF NOT EXISTS " +
-                database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName()) +
-                " (ID INT, LOCKED BOOLEAN, LOCKGRANTED timestamp, LOCKEDBY TEXT, PRIMARY KEY (ID))");
+        RawSqlStatement createTableStatement = buildCreateTableStatement(
+                database.escapeTableName(
+                        database.getLiquibaseCatalogName(),
+                        database.getLiquibaseSchemaName(),
+                        database.getDatabaseChangeLogLockTableName())
+        );
 
         return SqlGeneratorFactory.getInstance().generateSql(createTableStatement, database);
 
+    }
+
+    protected static RawSqlStatement buildCreateTableStatement(String tableName) {
+        return new RawSqlStatement("CREATE TABLE IF NOT EXISTS " + tableName
+                + " (ID INT, LOCKED BOOLEAN, LOCKGRANTED timestamp, LOCKEDBY TEXT, PRIMARY KEY (ID))");
     }
 
 }

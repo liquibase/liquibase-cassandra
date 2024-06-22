@@ -2,20 +2,25 @@ package liquibase.ext.cassandra.database;
 
 import com.ing.data.cassandra.jdbc.CassandraConnection;
 import liquibase.Scope;
+import liquibase.configuration.ConfigurationDefinition;
+import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.structure.core.Index;
 
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 /**
- * Cassandra 1.2.0 NoSQL database support.
- * Javadocs for ING Cassandra JDBC Wrapper: https://javadoc.io/doc/com.ing.data/cassandra-jdbc-wrapper/latest/index.html
- *
- * Javadocs for DataStax OSS Driver: https://javadoc.io/doc/com.datastax.oss/java-driver-core/latest/index.html
- * Jar file for DataStax OSS Driver: https://search.maven.org/search?q=com.DataStax.oss
+ * Cassandra NoSQL database support.
+ * <a href="https://javadoc.io/doc/com.ing.data/cassandra-jdbc-wrapper/latest/index.html">Javadocs for ING Cassandra
+ * JDBC Wrapper</a><br>
+ * <a href="https://javadoc.io/doc/com.datastax.oss/java-driver-core/latest/index.html">Javadocs for Apache Cassandra
+ * OSS Java driver</a><br>
+ * <a href="https://central.sonatype.com/artifact/org.apache.cassandra/java-driver-core">Apache Cassandra OSS Java
+ * driver</a>
  */
 public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final String PRODUCT_NAME = "Cassandra";
@@ -23,6 +28,31 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public static final Integer DEFAULT_PORT = 9160;
 	public static final String DEFAULT_DRIVER = "com.ing.data.cassandra.jdbc.CassandraDriver";
 	private String keyspace;
+
+	/**
+     * When running on AWS Keyspaces, a specific compatibility mode has to be activated for Liquibase because some
+     * behaviors need to be modified since AWS Keyspaces does not fully support CQL syntax.
+     * See: <a href="https://github.com/liquibase/liquibase-cassandra/issues/297">Issue #297</a>
+     * and: <a href="https://docs.aws.amazon.com/keyspaces/latest/devguide/cassandra-apis.html">Support Cassandra APIs
+	 * in AWS Keyspaces</a>
+     */
+	public static final ConfigurationDefinition<Boolean> AWS_KEYSPACES_COMPATIBILITY_MODE;
+	static {
+		final ConfigurationDefinition.Builder builder = new ConfigurationDefinition.Builder("liquibase.cassandra");
+
+		AWS_KEYSPACES_COMPATIBILITY_MODE = builder.define("awsKeyspacesCompatibilityModeEnabled", Boolean.class)
+				.setDescription("Whether the compatibility mode for AWS Keyspaces must be enabled")
+				.addAliasKey("liquibase.cassandra.awsKeyspacesCompatibilityModeEnabled")
+				.setDefaultValue(false)
+				.build();
+
+		Scope.getCurrentScope().getSingleton(LiquibaseConfiguration.class)
+				.registerDefinition(AWS_KEYSPACES_COMPATIBILITY_MODE);
+	}
+
+	public static boolean isAwsKeyspacesCompatibilityModeEnabled() {
+        return AWS_KEYSPACES_COMPATIBILITY_MODE.getCurrentValue();
+	}
 
 	@Override
 	public String getShortName() {
@@ -141,6 +171,10 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	public Statement getStatement() throws DatabaseException {
 		return ((JdbcConnection) super.getConnection()).createStatement();
+	}
+
+	public PreparedStatement prepareStatement(String query) throws DatabaseException {
+		return ((JdbcConnection) super.getConnection()).prepareStatement(query);
 	}
 
 	@Override
