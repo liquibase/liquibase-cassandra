@@ -21,6 +21,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import static liquibase.ext.cassandra.database.CassandraDatabase.isAwsKeyspacesCompatibilityModeEnabled;
+
 public class LockServiceCassandra extends StandardLockService {
 
     private boolean isDatabaseChangeLogLockTableInitialized;
@@ -149,7 +151,7 @@ public class LockServiceCassandra extends StandardLockService {
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
 
             try {
-                isDatabaseChangeLogLockTableInitialized =  executeCountQueryWithAlternative(executor,
+                isDatabaseChangeLogLockTableInitialized = executeCountQuery(executor,
                         "SELECT COUNT(*) FROM " + getChangeLogLockTableName()) > 0;
             } catch (LiquibaseException e) {
                 if (executor.updatesDatabase()) {
@@ -170,7 +172,7 @@ public class LockServiceCassandra extends StandardLockService {
 
     private boolean isLockedByCurrentInstance(Executor executor) throws DatabaseException {
         final String lockedBy = NetUtil.getLocalHostName() + " (" + NetUtil.getLocalHostAddress() + ")";
-        return executeCountQueryWithAlternative(executor,
+        return executeCountQuery(executor,
                 "SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " WHERE " +
                         "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING") > 0;
     }
@@ -183,20 +185,32 @@ public class LockServiceCassandra extends StandardLockService {
         }
     }
 
-    private int executeCountQueryWithAlternative(final Executor executor, final String query) throws DatabaseException {
+    /**
+     * Execute a count query using an alternative if the AWS Keyspaces compatibility mode is enabled.
+     *
+     * @implNote Since aggregate functions like COUNT are not supported by AWS Keyspaces (see
+     * <a href="https://docs.aws.amazon.com/keyspaces/latest/devguide/cassandra-apis.html#cassandra-functions">
+     * Cassandra functions in AWS Keyspaces</a>), this method tries to execute the same query without the COUNT
+     * function then programmatically count returned rows, when the AWS Keyspaces compatibility mode is enabled.
+     *
+     * @param executor The query executor.
+     * @param query    The query to execute.
+     * @return The result of the count query.
+     * @throws DatabaseException in case something goes wrong during the query execution or if the provided query is
+     * not a count query.
+     */
+    private int executeCountQuery(final Executor executor, final String query) throws DatabaseException {
         if (!query.contains("SELECT COUNT(*)")) {
             throw new UnexpectedLiquibaseException("Invalid count query: " + query);
         }
-        try {
-            return executor.queryForInt(new RawSqlStatement(query));
-        } catch (DatabaseException e) {
-            // If the count query failed (for example, because counting rows is not implemented - see issue #289 with
-            // AWS Keyspaces where aggregate functions like COUNT are not supported:
-            // https://docs.aws.amazon.com/keyspaces/latest/devguide/cassandra-apis.html#cassandra-functions), try to
-            // execute the same query without the COUNT function then programmatically count returned rows.
-            final String altQuery = query.replace("SELECT COUNT(*)", "SELECT *");
+        if (isAwsKeyspacesCompatibilityModeEnabled()) {
+            Scope.getCurrentScope().getLog(LockServiceCassandra.class)
+                    .fine("AWS Keyspaces compatibility mode enabled: using alternative count query");
+            final String altQuery = query.replaceAll("(?i)SELECT COUNT\\(\\*\\)", "SELECT *");
             final List<Map<String, ?>> rows = executor.queryForList(new RawSqlStatement(altQuery));
             return rows.size();
+        } else {
+            return executor.queryForInt(new RawSqlStatement(query));
         }
     }
 }

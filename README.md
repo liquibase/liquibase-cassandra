@@ -1,4 +1,4 @@
-liquibase-cassandra[![Build and Test Extention](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/build.yml)
+liquibase-cassandra [![Build and Test Extension](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml)
 ===================
 
 Liquibase extension for Cassandra Support.
@@ -88,19 +88,19 @@ INSERT INTO posts(id, author_id, title, description, content, inserted_date) VAL
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
 (4,4,'itaque','deleniti','Magni nam optio id recusandae.','2010-07-28');
 INSERT INTO posts(id, author_id, title, description, content, inserted_date) VALUES
-(5,5,'ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');;
+(5,5,'ad','similique','Rerum tempore quis ut nesciunt qui excepturi est.','2006-10-09');
 ```
 
 #### Executing the tests
 First you need to build project - `mvn package` will do the job.
 
 ##### from IDE
-From your IDE, right click on the `liquibase.ext.cassandra.LiquibaseHarnessSuiteIT` test class present in `src/test/groovy` directory.
+From your IDE, right-click on the `liquibase.ext.cassandra.LiquibaseHarnessSuiteIT` test class present in `src/test/groovy` directory.
 Doing so, will allow you to execute all the standard change object tests in the liquibase-test-harness as well as the
 Cassandra specific change objects tests created exclusively to test this extension (You can find this in the
 `src/test/resources/liquibase/harness/change/changelogs/cassandra` directory).
 
-To run single test case, let's say `addColumn`, create JUit configuration for `liquibase.harness.change.ChangeObjectTests` with arg `-DchangeObjects=addColumn`
+To run single test case, let's say `addColumn`, create JUnit configuration for `liquibase.harness.change.ChangeObjectTests` with arg `-DchangeObjects=addColumn`
 More details about different options can be found in [liquibase-test-harness readme](https://github.com/liquibase/liquibase-test-harness)
 
 ##### from command line
