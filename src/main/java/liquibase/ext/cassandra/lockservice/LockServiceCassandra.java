@@ -257,13 +257,13 @@ public class LockServiceCassandra extends StandardLockService {
                 attempt ++;
                 final String tableStatusSqlStatement = "SELECT status FROM system_schema_mcs.tables "
                         + "WHERE keyspace_name = '" + database.getLiquibaseCatalogName() + "'"
-                        + "AND table_name = " + tableName + "'";
+                        + "AND table_name = '" + tableName + "'";
                 String status = executor.queryForObject(new RawSqlStatement(tableStatusSqlStatement), String.class);
                 isTableActive = "ACTIVE".equalsIgnoreCase(status);
             } while (!isTableActive && attempt <= maxAttempts);
         } catch (final DatabaseException e) {
             Scope.getCurrentScope().getLog(LockServiceCassandra.class)
-                .warning("Failed to check the status of table " + tableName + " in AWS Keyspaces");
+                .warning("Failed to check the status of table " + tableName + " in AWS Keyspaces", e);
             return false;
         }
         return isTableActive;
