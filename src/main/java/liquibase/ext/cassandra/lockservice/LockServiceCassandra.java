@@ -255,9 +255,10 @@ public class LockServiceCassandra extends StandardLockService {
                 Scope.getCurrentScope().getLog(LockServiceCassandra.class)
                         .fine("Checking the status of table " + tableName + " (attempt #" + attempt + ")...");
                 attempt ++;
+                // Note: the table name must be lowercase to match the name in the table 'system_schema_mcs.tables'
                 final String tableStatusSqlStatement = "SELECT status FROM system_schema_mcs.tables "
-                        + "WHERE keyspace_name = '" + database.getLiquibaseCatalogName() + "'"
-                        + "AND table_name = '" + tableName + "'";
+                        + "WHERE keyspace_name = '" + database.getLiquibaseCatalogName() + "' "
+                        + "AND table_name = '" + tableName.toLowerCase() + "'";
                 String status = executor.queryForObject(new RawSqlStatement(tableStatusSqlStatement), String.class);
                 isTableActive = "ACTIVE".equalsIgnoreCase(status);
             } while (!isTableActive && attempt <= maxAttempts);
