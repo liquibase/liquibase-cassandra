@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.liquibase</groupId>
         <artifactId>liquibase-parent-pom</artifactId>
-        <version>0.4.5</version> <!-- Replace with the desired version -->
+        <version>0.5.0</version> <!-- Replace with the desired version -->
     </parent>
 
     <groupId>org.liquibase.ext</groupId>
@@ -20,6 +20,8 @@
         <liquibase.version>4.29.2</liquibase.version>
         <liquibase.sdk.github.token>${env.GITHUB_TOKEN}</liquibase.sdk.github.token>
         <sonar.tests>src/test/groovy</sonar.tests>
+        <junit.version>5.11.3</junit.version>
+        <junit-platform.version>1.11.3</junit-platform.version>
     </properties>
 
     <scm>
@@ -30,12 +32,6 @@
 	</scm>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>4.13.2</version>
-        </dependency>
         <dependency>
             <groupId>com.ing.data</groupId>
             <artifactId>cassandra-jdbc-wrapper</artifactId>
@@ -51,6 +47,36 @@
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>1.15.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
