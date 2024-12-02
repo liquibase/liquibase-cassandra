@@ -125,9 +125,13 @@ public class LockServiceCassandra extends StandardLockService {
         }
     }
 
-
+    /**
+     * Check whether the databasechangeloglock table exists in the database.
+     * @param forceRecheck has no effect in the Cassandra-specific implementation: the actual database is always
+     *                     checked.
+     */
     @Override
-    public boolean isDatabaseChangeLogLockTableCreated() {
+    public boolean isDatabaseChangeLogLockTableCreated(boolean forceRecheck) {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
