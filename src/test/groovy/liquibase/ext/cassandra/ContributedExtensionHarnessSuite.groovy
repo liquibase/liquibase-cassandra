@@ -1,7 +1,10 @@
 package liquibase.ext.cassandra
 
+import liquibase.harness.BaseHarnessSuite
 import liquibase.harness.change.ChangeObjectTests
+import org.junit.platform.suite.api.SelectClasses
 
-// TODO revert ChangeObjectTests back to BaseHarnessSuite after DAT-14706
-class ContributedExtensionHarnessSuite extends ChangeObjectTests {
+@SelectClasses(ChangeObjectTests.class)
+class ContributedExtensionHarnessSuite extends BaseHarnessSuite {
+
 }
