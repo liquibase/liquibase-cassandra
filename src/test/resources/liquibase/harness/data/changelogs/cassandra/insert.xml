@@ -6,8 +6,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet  id="1" author="as">
         <insert tableName="posts">
-            <column name="id" value="100"/>
-            <column name="author_id"  value="6"/>
+            <column name="id" valueNumeric="100"/>
+            <column name="author_id" valueNumeric="6"/>
             <column name="title" value="value"/>
             <column name="description" value="value"/>
             <column name="content" value="value"/>
