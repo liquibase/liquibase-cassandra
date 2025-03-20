@@ -85,10 +85,17 @@ public class TagDatabaseGeneratorCassandra extends TagDatabaseGenerator {
 			}
 
 			// Query to get composite key details of last executed change set
+			StringBuilder commandBuilder = new StringBuilder();
 			try (Statement statement1 = ((CassandraDatabase) database).getStatement();
-				ResultSet rs2 = statement1.executeQuery(
-					"SELECT id, author, filename FROM " + databaseChangelogTableName
-					+ " WHERE dateexecuted = '" + date + "' ALLOW FILTERING")
+				 ResultSet rs2 = statement1.executeQuery(
+						 commandBuilder
+								.append("SELECT id, author, filename FROM ")
+								.append(databaseChangelogTableName)
+								.append(" WHERE dateexecuted = '")
+								.append(date)
+								.append("' ALLOW FILTERING")
+								 .toString()
+				 )
 			) {
 				while (rs2.next()) {
 					id = rs2.getString("id");
