@@ -41,54 +41,68 @@ public class TagDatabaseGeneratorCassandra extends TagDatabaseGenerator {
 
 		try {
 			String tagEscaped = DataTypeFactory.getInstance().fromObject(statement.getTag(), database).objectToSql(statement.getTag(), database);
-
-			Statement statement1 = ((CassandraDatabase) database).getStatement();
 			String databaseChangelogTableName = database.escapeTableName(database.getLiquibaseCatalogName(),
 					database.getLiquibaseSchemaName(), "databasechangelog");
 
-			//Query to get last executed changeset date
-			ResultSet rs1;
-			PreparedStatement ps1 = null;
+			// Variables to be populated
+			String date = "";
+			String id = "", author = "", filename = "";
+
 			// When AWS Keyspaces compatibility mode is enabled, the max date must be calculated programmatically.
 			if (isAwsKeyspacesCompatibilityModeEnabled()) {
 				Scope.getCurrentScope().getLog(LockServiceCassandra.class)
 						.fine("AWS Keyspaces compatibility mode enabled: using alternative to get last executed changeset");
 				Timestamp maxDateExecuted = selectLastExecutedChangesetTimestamp(database, databaseChangelogTableName);
-				String query1 = "SELECT TOUNIXTIMESTAMP(DATEEXECUTED) as LAST_DATEEXECUTED FROM "
-						+ databaseChangelogTableName + "WHERE DATEEXECUTED = ? ALLOW FILTERING;";
-				ps1 = ((CassandraDatabase) database).prepareStatement(query1);
-				ps1.setTimestamp(1, maxDateExecuted);
-				rs1 = ps1.executeQuery();
+				
+				try (PreparedStatement ps1 = ((CassandraDatabase) database).prepareStatement(
+						"SELECT TOUNIXTIMESTAMP(DATEEXECUTED) as LAST_DATEEXECUTED FROM " 
+						+ databaseChangelogTableName + "WHERE DATEEXECUTED = ? ALLOW FILTERING;");
+				) {
+					ps1.setTimestamp(1, maxDateExecuted);
+					try (ResultSet rs1 = ps1.executeQuery()) {
+						if (rs1 == null) {
+							throw new UnexpectedLiquibaseException(
+									"Unexpected null result set when getting last executed changeset date");
+						}
+						while (rs1.next()) {
+							date = rs1.getString("LAST_DATEEXECUTED");
+						}
+					}
+				}
 			} else {
-				String query1 = "SELECT TOUNIXTIMESTAMP(MAX(DATEEXECUTED)) as LAST_DATEEXECUTED FROM "
-						+ databaseChangelogTableName;
-				rs1 = statement1.executeQuery(query1);
-			}
-			String date = "";
-			if (rs1 == null) {
-				throw new UnexpectedLiquibaseException(
-						"Unexpected null result set when getting last executed changeset date");
-			}
-			while (rs1.next()) {
-				date =  rs1.getString("LAST_DATEEXECUTED");
-			}
-			rs1.close();
-			if (ps1 != null) {
-				ps1.close();
+				try (Statement statement1 = ((CassandraDatabase) database).getStatement();
+					ResultSet rs1 = statement1.executeQuery(
+						"SELECT TOUNIXTIMESTAMP(MAX(DATEEXECUTED)) as LAST_DATEEXECUTED FROM " + databaseChangelogTableName)
+				) {
+					if (rs1 == null) {
+						throw new UnexpectedLiquibaseException(
+								"Unexpected null result set when getting last executed changeset date");
+					}
+					while (rs1.next()) {
+						date = rs1.getString("LAST_DATEEXECUTED");
+					}
+				}
 			}
 
-			//Query to get composite key details of last executed change set
-			String query2 = "SELECT id, author, filename FROM " + databaseChangelogTableName
-					+ " WHERE dateexecuted = '" + date + "' ALLOW FILTERING";
-			ResultSet rs2 = statement1.executeQuery(query2);
-			String id = "", author = "", filename = "";
-			while (rs2.next()) {
-				id = rs2.getString("id");
-				author = rs2.getString("author");
-				filename = rs2.getString("filename");
+			// Query to get composite key details of last executed change set
+			StringBuilder commandBuilder = new StringBuilder();
+			try (Statement statement1 = ((CassandraDatabase) database).getStatement();
+				 ResultSet rs2 = statement1.executeQuery(
+						 commandBuilder
+								.append("SELECT id, author, filename FROM ")
+								.append(databaseChangelogTableName)
+								.append(" WHERE dateexecuted = '")
+								.append(date)
+								.append("' ALLOW FILTERING")
+								 .toString()
+				 )
+			) {
+				while (rs2.next()) {
+					id = rs2.getString("id");
+					author = rs2.getString("author");
+					filename = rs2.getString("filename");
+				}
 			}
-			rs2.close();
-			statement1.close();
 
 			//Query to update tag 
 			String updateQuery = "UPDATE " 
@@ -123,18 +137,18 @@ public class TagDatabaseGeneratorCassandra extends TagDatabaseGenerator {
 	 */
 	private Timestamp selectLastExecutedChangesetTimestamp(final Database database, final String changelogTableName)
 			throws SQLException, DatabaseException {
-		Statement statement = ((CassandraDatabase) database).getStatement();
-		ResultSet rs = statement.executeQuery("SELECT DATEEXECUTED FROM " + changelogTableName);
-		Timestamp maxValue = null;
-		while (rs.next()) {
-			Timestamp result = rs.getTimestamp("DATEEXECUTED");
-			if (maxValue == null || maxValue.compareTo(result) < 0) {
-				maxValue = result;
+		try (Statement statement = ((CassandraDatabase) database).getStatement();
+			ResultSet rs = statement.executeQuery("SELECT DATEEXECUTED FROM " + changelogTableName)) {
+			
+			Timestamp maxValue = null;
+			while (rs.next()) {
+				Timestamp result = rs.getTimestamp("DATEEXECUTED");
+				if (maxValue == null || maxValue.compareTo(result) < 0) {
+					maxValue = result;
+				}
 			}
+			return maxValue;
 		}
-		rs.close();
-		statement.close();
-		return maxValue;
 	}
 
 }
