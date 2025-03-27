@@ -88,4 +88,9 @@ public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
         return table;
     }
 
+    @Override
+    public Class<? extends SnapshotGenerator>[] replaces() {
+        return new Class[]{TableSnapshotGenerator.class};
+    }
+
 }

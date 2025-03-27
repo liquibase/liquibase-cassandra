@@ -7,6 +7,7 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.snapshot.DatabaseSnapshot;
+import liquibase.snapshot.SnapshotGenerator;
 import liquibase.snapshot.jvm.IndexSnapshotGenerator;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
@@ -100,5 +101,9 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
         }
     }
 
+    @Override
+    public Class<? extends SnapshotGenerator>[] replaces() {
+        return new Class[]{IndexSnapshotGenerator.class};
+    }
 
 }

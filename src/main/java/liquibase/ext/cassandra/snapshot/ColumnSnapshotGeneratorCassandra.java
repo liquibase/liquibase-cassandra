@@ -7,6 +7,7 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.snapshot.DatabaseSnapshot;
+import liquibase.snapshot.SnapshotGenerator;
 import liquibase.snapshot.jvm.ColumnSnapshotGenerator;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
@@ -88,6 +89,11 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         //TODO extend datatype parsing when needed to include DataTypeId
         column.setType(new DataType(rawColumnType));
         return column;
+    }
+
+    @Override
+    public Class<? extends SnapshotGenerator>[] replaces() {
+        return new Class[]{ColumnSnapshotGenerator.class};
     }
 
 }
