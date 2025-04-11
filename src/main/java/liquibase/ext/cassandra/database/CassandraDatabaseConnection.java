@@ -17,6 +17,11 @@ public class CassandraDatabaseConnection extends JdbcConnection {
     }
 
     @Override
+    public boolean supports(String url) {
+        return url.toLowerCase().startsWith("jdbc:cassandra");
+    }
+
+    @Override
     public void open(String url, Driver driverObject, Properties driverProperties) throws DatabaseException {
         String jdbcUrl = url;
 
