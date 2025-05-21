@@ -8,6 +8,8 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
+import liquibase.structure.DatabaseObject;
+import liquibase.structure.core.ForeignKey;
 import liquibase.structure.core.Index;
 
 import java.sql.PreparedStatement;
@@ -198,5 +200,13 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	@Override
 	public String escapeIndexName(String catalogName, String schemaName, String indexName) {
 		return this.escapeObjectName(indexName, Index.class);
+	}
+
+	@Override
+	public boolean supports(Class<? extends DatabaseObject> object) {
+		if (ForeignKey.class.isAssignableFrom(object)) {
+			return false;
+		}
+		return super.supports(object);
 	}
 }
