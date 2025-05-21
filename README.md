@@ -1,4 +1,8 @@
-liquibase-cassandra [![Build and Test Extension](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml)
+liquibase-cassandra
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/org.liquibase.ext/liquibase-cassandra)](https://mvnrepository.com/artifact/org.liquibase.ext/liquibase-cassandra)
+[![Build and Test Extension](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml)
 ===================
 
 Liquibase extension for Cassandra Support.
