@@ -17,7 +17,7 @@
 
     <properties>
         <maven.enforcer.requireJavaVersion>${maven.compiler.source}</maven.enforcer.requireJavaVersion>
-        <liquibase.version>4.31.1</liquibase.version>
+        <liquibase.version>4.32.0</liquibase.version>
         <liquibase.sdk.github.token>${env.GITHUB_TOKEN}</liquibase.sdk.github.token>
         <sonar.tests>src/test/groovy</sonar.tests>
         <junit.version>5.11.4</junit.version>
