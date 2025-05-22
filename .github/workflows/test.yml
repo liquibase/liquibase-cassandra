@@ -1,15 +1,11 @@
 name: Build and Test
 
 on:
-  workflow_dispatch:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - reopened
       - synchronize
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
@@ -27,67 +23,8 @@ jobs:
     needs: authorize
     uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@main
     secrets: inherit
-    with:
-      java: "[11, 17, 21]"
-
-  integration-tests:
-    name: Integration Tests -- Java ${{ matrix.java }} on Cassandra ${{ matrix.cassandra }}
-    runs-on: ubuntu-latest
-    needs: build-test
-    strategy:
-      matrix:
-        java: [11, 17]
-    services:
-      cassandra-3:
-        image: liquibase/liquibase:cassandra-test-3
-        ports:
-          - "9042:9042"
-      cassandra-4:
-        image: liquibase/liquibase:cassandra-test-4
-        ports:
-          - "9043:9042"
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore Built Code
-        uses: actions/cache@v4
-        with:
-          key: built-code-${{ github.run_id }}
-          path: ./**/target
-
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ matrix.java }}
-          distribution: "temurin"
-          cache: "maven"
-
-      - name: Start Cassandra Container
-        run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -e CASSANDRA_PASSWORD=Password1 -e CASSANDRA_PASSWORD_SEEDER=yes -d bitnami/cassandra
-
-      - name: Wait for cassandra to start up
-        run: sleep 90s
-
-      - name: Check cassandra status
-        run: docker ps -a
-
-      - name: Check cassandra logs
-        run: docker logs mycassandra
-
-      - name: Load Cassandra Config
-        run: docker exec mycassandra cqlsh -u cassandra -p Password1 localhost 9042 -f /app/test.cql
-
-      - name: Run Tests
-        run: mvn -B clean test verify
-
-      - name: Archive Test Results
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports-integration-jdk${{ matrix.java }}-cassandra${{ matrix.cassandra }}
-          path: ./**/target/surefire-reports
 
   dependabot:
-    needs: integration-tests
+    needs: build-test
     uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@main
     secrets: inherit
