@@ -12,11 +12,11 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
+  packages: read
 
 jobs:
-
   authorize:
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: ubuntu-latest
@@ -59,8 +59,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: "temurin"
+          cache: "maven"
 
       - name: Start Cassandra Container
         run: docker run -p 9042:9042 -v $(pwd):/app --name mycassandra -e CASSANDRA_PASSWORD=Password1 -e CASSANDRA_PASSWORD_SEEDER=yes -d bitnami/cassandra

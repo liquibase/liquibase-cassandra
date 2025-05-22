@@ -4,7 +4,12 @@ on:
   workflow_dispatch:
   release:
     types: [published]
-  
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
 jobs:
   release:
     uses: liquibase/build-logic/.github/workflows/extension-release-published.yml@main
