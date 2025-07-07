@@ -32,16 +32,15 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     @Override
     public boolean hasDatabaseChangeLogTable() {
         boolean hasChangeLogTable;
-        try {
-            Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            statement.executeQuery("select ID from " + getChangeLogTableName());
-            statement.close();
-            hasChangeLogTable = true;
+        try (Statement statement = ((CassandraDatabase) getDatabase()).getStatement()) {
+            try (ResultSet rs = statement.executeQuery("select ID from " + getChangeLogTableName())) {
+                hasChangeLogTable = true;
+            }
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogTableName() + " available in cassandra.");
             hasChangeLogTable = false;
         } catch (DatabaseException e) {
-            e.printStackTrace();
+            Scope.getCurrentScope().getLog(getClass()).warning("Error checking for changelog table", e);
             hasChangeLogTable = false;
         }
 
@@ -53,32 +52,29 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
     @Override
     public int getNextSequenceValue() {
         int next = 0;
-        try {
-            Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
-            ResultSet rs = statement.executeQuery("SELECT " +
-                    "ID as \"ID\", " +
-                    "AUTHOR as \"AUTHOR\", " +
-                    "FILENAME as \"FILENAME\", " +
-                    "COMMENTS AS \"COMMENTS\", " +
-                    "CONTEXTS AS \"CONTEXTS\", " +
-                    "DATEEXECUTED AS \"DATEEXECUTED\", " +
-                    "ORDEREXECUTED AS \"ORDEREXECUTED\", " +
-                    "DEPLOYMENT_ID AS \"DEPLOYMENT_ID\", " +
-                    "DESCRIPTION AS \"DESCRIPTION\", " +
-                    "EXECTYPE AS \"EXECTYPE\", " +
-                    "LABELS AS \"LABELS\", " +
-                    "LIQUIBASE AS \"LIQUIBASE\", " +
-                    "MD5SUM AS \"MD5SUM\", " +
-                    "TAG AS \"TAG\" " +
-                    "FROM " + getChangeLogTableName());
+        try (Statement statement = ((CassandraDatabase) getDatabase()).getStatement();
+             ResultSet rs = statement.executeQuery("SELECT " +
+                     "ID as \"ID\", " +
+                     "AUTHOR as \"AUTHOR\", " +
+                     "FILENAME as \"FILENAME\", " +
+                     "COMMENTS AS \"COMMENTS\", " +
+                     "CONTEXTS AS \"CONTEXTS\", " +
+                     "DATEEXECUTED AS \"DATEEXECUTED\", " +
+                     "ORDEREXECUTED AS \"ORDEREXECUTED\", " +
+                     "DEPLOYMENT_ID AS \"DEPLOYMENT_ID\", " +
+                     "DESCRIPTION AS \"DESCRIPTION\", " +
+                     "EXECTYPE AS \"EXECTYPE\", " +
+                     "LABELS AS \"LABELS\", " +
+                     "LIQUIBASE AS \"LIQUIBASE\", " +
+                     "MD5SUM AS \"MD5SUM\", " +
+                     "TAG AS \"TAG\" " +
+                     "FROM " + getChangeLogTableName())) {
             while (rs.next()) {
                 int order = rs.getInt("ORDEREXECUTED");
                 next = Math.max(order, next);
             }
-            statement.close();
-
         } catch (SQLException | DatabaseException e) {
-            e.printStackTrace();
+            Scope.getCurrentScope().getLog(getClass()).warning("Error getting next sequence value", e);
         }
         return next + 1;
     }

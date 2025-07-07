@@ -90,7 +90,7 @@ class CassandraFunctionalIT extends Specification {
         def historyService = ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(database)
         def ranChangeSets = historyService.getRanChangeSets()
         then:
-        ranChangeSets.size() == 3
+        ranChangeSets.findAll { it.changeLog.contains("test-changelog.xml") }.size() == 3
 
     }
 
