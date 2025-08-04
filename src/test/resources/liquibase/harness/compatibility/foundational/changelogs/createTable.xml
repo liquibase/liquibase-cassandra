@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="1" author="as" labels="test_label" context="test_context">
+        <comment>test_comment</comment>
+        <sql>CREATE TABLE test_table_xml (test_column INT PRIMARY KEY)</sql>
+        <rollback>DROP TABLE test_table_xml</rollback>
+    </changeSet>
+</databaseChangeLog>
