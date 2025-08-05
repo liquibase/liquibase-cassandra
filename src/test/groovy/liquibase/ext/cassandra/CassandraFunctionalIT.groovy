@@ -5,6 +5,7 @@ import liquibase.LabelExpression
 import liquibase.Liquibase
 import liquibase.change.CheckSum
 import liquibase.changelog.ChangeLogHistoryServiceFactory
+import liquibase.ext.cassandra.lockservice.LockServiceCassandra
 import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.ClassLoaderResourceAccessor
 import spock.lang.Specification
@@ -117,6 +118,22 @@ class CassandraFunctionalIT extends Specification {
             liquibase.rollback(1, (String) null)
         then:
             database != null
+    }
+
+    def "listLocks"() {
+
+        when:
+            def lockService = new LockServiceCassandra()
+            lockService.setDatabase(database)
+            lockService.init()
+            lockService.acquireLock()
+            def locks = lockService.listLocks()
+        then:
+            try {
+                assert locks.size() > 0
+            } finally {
+                lockService.forceReleaseLock()
+            }
     }
 
 }
