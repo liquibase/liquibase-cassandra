@@ -129,7 +129,7 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 
 	@Override
 	public boolean isCaseSensitive() {
-		return true;
+		return false;
 	}
 
 	@Override
