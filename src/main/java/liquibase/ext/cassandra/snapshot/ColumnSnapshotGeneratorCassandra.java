@@ -92,7 +92,7 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
 
         //we can't add column name as query parameter here as AWS keyspaces don't support such where statement
         String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s';"
-                , database.getDefaultCatalogName(), relation);
+                , database.getDefaultCatalogName(), relation.getName());
 
         List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class)
                 .getExecutor("jdbc", database).queryForList(new RawSqlStatement(query));
