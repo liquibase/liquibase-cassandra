@@ -31,6 +31,14 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         return PRIORITY_NONE;
     }
 
+    /**
+     * Adds column information to the database snapshot.
+     * Safely handles null relation names by logging and returning early.
+     *
+     * @param foundObject the database object (must be a Relation)
+     * @param snapshot the database snapshot being built
+     * @throws DatabaseException if database access fails
+     */
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
         if (!snapshot.getSnapshotControl().shouldInclude(Column.class)) {
@@ -39,6 +47,14 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         if (foundObject instanceof Relation) {
             Database database = snapshot.getDatabase();
             Relation relation = (Relation) foundObject;
+
+            if (relation.getName() == null) {
+                Scope.getCurrentScope().getLog(ColumnSnapshotGeneratorCassandra.class)
+                        .warning("Skipping column snapshot for relation with null name. " +
+                                "This may indicate unsupported snapshot operations for Cassandra databases.");
+                return;
+            }
+
             String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE KEYSPACE_NAME = '%s' AND table_name='%s';"
                     , database.getDefaultCatalogName(), relation.getName());
             Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",
@@ -51,10 +67,29 @@ public class ColumnSnapshotGeneratorCassandra extends ColumnSnapshotGenerator {
         }
     }
 
+    /**
+     * Creates a snapshot of a specific column object.
+     * Returns null for relations with null names to prevent NPE.
+     *
+     * @param example the column object to snapshot
+     * @param snapshot the database snapshot context
+     * @return the column object with populated metadata, or null if relation name is null
+     * @throws DatabaseException if database access fails
+     */
     @Override
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
         Database database = snapshot.getDatabase();
         Relation relation = ((Column) example).getRelation();
+
+        // Check for null relation or relation name which can occur with certain snapshot operations
+        // This prevents NPE and allows other snapshot components to continue working
+        if (relation == null || relation.getName() == null) {
+            Scope.getCurrentScope().getLog(ColumnSnapshotGeneratorCassandra.class)
+                    .warning("Skipping column snapshot for relation with null name. " +
+                            "This may indicate unsupported snapshot operations for Cassandra databases.");
+            return null;
+        }
+
         //we can't add column name as query parameter here as AWS keyspaces don't support such where statement
         String query = String.format("SELECT KEYSPACE_NAME, COLUMN_NAME, TYPE, KIND FROM system_schema.columns WHERE keyspace_name = '%s' AND table_name='%s';"
                 , database.getDefaultCatalogName(), relation);
