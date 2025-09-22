@@ -29,6 +29,14 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
         return PRIORITY_NONE;
     }
 
+    /**
+     * Adds index information to the database snapshot.
+     * Safely handles null relation names by logging and returning early.
+     *
+     * @param foundObject the database object (must be a Relation)
+     * @param snapshot the database snapshot being built
+     * @throws DatabaseException if database access fails
+     */
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
         if (!snapshot.getSnapshotControl().shouldInclude(Index.class)) {
@@ -38,6 +46,13 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
 
             Relation relation = (Relation) foundObject;
             Database database = snapshot.getDatabase();
+
+            if (relation.getName() == null) {
+                Scope.getCurrentScope().getLog(IndexSnapshotGeneratorCassandra.class)
+                        .warning("Skipping index snapshot for relation with null name. " +
+                                "This may indicate unsupported snapshot operations for Cassandra databases.");
+                return;
+            }
 
             String query = String.format("SELECT KEYSPACE_NAME, INDEX_NAME, OPTIONS FROM system_schema.indexes WHERE KEYSPACE_NAME = '%s' AND TABLE_NAME='%s';",
                     database.getDefaultCatalogName(), relation.getName());
@@ -82,10 +97,26 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
         return Collections.emptyList();
     }
 
+    /**
+     * Creates a snapshot of a specific index object.
+     * Returns null for relations with null names to prevent NPE.
+     *
+     * @param example the index object to snapshot
+     * @param snapshot the database snapshot context
+     * @return the index object with populated metadata, or null if relation name is null
+     * @throws DatabaseException if database access fails
+     */
     @Override
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
         Relation relation = ((Index) example).getRelation();
         Database database = snapshot.getDatabase();
+
+        if (relation == null || relation.getName() == null) {
+            Scope.getCurrentScope().getLog(IndexSnapshotGeneratorCassandra.class)
+                    .warning("Skipping index snapshot for relation with null name. " +
+                            "This may indicate unsupported snapshot operations for Cassandra databases.");
+            return null;
+        }
 
         String query = String.format("SELECT KEYSPACE_NAME, INDEX_NAME, OPTIONS FROM system_schema.indexes WHERE KEYSPACE_NAME = '%s' AND TABLE_NAME='%s' AND INDEX_NAME= '%s';",
                 database.getDefaultCatalogName(), relation.getName(), example.getName());

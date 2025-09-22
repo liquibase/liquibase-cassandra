@@ -47,6 +47,10 @@ public class TableSnapshotGeneratorCassandra extends TableSnapshotGenerator {
             List<Map<String, ?>> returnList = executor.queryForList(new RawSqlStatement(query));
 
             for (Map<String, ?> tablePropertiesMap : returnList) {
+                Table table = readTable(tablePropertiesMap, database);
+                if (table == null || table.getName() == null) {
+                    continue;
+                }
                 schema.addDatabaseObject(readTable(tablePropertiesMap, database));
             }
         }
