@@ -26,21 +26,21 @@ To be able to run the harness tests locally setting up docker container is curre
 
 To create a local test database docker container, execute the following steps:
 - Run main cassandra instance. It could be Cassandra official image or VMware's `bitnami` image. Second one allows to provide password during startup, and we use it in our CI/CD.
-Official cassandra image doesn't care about auth. Full list of possible versions for official image can be found in [dockerhub Cassandra official](https://hub.docker.com/_/cassandra) page,
+  Official cassandra image doesn't care about auth. Full list of possible versions for official image can be found in [dockerhub Cassandra official](https://hub.docker.com/_/cassandra) page,
   for `bitnami` go to [VMware's bitnami dockerhub](https://hub.docker.com/r/bitnami/cassandra) page. So commands could be
-  - `docker run --name cassandra -e CASSANDRA_PASSWORD=Password1 -e CASSANDRA_PASSWORD_SEEDER=yes -p 9042:9042 -d bitnami/cassandra` or
-  - `docker run -p 9042:9042 --rm --name cassandra3 -d cassandra:3` 
- Give container a minute to fully initialize.
-  
-- run 
-  - `docker inspect cassandra` or
-  - `docker inspect cassandra3` depending which container you started to get a main instance IP address. By default, it's 172.17.0.2 but may change in our local env.
-- to execute init script run second container 
-  - `docker run -it --rm cassandra bash` or 
-  - `docker run -it --rm bitnami/cassandra bash`, they are interchangeable in our case
+    - `docker run --name cassandra -e CASSANDRA_PASSWORD=Password1 -e CASSANDRA_PASSWORD_SEEDER=yes -p 9042:9042 -d bitnami/cassandra` or
+    - `docker run -p 9042:9042 --rm --name cassandra3 -d cassandra:3`
+      Give container a minute to fully initialize.
+
+- run
+    - `docker inspect cassandra` or
+    - `docker inspect cassandra3` depending which container you started to get a main instance IP address. By default, it's 172.17.0.2 but may change in our local env.
+- to execute init script run second container
+    - `docker run -it --rm cassandra bash` or
+    - `docker run -it --rm bitnami/cassandra bash`, they are interchangeable in our case
 - enter cql console
-  - `cqlsh 172.17.0.2` or
-  - `cqlsh 172.17.0.2 -u cassandra -p Password1` for `bitnami`'s image (or use other IP showed by `docker inspect` if this doesn't work)
+    - `cqlsh 172.17.0.2` or
+    - `cqlsh 172.17.0.2 -u cassandra -p Password1` for `bitnami`'s image (or use other IP showed by `docker inspect` if this doesn't work)
 - copy and paste init script from `test.cql` file content to create keyspace and tables for tests. Also provided here for your convenience
 ```
 CREATE KEYSPACE betterbotz
@@ -110,6 +110,37 @@ More details about different options can be found in [liquibase-test-harness rea
 ##### from command line
 You can use `mvn verify` command to run all integration tests - both living in Cassandra and test-harness.
 To run only test-harness IT test use `mvn -Dit.test=LiquibaseHarnessSuiteIT verify` command.
+
+## ScyllaDB Compatibility
+
+This extension is fully compatible with **ScyllaDB** as a drop-in replacement for Apache Cassandra. ScyllaDB's Cassandra-compatible protocol allows seamless integration with the Liquibase Cassandra extension.
+
+All core Liquibase operations work correctly with ScyllaDB, including schema migrations (DDL), data operations (DML), changelog tracking, distributed locking, and rollback functionality.
+
+### Using ScyllaDB for Testing
+
+To use ScyllaDB instead of Cassandra for local testing:
+
+**Start ScyllaDB Docker container:**
+```bash
+# Standard setup (Linux)
+docker run --name scylladb -p 9042:9042 -d scylladb/scylla --smp 1
+
+# macOS users must add --reactor-backend=epoll flag
+docker run --name scylladb -p 9042:9042 -d scylladb/scylla --reactor-backend=epoll --smp 1
+```
+
+**Configuration notes:**
+- ScyllaDB uses default credentials `cassandra`/`cassandra`
+- Update password in `liquibase.properties` and `src/test/resources/harness-config.yml` from `Password1` to `cassandra`
+- Connection configuration is otherwise identical to Cassandra
+- Wait 15-20 seconds for ScyllaDB to fully initialize before running tests
+
+**Initialize test database:**
+```bash
+docker cp test.cql scylladb:/tmp/test.cql
+docker exec scylladb cqlsh -f /tmp/test.cql
+```
 
 ## Contributing
 
