@@ -23,7 +23,7 @@ jobs:
 
   build-test:
     needs: authorize
-    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@main
+    uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@DAT-21845
     secrets: inherit
 
   dependabot:
