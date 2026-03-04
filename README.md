@@ -1,6 +1,6 @@
 liquibase-cassandra
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-FSL--1.1--ALv2-blue)](https://opensource.org/licenses/FSL-1.1-ALv2)
 [![Maven Central](https://img.shields.io/maven-central/v/org.liquibase.ext/liquibase-cassandra)](https://mvnrepository.com/artifact/org.liquibase.ext/liquibase-cassandra)
 [![Build and Test Extension](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml/badge.svg)](https://github.com/liquibase/liquibase-cassandra/actions/workflows/test.yml)
 ===================
@@ -149,5 +149,5 @@ Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of cond
 <a name="license"></a>
 ## License
 
-This project is licensed under the Apache License Version 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Functional Source License, Version 1.1, ALv2 Future License (FSL-1.1-ALv2) - see the [LICENSE.txt](LICENSE.txt) file for details
 
