@@ -3,15 +3,8 @@ context: testContext
 
 databasesUnderTest:
 - name: cassandra
-  version: 3
-  url: jdbc:cassandra://localhost:9043/betterbotz?compliancemode=Liquibase&localdatacenter=datacenter1
+  version: 5
+  url: jdbc:cassandra://localhost:9045/betterbotz?compliancemode=Liquibase&localdatacenter=datacenter1
   username: cassandra
   password: Password1
   dbSchema: betterbotz
-
-#- name: cassandra
-#  version: 4
-#  url: jdbc:cassandra://localhost:9044/betterbotz?compliancemode=Liquibase&localdatacenter=datacenter1
-#  username: cassandra
-#  password: cassandra
-#  dbSchema: betterbotz
