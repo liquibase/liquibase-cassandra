@@ -67,12 +67,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Test.groovy</include>
-                        <include>**/*IT.java</include>
-                        <include>**/*IT.groovy</include>
-                    </includes>
                 </configuration>
             </plugin>
         </plugins>
