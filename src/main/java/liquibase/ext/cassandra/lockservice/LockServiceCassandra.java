@@ -17,6 +17,7 @@ import liquibase.statement.core.RawSqlStatement;
 import liquibase.statement.core.UnlockDatabaseChangeLogStatement;
 import liquibase.util.NetUtil;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -135,9 +136,16 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName());
-            statement.close();
-            hasChangeLogLockTable = true;
+            try {
+                ResultSet rs = statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName());
+                try {
+                    hasChangeLogLockTable = true;
+                } finally {
+                    rs.close();
+                }
+            } finally {
+                statement.close();
+            }
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogLockTableName() + " available in Cassandra.");
             hasChangeLogLockTable = false;
