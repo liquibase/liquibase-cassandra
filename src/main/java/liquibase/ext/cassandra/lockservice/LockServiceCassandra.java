@@ -12,13 +12,18 @@ import liquibase.executor.ExecutorService;
 import liquibase.executor.LoggingExecutor;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.lockservice.StandardLockService;
+import liquibase.lockservice.DatabaseChangeLogLock;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.statement.core.UnlockDatabaseChangeLogStatement;
 import liquibase.util.NetUtil;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -126,6 +131,50 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     /**
+     * Override listLocks to handle Cassandra's lowercase column names.
+     * The Cassandra JDBC driver returns column names in lowercase, but
+     * StandardLockService.listLocks() expects uppercase (LOCKED, LOCKGRANTED, LOCKEDBY, ID).
+     */
+    @Override
+    public DatabaseChangeLogLock[] listLocks() throws LockException {
+        try {
+            if (!isDatabaseChangeLogLockTableCreated()) {
+                return new DatabaseChangeLogLock[0];
+            }
+            Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class)
+                    .getExecutor("jdbc", database);
+            List<Map<String, ?>> rows = executor.queryForList(
+                    new RawSqlStatement("SELECT ID, LOCKED, LOCKGRANTED, LOCKEDBY FROM "
+                            + getChangeLogLockTableName()));
+            List<DatabaseChangeLogLock> locks = new ArrayList<>();
+            for (Map<String, ?> row : rows) {
+                // Cassandra JDBC driver returns lowercase column names
+                Object lockedValue = row.get("LOCKED") != null ? row.get("LOCKED") : row.get("locked");
+                boolean locked;
+                if (lockedValue instanceof Number) {
+                    locked = ((Number) lockedValue).intValue() == 1;
+                } else if (lockedValue instanceof Boolean) {
+                    locked = (Boolean) lockedValue;
+                } else {
+                    locked = false;
+                }
+                if (locked) {
+                    Object grantedValue = row.get("LOCKGRANTED") != null ? row.get("LOCKGRANTED") : row.get("lockgranted");
+                    Date lockGranted = grantedValue instanceof Date ? (Date) grantedValue : null;
+                    Object lockedByValue = row.get("LOCKEDBY") != null ? row.get("LOCKEDBY") : row.get("lockedby");
+                    String lockedBy = lockedByValue != null ? lockedByValue.toString() : null;
+                    Object idValue = row.get("ID") != null ? row.get("ID") : row.get("id");
+                    int id = idValue instanceof Number ? ((Number) idValue).intValue() : 0;
+                    locks.add(new DatabaseChangeLogLock(id, lockGranted, lockedBy));
+                }
+            }
+            return locks.toArray(new DatabaseChangeLogLock[0]);
+        } catch (DatabaseException e) {
+            throw new LockException(e);
+        }
+    }
+
+    /**
      * Check whether the databasechangeloglock table exists in the database.
      * @param forceRecheck has no effect in the Cassandra-specific implementation: the actual database is always
      *                     checked.
@@ -135,9 +184,16 @@ public class LockServiceCassandra extends StandardLockService {
         boolean hasChangeLogLockTable;
         try {
             Statement statement = ((CassandraDatabase) database).getStatement();
-            statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName());
-            statement.close();
-            hasChangeLogLockTable = true;
+            try {
+                ResultSet rs = statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName());
+                try {
+                    hasChangeLogLockTable = true;
+                } finally {
+                    rs.close();
+                }
+            } finally {
+                statement.close();
+            }
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogLockTableName() + " available in Cassandra.");
             hasChangeLogLockTable = false;
