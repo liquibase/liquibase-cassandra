@@ -21,7 +21,7 @@ import liquibase.util.NetUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -148,8 +148,7 @@ public class LockServiceCassandra extends StandardLockService {
                             + getChangeLogLockTableName()));
             List<DatabaseChangeLogLock> locks = new ArrayList<>();
             for (Map<String, ?> row : rows) {
-                // Cassandra JDBC driver returns lowercase column names
-                Object lockedValue = row.get("LOCKED") != null ? row.get("LOCKED") : row.get("locked");
+                Object lockedValue = getIgnoreCase(row, "LOCKED");
                 boolean locked;
                 if (lockedValue instanceof Number) {
                     locked = ((Number) lockedValue).intValue() == 1;
@@ -159,11 +158,11 @@ public class LockServiceCassandra extends StandardLockService {
                     locked = false;
                 }
                 if (locked) {
-                    Object grantedValue = row.get("LOCKGRANTED") != null ? row.get("LOCKGRANTED") : row.get("lockgranted");
+                    Object grantedValue = getIgnoreCase(row, "LOCKGRANTED");
                     Date lockGranted = grantedValue instanceof Date ? (Date) grantedValue : null;
-                    Object lockedByValue = row.get("LOCKEDBY") != null ? row.get("LOCKEDBY") : row.get("lockedby");
+                    Object lockedByValue = getIgnoreCase(row, "LOCKEDBY");
                     String lockedBy = lockedByValue != null ? lockedByValue.toString() : null;
-                    Object idValue = row.get("ID") != null ? row.get("ID") : row.get("id");
+                    Object idValue = getIgnoreCase(row, "ID");
                     int id = idValue instanceof Number ? ((Number) idValue).intValue() : 0;
                     locks.add(new DatabaseChangeLogLock(id, lockGranted, lockedBy));
                 }
@@ -182,18 +181,9 @@ public class LockServiceCassandra extends StandardLockService {
     @Override
     public boolean isDatabaseChangeLogLockTableCreated(boolean forceRecheck) {
         boolean hasChangeLogLockTable;
-        try {
-            Statement statement = ((CassandraDatabase) database).getStatement();
-            try {
-                ResultSet rs = statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName());
-                try {
-                    hasChangeLogLockTable = true;
-                } finally {
-                    rs.close();
-                }
-            } finally {
-                statement.close();
-            }
+        try (Statement statement = ((CassandraDatabase) database).getStatement();
+             ResultSet rs = statement.executeQuery("SELECT ID FROM " + getChangeLogLockTableName())) {
+            hasChangeLogLockTable = true;
         } catch (SQLException e) {
             Scope.getCurrentScope().getLog(getClass()).info("No " + getChangeLogLockTableName() + " available in Cassandra.");
             hasChangeLogLockTable = false;
@@ -245,6 +235,11 @@ public class LockServiceCassandra extends StandardLockService {
         return executeCountQuery(executor,
                 "SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " WHERE " +
                         "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING") > 0;
+    }
+
+    private static Object getIgnoreCase(Map<String, ?> row, String key) {
+        Object val = row.get(key);
+        return val != null ? val : row.get(key.toLowerCase());
     }
 
     private String getChangeLogLockTableName() {
