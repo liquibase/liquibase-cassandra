@@ -1,1 +1,2 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+CREATE INDEX idx_email ON betterbotz.authors(email)
+DROP INDEX idx_email

@@ -1,1 +1,2 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+CREATE INDEX idx_first_name ON betterbotz.authors(first_name)
+CREATE INDEX idx_last_name ON betterbotz.authors(last_name)

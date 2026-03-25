@@ -58,6 +58,16 @@ public class LockServiceCassandra extends StandardLockService {
             database.rollback();
             super.init();
 
+            // During SQL output mode (updateSql etc.) the executor is a LoggingExecutor.
+            // Skip all real JDBC-based lock checks; the lock SQL is captured in the output.
+            if (executor instanceof LoggingExecutor) {
+                executor.comment("Lock Database");
+                executor.update(new LockDatabaseChangeLogStatement());
+                database.commit();
+                hasChangeLogLock = true;
+                database.setCanCacheLiquibaseTableInfo(true);
+                return true;
+            }
 
             if (isLocked(executor)) {
                 return false;

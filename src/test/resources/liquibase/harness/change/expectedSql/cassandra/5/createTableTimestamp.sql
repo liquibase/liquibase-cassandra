@@ -1,1 +1,1 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+CREATE TABLE betterbotz.test_table_timestamp (test_id INT, test_column timestamp, PRIMARY KEY (test_id))

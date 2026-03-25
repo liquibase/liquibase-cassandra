@@ -1,1 +1,1 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+INVALID TEST - mergeColumns generates an unbounded UPDATE (no WHERE clause) which is not valid CQL in Cassandra
