@@ -1,0 +1,14 @@
+{
+  "snapshot": {
+    "objects": {
+      "_noMatch": true,
+      "liquibase.structure.core.Index": [
+        {
+          "index": {
+            "name": "idx_email"
+          }
+        }
+      ]
+    }
+  }
+}

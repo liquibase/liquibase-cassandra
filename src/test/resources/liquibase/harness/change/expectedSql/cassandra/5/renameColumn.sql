@@ -1,1 +1,1 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+ALTER TABLE betterbotz.authors RENAME id TO id_renameColumn_test

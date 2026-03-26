@@ -12,6 +12,7 @@ import liquibase.statement.core.RawSqlStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -80,6 +81,9 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
 
     @Override
     public List<Map<String, ?>> queryDatabaseChangeLogTable(Database database) throws DatabaseException {
+        if (!hasDatabaseChangeLogTable()) {
+            return Collections.emptyList();
+        }
         RawSqlStatement select = new RawSqlStatement("SELECT " +
                 "ID as \"ID\", " +
                 "AUTHOR as \"AUTHOR\", " +

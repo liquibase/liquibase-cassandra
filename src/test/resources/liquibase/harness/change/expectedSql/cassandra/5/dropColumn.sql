@@ -1,1 +1,2 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+ALTER TABLE betterbotz.posts ADD dropColumnTestColumn VARCHAR
+ALTER TABLE betterbotz.posts DROP dropColumnTestColumn

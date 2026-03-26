@@ -17,16 +17,18 @@
             <column name="last_name"
                     type="varchar"/>
         </createTable>
-        <rollback/>
+        <rollback>
+            <dropTable tableName="full_name_table"/>
+        </rollback>
     </changeSet>
     <changeSet id="2" author="as">
         <insert tableName="full_name_table">
-            <column name="id" value="1"/>
+            <column name="id" valueNumeric="1"/>
             <column name="first_name" value="John"/>
             <column name="last_name" value="Doe"/>
         </insert>
         <insert tableName="full_name_table">
-            <column name="id" value="2"/>
+            <column name="id" valueNumeric="2"/>
             <column name="first_name" value="Jane"/>
             <column name="last_name" value="Doe"/>
         </insert>

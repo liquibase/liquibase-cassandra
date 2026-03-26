@@ -1,1 +1,3 @@
-INVALID TEST Cassandra extension does not support updateSql output capture for this change type
+ALTER TABLE betterbotz.authors ADD varcharColumn VARCHAR
+ALTER TABLE betterbotz.authors ADD intColumn INT
+ALTER TABLE betterbotz.authors ADD dateColumn date
