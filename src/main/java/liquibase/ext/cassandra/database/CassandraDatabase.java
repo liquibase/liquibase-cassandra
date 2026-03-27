@@ -199,4 +199,9 @@ public class CassandraDatabase extends AbstractJdbcDatabase {
 	public String escapeIndexName(String catalogName, String schemaName, String indexName) {
 		return this.escapeObjectName(indexName, Index.class);
 	}
+
+    @Override
+    public String getDisplayName() {
+        return PRODUCT_NAME;
+    }
 }
