@@ -12,10 +12,10 @@ import spock.lang.Specification
 
 
 class CassandraFunctionalIT extends Specification {
-    def url = "jdbc:cassandra://localhost:9042/betterbotz?compliancemode=Liquibase&localdatacenter=datacenter1"
+    def url = System.getProperty("dbUrl", "jdbc:cassandra://localhost:9043/betterbotz?compliancemode=Liquibase&localdatacenter=datacenter1")
     def defaultSchemaName = "betterbotz"
-    def username = "cassandra"
-    def password = "Password1"
+    def username = System.getProperty("dbUsername", "cassandra")
+    def password = System.getProperty("dbPassword", "Password1")
     def database = CommandLineUtils.createDatabaseObject(new ClassLoaderResourceAccessor(), url, username, password, null, null, defaultSchemaName, false, false, null, null, null, null, null, null, null)
 
     def "calculateCheckSum"() {

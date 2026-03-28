@@ -1,39 +1,81 @@
-version: "3.9"
-
 services:
-  cassandra3:
+  cassandra-3:
     image: "cassandra:3"
-    container_name: "cassandra3"
+    container_name: "cassandra-3"
     ports:
       - "9043:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=Test Cluster
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "describe cluster"]
-      interval: 30s
+      interval: 15s
       timeout: 10s
-      retries: 3
+      retries: 10
 
-  cassandra4:
-    image: "cassandra:4"
-    container_name: "cassandra4"
+  cassandra-4:
+    image: "cassandra:4.1"
+    container_name: "cassandra-4"
     ports:
       - "9044:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=Test Cluster
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
     healthcheck:
       test: ["CMD", "cqlsh", "-e", "describe cluster"]
-      interval: 30s
+      interval: 15s
       timeout: 10s
-      retries: 3
+      retries: 10
 
-  cassandra-init:
-    image: "cassandra:latest"
-    container_name: "cassandra-init"
+  cassandra-5:
+    image: "cassandra:5.0"
+    container_name: "cassandra-5"
+    ports:
+      - "9045:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=Test Cluster
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe cluster"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  cassandra-init-3:
+    image: "cassandra:3"
+    depends_on:
+      cassandra-3:
+        condition: service_healthy
     volumes:
-      - "../../../../test.cql:/cql/test.cql"
+      - "./init.cql:/init.cql"
     entrypoint: /bin/bash
     command:
       - -c
-      - "cqlsh cassandra3 -f /cql/test.cql && cqlsh cassandra4 -f /cql/test.cql"
+      - "cqlsh cassandra-3 -f /init.cql"
+
+  cassandra-init-4:
+    image: "cassandra:4.1"
     depends_on:
-      cassandra3:
+      cassandra-4:
         condition: service_healthy
-      cassandra4:
+    volumes:
+      - "./init.cql:/init.cql"
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - "cqlsh cassandra-4 -f /init.cql"
+
+  cassandra-init-5:
+    image: "cassandra:5.0"
+    depends_on:
+      cassandra-5:
         condition: service_healthy
+    volumes:
+      - "./init.cql:/init.cql"
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - "cqlsh cassandra-5 -f /init.cql"
