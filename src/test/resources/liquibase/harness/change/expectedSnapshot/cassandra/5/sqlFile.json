@@ -4,19 +4,14 @@
       "liquibase.structure.core.Table": [
         {
           "table": {
-            "name": "test_table_timestamp"
+            "name": "sql_file_test"
           }
         }
       ],
       "liquibase.structure.core.Column": [
         {
           "column": {
-            "name": "test_id"
-          }
-        },
-        {
-          "column": {
-            "name": "test_column"
+            "name": "id"
           }
         }
       ]

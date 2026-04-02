@@ -1,0 +1,1 @@
+ALTER TABLE betterbotz.authors WITH comment = 'A Test Remark'

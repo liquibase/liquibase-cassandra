@@ -1,0 +1,1 @@
+ALTER TABLE betterbotz.authors RENAME id TO id_renameColumn_test

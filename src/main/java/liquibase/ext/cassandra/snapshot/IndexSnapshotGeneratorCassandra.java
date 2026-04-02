@@ -67,28 +67,37 @@ public class IndexSnapshotGeneratorCassandra extends IndexSnapshotGenerator {
 
     private Index readIndex(Map<String, ?> tableMap, Relation relation) {
         String indexName = StringUtil.trimToNull((String) tableMap.get("index_name"));
-        String options = StringUtil.trimToNull((String) tableMap.get("options"));
+        Object optionsRaw = tableMap.get("options");
         // we don't really need KEYSPACE_NAME param in query to build Column obj, but Astra Cassandra implementation
         // (and maybe some others) fails if it's missing
         Index index = new Index();
         index.setName(indexName);
         index.setRelation(relation);
-        index.setColumns(parseColumns(options));
+        index.setColumns(parseColumns(optionsRaw));
         return index;
     }
 
-    private List<Column> parseColumns(String options) {
-//         options is kinda json but not RFC specification compatible, looks like this
-//        {
-//            'analyzer_class':org.apache.cassandra.index.sasi.analyzer.StandardAnalyzer,
-//            'case_sensitive':false,
-//            'class_name':org.apache.cassandra.index.sasi.SASIIndex,
-//            'mode':CONTAINS,
-//            'target':first_name
-//        }
-//      standard parsers don't work, so it's easier to parse string manually
-
+    private List<Column> parseColumns(Object optionsRaw) {
+        if (optionsRaw == null) {
+            return Collections.emptyList();
+        }
+        // Cassandra 5+: options is map<text,text> returned as Map by the JDBC driver
+        if (optionsRaw instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, String> optionsMap = (Map<String, String>) optionsRaw;
+            String target = StringUtil.trimToNull(optionsMap.get("target"));
+            if (target != null) {
+                return Collections.singletonList(new Column(target));
+            }
+            return Collections.emptyList();
+        }
+        // Older Cassandra versions: options is a non-RFC JSON-like string, e.g.:
+        //   {'target': 'first_name', 'class_name': 'org.apache.cassandra.index.sasi.SASIIndex', ...}
+        String options = optionsRaw.toString();
         int startIndex = options.indexOf("target");
+        if (startIndex < 0) {
+            return Collections.emptyList();
+        }
         String[] keyValues = options.substring(startIndex, options.indexOf("}", startIndex)).split(":");
 
         if (keyValues.length == 2) {
