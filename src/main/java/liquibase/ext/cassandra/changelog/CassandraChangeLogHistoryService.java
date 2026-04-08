@@ -1,13 +1,18 @@
 package liquibase.ext.cassandra.changelog;
 
+import liquibase.ChecksumVersion;
 import liquibase.Scope;
+import liquibase.change.ColumnConfig;
 import liquibase.changelog.StandardChangeLogHistoryService;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.ExecutorService;
+import liquibase.executor.jvm.ChangelogJdbcMdcListener;
 import liquibase.ext.cassandra.database.CassandraDatabase;
 import liquibase.servicelocator.PrioritizedService;
+import liquibase.statement.SqlStatement;
 import liquibase.statement.core.RawSqlStatement;
+import liquibase.statement.core.SelectFromDatabaseChangeLogStatement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +22,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 public class CassandraChangeLogHistoryService extends StandardChangeLogHistoryService {
 
@@ -103,6 +110,26 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         final List<Map<String, ?>> returnList = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database).queryForList(select);
         returnList.sort(Comparator.comparing((Map<String, ?> o) -> (Date) o.get("DATEEXECUTED")).thenComparingInt(o -> (Integer) o.get("ORDEREXECUTED")));
         return returnList;
+    }
+
+    @Override
+    public List<Map<String, ?>> getIncompatibleDatabaseChangeLogs() throws DatabaseException {
+        /* Override default behavior to ensure compatibility with Cassandra CQL (see issue #375):
+        re-implement the logic of the overridden method by selecting all the checksum values in the table
+        DATABASECHANGELOG, then filtering the results in Java to implement the original WHERE clause
+        'ByCheckSumNotNullAndNotLike'.
+        */
+        final SqlStatement databaseChangeLogStatement = new SelectFromDatabaseChangeLogStatement(
+                new ColumnConfig().setName("MD5SUM")
+        );
+        final List<Map<String, ?>> allChecksums = ChangelogJdbcMdcListener.query(
+                getDatabase(), ex -> ex.queryForList(databaseChangeLogStatement)
+        );
+        return allChecksums.stream().filter(resultItem -> {
+            final var checksumValue = resultItem.get("md5sum");
+            return checksumValue != null
+                    && !checksumValue.toString().startsWith(format("%d:", ChecksumVersion.latest().getVersion()));
+        }).toList();
     }
 
     private String getChangeLogTableName() {
