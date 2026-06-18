@@ -105,6 +105,22 @@ public class CassandraChangeLogHistoryService extends StandardChangeLogHistorySe
         return returnList;
     }
 
+    /**
+     * Override tagExists to avoid a WHERE clause on the TAG column, which is not part of the
+     * Cassandra primary key (ID, AUTHOR, FILENAME). A bare {@code WHERE TAG='...'} query would
+     * fail with "Cannot execute this query … use ALLOW FILTERING", and the COUNT(*) workaround
+     * is not supported by AWS Keyspaces. We reuse the already-correct full-table-scan from
+     * {@link #queryDatabaseChangeLogTable} and filter in Java instead.
+     */
+    @Override
+    public boolean tagExists(String tag) throws DatabaseException {
+        if (!hasDatabaseChangeLogTable()) {
+            return false;
+        }
+        List<Map<String, ?>> rows = queryDatabaseChangeLogTable(getDatabase());
+        return rows.stream().anyMatch(row -> tag.equals(row.get("TAG")));
+    }
+
     private String getChangeLogTableName() {
         if (getDatabase().getLiquibaseCatalogName() != null) {
             return getDatabase().getLiquibaseCatalogName() + "." + getDatabase().getDatabaseChangeLogTableName();
