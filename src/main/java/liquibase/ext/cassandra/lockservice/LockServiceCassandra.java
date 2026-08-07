@@ -221,8 +221,8 @@ public class LockServiceCassandra extends StandardLockService {
             }
 
             try {
-                isDatabaseChangeLogLockTableInitialized = executeCountQuery(executor,
-                        "SELECT COUNT(*) FROM " + getChangeLogLockTableName()) > 0;
+                isDatabaseChangeLogLockTableInitialized = !executor.queryForList(
+                        new RawSqlStatement("SELECT ID FROM " + getChangeLogLockTableName() + " WHERE ID = 1")).isEmpty();
             } catch (LiquibaseException e) {
                 if (executor.updatesDatabase()) {
                     throw new UnexpectedLiquibaseException(e);
@@ -236,15 +236,34 @@ public class LockServiceCassandra extends StandardLockService {
     }
 
     private boolean isLocked(Executor executor) throws DatabaseException {
-        return executeCountQuery(executor,
-                "SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " WHERE LOCKED = TRUE ALLOW FILTERING") > 0;
+        List<Map<String, ?>> rows = executor.queryForList(
+                new RawSqlStatement("SELECT LOCKED FROM " + getChangeLogLockTableName() + " WHERE ID = 1"));
+        if (rows.isEmpty()) {
+            return false;
+        }
+        return parseBooleanColumn(getIgnoreCase(rows.get(0), "LOCKED"));
     }
 
     private boolean isLockedByCurrentInstance(Executor executor) throws DatabaseException {
         final String lockedBy = NetUtil.getLocalHostName() + " (" + NetUtil.getLocalHostAddress() + ")";
-        return executeCountQuery(executor,
-                "SELECT COUNT(*) FROM " + getChangeLogLockTableName() + " WHERE " +
-                        "LOCKED = TRUE AND LOCKEDBY = '" + lockedBy + "' ALLOW FILTERING") > 0;
+        List<Map<String, ?>> rows = executor.queryForList(
+                new RawSqlStatement("SELECT LOCKED, LOCKEDBY FROM " + getChangeLogLockTableName() + " WHERE ID = 1"));
+        if (rows.isEmpty()) {
+            return false;
+        }
+        Map<String, ?> row = rows.get(0);
+        boolean locked = parseBooleanColumn(getIgnoreCase(row, "LOCKED"));
+        Object lockedByValue = getIgnoreCase(row, "LOCKEDBY");
+        return locked && lockedBy.equals(lockedByValue != null ? lockedByValue.toString() : null);
+    }
+
+    private static boolean parseBooleanColumn(Object value) {
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        } else if (value instanceof Number) {
+            return ((Number) value).intValue() != 0;
+        }
+        return false;
     }
 
     private static Object getIgnoreCase(Map<String, ?> row, String key) {
@@ -257,35 +276,6 @@ public class LockServiceCassandra extends StandardLockService {
             return database.getLiquibaseCatalogName() + "." + database.getDatabaseChangeLogLockTableName();
         } else {
             return database.getDatabaseChangeLogLockTableName();
-        }
-    }
-
-    /**
-     * Execute a count query using an alternative if the AWS Keyspaces compatibility mode is enabled.
-     *
-     * @implNote Since aggregate functions like COUNT are not supported by AWS Keyspaces (see
-     * <a href="https://docs.aws.amazon.com/keyspaces/latest/devguide/cassandra-apis.html#cassandra-functions">
-     * Cassandra functions in AWS Keyspaces</a>), this method tries to execute the same query without the COUNT
-     * function then programmatically count returned rows, when the AWS Keyspaces compatibility mode is enabled.
-     *
-     * @param executor The query executor.
-     * @param query    The query to execute.
-     * @return The result of the count query.
-     * @throws DatabaseException in case something goes wrong during the query execution or if the provided query is
-     * not a count query.
-     */
-    private int executeCountQuery(final Executor executor, final String query) throws DatabaseException {
-        if (!query.contains("SELECT COUNT(*)")) {
-            throw new UnexpectedLiquibaseException("Invalid count query: " + query);
-        }
-        if (isAwsKeyspacesCompatibilityModeEnabled()) {
-            Scope.getCurrentScope().getLog(LockServiceCassandra.class)
-                    .fine("AWS Keyspaces compatibility mode enabled: using alternative count query");
-            final String altQuery = query.replaceAll("(?i)SELECT COUNT\\(\\*\\)", "SELECT *");
-            final List<Map<String, ?>> rows = executor.queryForList(new RawSqlStatement(altQuery));
-            return rows.size();
-        } else {
-            return executor.queryForInt(new RawSqlStatement(query));
         }
     }
 
