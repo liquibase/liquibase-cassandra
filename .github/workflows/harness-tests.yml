@@ -43,7 +43,7 @@ jobs:
           maven-version: "3.9.5"
 
       - name: Set up Maven settings.xml
-        uses: liquibase/build-logic/.github/actions/setup-maven-settings@5ac918e7d6ab07f75e2a0a26261577f9c5df15d4 # main
+        uses: liquibase/build-logic/.github/actions/setup-maven-settings@b8d4fd9e9217ff99f5a17f6ce4d2808b21d35a43 # main
         with:
           gpm-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
 
