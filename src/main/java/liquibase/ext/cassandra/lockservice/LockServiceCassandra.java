@@ -75,14 +75,10 @@ public class LockServiceCassandra extends StandardLockService {
 
                 executor.comment("Lock Database");
                 int rowsUpdated = executor.update(new LockDatabaseChangeLogStatement());
-                if (rowsUpdated == -1 && !isLockedByCurrentInstance(executor)) {
-                    // another node was faster
-                    return false;
-                }
                 if (rowsUpdated > 1) {
                     throw new LockException("Did not update change log lock correctly");
                 }
-                if (rowsUpdated == 0) {
+                if (lockAcquisitionInconclusive(rowsUpdated) && !isLockedByCurrentInstance(executor)) {
                     // another node was faster
                     return false;
                 }
@@ -233,6 +229,15 @@ public class LockServiceCassandra extends StandardLockService {
             }
         }
         return isDatabaseChangeLogLockTableInitialized;
+    }
+
+    /**
+     * The applied-row count reported by the LWT-backed lock UPDATE isn't a reliable success signal on its own:
+     * some JDBC option sets report -1 (unknown), and others report 0 even when the conditional apply actually
+     * succeeded. Both counts require verifying lock ownership directly rather than assuming the update failed.
+     */
+    private boolean lockAcquisitionInconclusive(int rowsUpdated) {
+        return rowsUpdated == -1 || rowsUpdated == 0;
     }
 
     private boolean isLocked(Executor executor) throws DatabaseException {
