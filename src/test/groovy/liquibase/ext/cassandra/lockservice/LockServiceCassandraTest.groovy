@@ -67,6 +67,20 @@ class LockServiceCassandraTest extends Specification {
         !callIsLocked()
     }
 
+    // ─── lockAcquisitionInconclusive ─────────────────────────────────────────
+
+    @Unroll
+    def "lockAcquisitionInconclusive returns #expected for rowsUpdated=#rowsUpdated"() {
+        expect:
+        callLockAcquisitionInconclusive(rowsUpdated) == expected
+
+        where:
+        rowsUpdated | expected
+        -1          | true   // driver reports "unknown affected rows" for the LWT-backed UPDATE
+        0           | true   // some JDBC option sets report 0 even when the conditional apply succeeded
+        1           | false  // unambiguous single-row success
+    }
+
     // ─── isLockedByCurrentInstance ───────────────────────────────────────────
 
     def "isLockedByCurrentInstance queries by partition key, not by ALLOW FILTERING"() {
@@ -135,6 +149,12 @@ class LockServiceCassandraTest extends Specification {
         Method m = LockServiceCassandra.getDeclaredMethod("isLockedByCurrentInstance", Executor)
         m.accessible = true
         return m.invoke(lockService, executor) as boolean
+    }
+
+    private boolean callLockAcquisitionInconclusive(int rowsUpdated) {
+        Method m = LockServiceCassandra.getDeclaredMethod("lockAcquisitionInconclusive", int)
+        m.accessible = true
+        return m.invoke(lockService, rowsUpdated) as boolean
     }
 
     private static String currentLockedBy() {
