@@ -2,39 +2,30 @@ name: Build and Test
 
 on:
   workflow_dispatch:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - reopened
       - synchronize
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
   packages: read
   id-token: write
 
 jobs:
-  authorize:
-    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: true
-
   build-test:
-    needs: authorize
     uses: liquibase/build-logic/.github/workflows/os-extension-test.yml@main
     secrets: inherit
 
   harness-tests:
-    needs: authorize
     uses: ./.github/workflows/harness-tests.yml
     secrets: inherit
 
   functional-tests:
     name: Functional Tests
     runs-on: ubuntu-latest
-    needs: authorize
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
@@ -51,9 +42,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.ref }}
-          allow-unsafe-pr-checkout: true
 
       - name: Set up JDK 21
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
@@ -100,8 +88,3 @@ jobs:
           path: |
             target/surefire-reports/
             target/spock-reports/
-
-  dependabot:
-    needs: build-test
-    uses: liquibase/build-logic/.github/workflows/dependabot-automerge.yml@main
-    secrets: inherit
