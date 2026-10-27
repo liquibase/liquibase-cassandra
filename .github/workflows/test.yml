@@ -8,6 +8,10 @@ on:
       - reopened
       - synchronize
 
+env:
+  # Fork PRs get no secrets, so they skip the vault and build from Maven Central only.
+  IS_FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+
 permissions:
   contents: read
   pull-requests: write
@@ -28,12 +32,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS Credentials
+        if: env.IS_FORK_PR != 'true'
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ secrets.LIQUIBASE_VAULT_OIDC_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Get secrets from vault
+        if: env.IS_FORK_PR != 'true'
         uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
         with:
           secret-ids: |
@@ -56,6 +62,7 @@ jobs:
           maven-version: "3.9.5"
 
       - name: Set up Maven settings.xml
+        if: env.IS_FORK_PR != 'true'
         uses: liquibase/build-logic/.github/actions/setup-maven-settings@5ac918e7d6ab07f75e2a0a26261577f9c5df15d4 # main
         with:
           gpm-token: ${{ env.LIQUIBOT_PAT_GPM_ACCESS }}
